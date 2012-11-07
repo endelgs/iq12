@@ -1,0 +1,1336 @@
+<?php $baseUrl = Zend_Controller_Front::getInstance()->getBaseUrl(); ?>
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        $('#pessoa-<?php echo $this->tipocurso; ?>').addClass('selecionado');
+        $('#<?php echo $this->tipocurso; ?>-ingresso').addClass('selecionado');
+        //$('input').attr('onBlur', 'mudancaDeValor()');
+        $('#tabelaDesligamento').attr('width', '100%');
+    });
+    function mudancaDeValor()
+    {
+        //window.onbeforeunload = function(){ return 'Você perderá todas as alterações';}
+        //alert('Modificado');
+        //$('body').attr('onUnload', 'if !window.confirm("Dados podem ter sido alterados. Deseja sair sem gravar?")){return false}');
+    }
+    function ConfirmExit()
+    {
+        //return window.confirm('');
+    }
+    function mudaIngressoDireto()
+    {
+        var display = $('#divIngressoDireto').css('display');
+        if(display=='inline')$('#divIngressoDireto').css({'display':'none'});
+        else $('#divIngressoDireto').css({'display':'inline'});
+    }
+    function chk_mudaIngressoDireto(chk)
+    {
+        if(chk.checked==true)
+        {
+            $('#divIngressoDireto').css({'display':'inline'});
+            $('#MEIngresso').css({'display':'inline'});
+        }
+        else
+        {
+            $('#divIngressoDireto').css({'display':'none'});
+            $('#MEIngresso').css({'display':'none'});
+        }
+    }
+    function mudaPassagem()
+    {
+        var display = $('#divPassagemDireta').css('display');
+        if(display=='inline')$('#divPassagemDireta').css({'display':'none'});
+        else $('#divPassagemDireta').css({'display':'inline'});
+    }
+    function chk_mudaPassagem(chk)
+    {
+        if(chk.checked==true)
+        {
+            $('#divPassagemDireta').css({'display':'inline'});
+            $('#MEPassagem').css({'display':'inline'});
+        }
+        else
+        {
+            $('#divPassagemDireta').css({'display':'none'});
+            $('#MEPassagem').css({'display':'none'});
+        }
+    }
+</script>
+<form method="post" class="zend_form" action="<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'ingressos', 'action' => 'post')) ?>">
+    <input type="hidden" name="idPosGraduacao" value="<?php echo $this->idPosGraduacao; ?>" id="idPosGraduacao">
+    <input type="hidden" name="idIngresso" value="<?php echo $this->idIngresso; ?>">
+    <?php
+    echo $this->partial('partials/pessoaheader.phtml', array('nome' => $this->nomePessoa));
+    echo $this->partial('partials/posgraduacaoheader.phtml', array('tipo' => $this->tipoPosGraduacao)); ?>
+
+    <?php
+    $professor = $this->partial('partials/combobox.phtml', array(
+                'name' => 'professor',
+                'data' => $this->professores,
+                'id' => 'professor',
+            ));
+    ?>
+
+    <?php
+    $coorientador = $this->partial('partials/combobox.phtml', array(
+                'name' => 'coorientador',
+                'data' => $this->professores,
+                'id' => 'coorientador',
+            )); ?>
+
+    <?php
+    $areaDeConcentracao = $this->partial('partials/combobox.phtml', array(
+                'name' => 'areaConcentracao',
+                'data' => $this->areasDeConcentracao,
+                'id' => 'areaConcentracao',
+            )); ?>
+    <?php
+    $tipoTrancamento = $this->partial('partials/combobox.phtml', array(
+                'data' => $this->tiposDeTrancamento,
+                'name' => 'tipo_trancamento',
+                'id' => 'tipo_trancamento',
+            )); ?>
+    <?php
+    $tipoPeriodos = $this->partial('partials/combobox.phtml', array(
+                'data' => $this->periodos,
+                'name' => 'tipo_periodos',
+                'id' => 'tipo_periodos',
+            )); ?>
+    <?php
+    $tipoDesligamento = $this->partial('partials/combobox.phtml', array(
+                'data' => $this->desligado,
+                'name' => 'tipo_desligamentos',
+                'id' => 'tipo_desligamentos',
+            )); ?>
+    <?php
+    $tipoPesquisas = $this->partial('partials/combobox.phtml', array(
+                'data' => $this->linhasDePesquisa,
+                'name' => 'tipo_pesquisas',
+                'id' => 'tipo_pesquisas',
+            )); ?>
+    <?php
+    if ($this->tipocurso != 'mestrado') {
+        if ((INT) $this->passagemDireta != 0) {
+            $ckPassagemDireta = ' disabled ';
+            $ckPassagemDiretaValue = ' checked="checked"';
+        } else {
+            $stylePassagemDireta = ' display:none; ';
+        }
+
+        if ((INT) $this->ingressoDireto != 0) {
+            $ckIngressoDireto = ' disabled ';
+            $ckIngressoDiretoValue = ' checked="checked" ';
+        } else {
+            $styleIngressoDireto = ' display:none; ';
+        }
+    } else {
+        if ((INT) $this->passagemDireta != 0) {
+            $ckPassagemDiretaValue = ' checked="checked"';
+        }
+
+        if ((INT) $this->ingressoDireto != 0) {
+            $ckIngressoDiretoValue = ' checked="checked" ';
+        }
+    }
+
+
+
+    if ($this->qpd['aprovado'] == 0
+
+        )$qpd_aprovado[0] = "checked='checked'";
+    else
+        $qpd_aprovado[0] = "";
+    if ($this->qpd['aprovado'] == 1
+
+        )$qpd_aprovado[1] = "checked='checked'";
+    else
+        $qpd_aprovado[1] = "";
+    if ($this->qpd['aprovado'] == 2
+
+        )$qpd_aprovado[2] = "checked='checked'";
+    else
+        $qpd_aprovado[2] = "";
+
+    if ($this->qid['aprovado'] == 0
+
+        )$qid_aprovado[0] = "checked='checked'";
+    else
+        $qid_aprovado[0] = "";
+    if ($this->qid['aprovado'] == 1
+
+        )$qid_aprovado[1] = "checked='checked'";
+    else
+        $qid_aprovado[1] = "";
+    if ($this->qid['aprovado'] == 2
+
+        )$qid_aprovado[2] = "checked='checked'";
+    else
+        $qid_aprovado[2] = "";
+
+    $qid_bancas = array();
+    $y = 0;
+    foreach ($this->pg_bancas as $banca) {
+        if ($banca['id_qualificacao'] == $this->qid['id_qualificacoes']) {
+            $qid_bancas[$y] = array(
+                'id_qualificacao' => $banca['id_qualificacao'],
+                'id_banca' => $banca['id'],
+                'id_professor' => $banca['nome'],
+                'id_atribuicao' => $banca['atribuicao'],
+            );
+            $y++;
+        }
+    }
+
+    $qpd_bancas = array();
+    $y = 0;
+    foreach ($this->pg_bancas as $banca) {
+        if ($banca['id_qualificacao'] == $this->qpd['id_qualificacoes']) {
+            $qpd_bancas[$y] = array(
+                'id_qualificacao' => $banca['id_qualificacao'],
+                'id_banca' => $banca['id'],
+                'id_professor' => $banca['nome'],
+                'id_atribuicao' => $banca['atribuicao'],
+            );
+            $y++;
+        }
+    }
+
+    $ingressoGeral = '
+    <table width="100%">
+        <colgroup>
+            <col width="250">
+        </colgroup>
+        <tr>
+            <td><label>Data de ingresso<br /><span style="font-size: 10px;">(mês e ano)</span></label></td><td><input type="text" name="data" id="dataIngresso" onkeypress="formataCampo(this, \'00/0000\', event);" value="' . $this->partial('partials/data.phtml', array('tipo' => 'out', 'data' => $this->ingresso['data_ingresso'], 'full' => 'no')) . '" maxlength="7"></td>
+        </tr>
+        <tr>
+            <td><label>Período de ingresso:</label></td><td>' . $this->partial('partials/combobox.phtml', array('name' => 'id_periodo', 'data' => $this->periodos, 'selected' => $this->ingresso['id_periodo'])) . '</td>
+        </tr>
+        <tr>
+            <td><label>Data de integralização<br /><span style="font-size: 10px;">(mês e ano)</span></label></td><td><input id="date_int" type="text" name="integralizacao" onkeypress="formataCampo(this, \'00/0000\', event);" value="' . $this->partial('partials/data.phtml', array('tipo' => 'out', 'data' => $this->ingresso['data_integralizacao'], 'full' => 'no')) . '" maxlength="7"></td>
+        </tr>
+        <tr>
+            <td><label>Linha de pesquisa:</label></td><td>' . $this->partial('partials/combobox.phtml', array('name' => 'id_linha_de_pesquisa', 'data' => $this->linhasDePesquisa, 'selected' => $this->ingresso['id_linha_de_pesquisa'])) . '</td>
+        </tr>
+        <tr>
+            <td><label>RA:</label></td><td><input type="text" name="ra" value="' . $this->ingresso['RA'] . '"></td>
+        </tr>
+        <tr style="' . $stylePassagemDireta . '">
+            <td ></td><td><label style="text-align:left; float: left;"><input ' . $ckPassagemDireta . ' type="checkbox" name="passagem"  value="1" onclick="chk_mudaPassagem(this);"  ' . $ckPassagemDiretaValue . '>Passagem direta para o doutorado</label><span style="font-size: 10px; color: #666 !important;"><a href="javascript:;" onClick="mudaPassagem();" id="MEPassagem" style="' . ($this->ingresso['passagem_direta'] ? '' : 'display:none') . '">[Mostrar / Ocultar detalhes]</a></span></td>
+        </tr>
+        <tr><td></td>
+            <td id="divPassagemDireta" style="display:none">
+            <label style="float: left;">Data: <input type="text" name="dataPassagemDireta" onkeypress="formataCampo(this, \'00/00/0000\', event);" value="' . $this->partial('partials/data.phtml', array('tipo' => 'out', 'data' => $this->ingresso['data_passagem_direta'])) . '" maxlength="10" /></label><br/>
+            ' . $this->partial('partials/fieldset.phtml', array(
+                'title' => 'Passagem direta para doutorado',
+                'height' => '400',
+                'content' => '
+		<div class="crud-c">
+		<table width="100%">
+			<colgroup>
+		    	<col width="250" />
+		    	<col>
+		    </colgroup>
+		    <tr><td><label>Título: </td><td><input value="' . $this->qpd['titulo'] . '" size="50" type="text" name="qpd_titulo" /></td></tr>
+		    <tr><td><label>Data: </td><td><input type="text" value="' . $this->partial('partials/data.phtml', array('tipo' => 'out', 'data' => $this->qpd['data'])) . '" name="qpd_data" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr>
+		    <tr><td><label>Sala: </td><td><input value="' . $this->qpd['sala'] . '" type="text" name="qpd_sala" /></td></tr>
+		    <tr><td><label>Horário: </td><td><input value="' . $this->qpd['horario'] . '" type="text" onkeypress="formataCampo(this, \'00:00:00\', event);" maxlength="8" name="qpd_horario" /></td></tr>
+		    <tr>
+		    	<td><label>Aprovado: </td>
+		    	<td>
+		    		<table>
+		    			<tr><td><input ' . $qpd_aprovado[0] . ' name="qpd_aprovado" type="radio" value="0" /></td><td>sim</td></tr>
+		    			<tr><td><input ' . $qpd_aprovado[1] . ' name="qpd_aprovado" type="radio" value="1" /></td><td>não</td></tr>
+		    		</table>	
+		    	</td>
+		    </tr>
+		    <tr>
+		    	<td><label>Bancas: </td>
+		    	<td>
+		    		<table>
+		    			<tr>
+		    				<td colspan="4">
+		    				' .
+                $this->partial('partials/flexigrid.phtml',
+                        array(
+                            'isCrud' => true,
+                            'table' => $qpd_bancas,
+                            'functionDelete' => 'deleteBancaQualificacao',
+                            'exclude' => array('id_banca', 'id_qualificacao'),
+                            'headers' => array('id_professor' => 'Professor', 'id_atribuicao' => 'Atribuição'),
+                            'ifNull' => array('id_professor', 'id_atribuicao')
+                ))
+                . '
+		    				</td>
+		    			</tr>
+		    			<tr>
+		    				<td><label>Professor:</label></td>
+		    				<td>
+		    				' . $this->partial('partials/combobox.phtml', array(
+                    'name' => 'qpd_professores',
+                    'data' => $this->professores,
+                )) . '
+		    				</td>
+		    				<td><label>Atribuição:</label></td>
+		    				<td>' . $this->partial('partials/combobox.phtml', array(
+                    'name' => 'qpd_atribuicoes',
+                    'data' => $this->atribuicoes,
+                )) . '  <input class="botao-calcular-media" type="submit" value="Gravar" onClick="window.onbeforeunload=null"/>
+							</td>
+		    			</tr>
+		    		</table>
+		    	</td>
+		    </tr>
+		    <tr><td><label>Observações: </td><td><input size="50" value="' . $this->qpd['observacoes'] . '" type="text" name="qpd_observacoes" /></td></tr>
+		    <input value="' . $this->qpd['id_qualificacoes'] . '" type="hidden" name="qpd" />
+		</table>
+		</div>',
+                'addClass' => '-clara'
+            )) . '
+            </td>
+        </tr>
+        <tr  style="' . $styleIngressoDireto . '">
+            <td></td><td><label style="text-align:left; float: left;"><input ' . $ckIngressoDireto . ' type="checkbox" name="ingresso" value="1" onclick="chk_mudaIngressoDireto(this);" ' . $ckIngressoDiretoValue . '>Ingresso direto para o doutorado</label><span style="font-size: 10px;"><a href="javascript:;" onClick="mudaIngressoDireto();" id="MEIngresso" style="' . ($this->ingresso['ingresso_direto'] ? '' : 'display:none') . '">[Mostrar / Ocultar detalhes]</a></span></td>
+        </tr>
+        <tr><td></td>
+            <td id="divIngressoDireto" style="display: none;">
+            <label style="float: left;">Data: <input type="text" name="dataIngressoDireto" onkeypress="formataCampo(this, \'00/00/0000\', event);" value="' . $this->partial('partials/data.phtml', array('tipo' => 'out', 'data' => $this->ingresso['data_ingresso_direto'])) . '" maxlength="10" /></label><br/>
+            ' . $this->partial('partials/fieldset.phtml', array(
+                'title' => 'Ingresso direto para doutorado',
+                'height' => '400',
+                'width' => '100%',
+                'content' => '
+		<div class="crud-c">
+		<table width="100%">
+			<colgroup>
+		    	<col width="250" />
+		    	<col>
+		    </colgroup>
+		    <tr><td><label>Título: </td><td><input value="' . $this->qid['titulo'] . '" size="50" type="text" name="qid_titulo" /></td></tr>
+		    <tr><td><label>Data: </td><td><input type="text" value="' . $this->partial('partials/data.phtml', array('tipo' => 'out', 'data' => $this->qid['data'])) . '" name="qid_data" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr>
+		    <tr><td><label>Sala: </td><td><input value="' . $this->qid['sala'] . '" type="text" name="qid_sala" /></td></tr>
+		    <tr><td><label>Horário: </td><td><input value="' . $this->qid['horario'] . '" type="text" onkeypress="formataCampo(this, \'00:00:00\', event);" maxlength="8" name="qid_horario" /></td></tr>
+		    <tr>
+		    	<td><label>Aprovado: </td>
+		    	<td>
+		    		<table>
+		    			<tr><td><input ' . $qid_aprovado[0] . ' name="qid_aprovado" type="radio" value="0" /></td><td>sim</td></tr>
+		    			<tr><td><input ' . $qid_aprovado[1] . ' name="qid_aprovado" type="radio" value="1" /></td><td>não</td></tr>
+		    		</table>	
+		    	</td>
+		    </tr>
+		    <tr>
+		    	<td><label>Bancas: </td>
+		    	<td>
+		    		<table>
+		    			<tr>
+		    				<td colspan="4">
+		    				' .
+                $this->partial('partials/flexigrid.phtml',
+                        array(
+                            'isCrud' => true,
+                            'table' => $qid_bancas,
+                            'functionDelete' => 'deleteBancaQualificacao',
+                            'exclude' => array('id_banca', 'id_qualificacao'),
+                            'headers' => array('id_professor' => 'Professor', 'id_atribuicao' => 'Atribuição'),
+                            'ifNull' => array('id_professor', 'id_atribuicao')
+                ))
+                . ' 
+		    				</td>
+		    			</tr>
+		    			<tr>
+		    				<td><label>Professor:</label></td>
+		    				<td>
+		    				' . $this->partial('partials/combobox.phtml', array(
+                    'name' => 'qid_professores',
+                    'data' => $this->professores,
+                )) . '
+		    				</td>
+		    				<td><label>Atribuição:</label></td>
+		    				<td>' . $this->partial('partials/combobox.phtml', array(
+                    'name' => 'qid_atribuicoes',
+                    'data' => $this->atribuicoes,
+                )) . ' <input class="botao-calcular-media" type="submit" value="Gravar" onClick="window.onbeforeunload=null"/>
+							</td>
+		    			</tr>
+		    		</table>
+		    	</td>
+		    </tr>
+		    <tr><td><label>Observações: </td><td><input size="50" value="' . $this->qid['observacoes'] . '" type="text" name="qid_observacoes" /></td></tr>
+		    <input value="' . $this->qid['id_qualificacoes'] . '" type="hidden" name="qid" />
+		</table>
+		</div>',
+                'addClass' => '-clara'
+            )) . '
+            </td>
+        </tr>
+        ';
+
+    $ingressoGeral .= '
+         <tr>
+            <td></td><td><label style="text-align: left; float: left;"><input type="checkbox" name="desligado" value="1" ' . ($this->ingresso['aluno_desligado'] ? 'checked="checked"' : '') . ' onChange="(this.checked ? ($(\'#tabelaDesligamento\').show().attr(\'width\', \'100%\')) : $(\'#tabelaDesligamento\').hide())">Aluno desligado</label></td>
+        </tr>
+         <tr>
+            <td></td><td><table id="tabelaDesligamento" width="100%" style="width:100%; display: ' . ($this->ingresso['aluno_desligado'] ? 'block' : 'none') . ';"><colgroup><col width="240"><col width="auto"></colgroup><tr><td>
+            <label>Motivo do desligamento:</label></td><td>' . $this->partial('partials/combobox.phtml', array('name' => 'idDesligadoDetalhe', 'data' => $this->desligado, 'selected' => $this->ingresso['id_desligado_detalhe'])) . '</td>
+        </tr>
+        <tr>
+            <td><label>Data de desligamento:</label></td><td><label style="text-align: left;"><input type="text" maxlength="10" name="desligadoData" onkeypress="formataCampo(this, \'00/00/0000\', event);" value="' . $this->partial('partials/data.phtml', array('tipo' => 'out', 'data' => $this->ingresso['data_desligado'])) . '"></label></td>
+        </tr>
+         <tr>
+            <td><label>Observações de Desligamento:</label></td><td><textarea name="desligadoObservacoes" style="width:100%; display: block;" >' . $this->ingresso['observacoes_desligado'] . '</textarea></td>
+        </tr></table></td></tr>
+        </table>
+';
+
+    $orientadores = '
+    <table width="100%">
+            <td>
+            ' . $this->partial('partials/flexigrid.phtml',
+                    array(
+                        'isCrud' => true,
+                        'table' => $this->orientadores,
+                        'doubleClick' => "carregaBoxOrientadores(this.className)",
+                        'functionDelete' => 'deleteOrientador',
+                        'exclude' => array('id_orientador', 'id_ingresso', 'atual', 'id_professor', 'id_area_de_concentracao', 'area_de_concentracao', 'data_semmascara'),
+                        'headers' => array('nome' => 'Orientador', 'data' => 'Data da Reunião', 'area_de_concentracao' => 'Área de Concentração', 'justificativa' => 'Justificativa', 'eh_atual' => 'Orientador atual?'),
+                        'ifNull' => array('nome', 'data', 'area_de_concentracao', 'justificativa', 'eh_atual')
+            )) . '
+            </td>
+        </tr>
+        <tr>
+            <td align="right"><a href="javascript:;" onClick="$(\'#novoOrientador\').toggle(null, $(\'#novoOrientador\').attr(\'width\', \'100%\'));" class="crud-toggle-button">Adicionar novo</a></td>
+        </tr>
+        <tr>
+            <td>
+        <table width="100%" id="novoOrientador" style="display: none;"><colgroup><col width="190"></colgroup><tr>
+            <td><label>Nome do orientador:</label></td><td>' . $this->partial('partials/combobox.phtml', array('name' => 'id_professor_orientador', 'data' => $this->professores, 'selected' => $item['id_orientador'])) . '</td>
+        </tr>
+        <tr>
+            <td><label>Área de concentração:</label></td><td>' . $this->partial('partials/combobox.phtml', array('name' => 'id_area_de_concentracao', 'data' => $this->areasDeConcentracao, 'selected' => $item['id_area_de_concentracao'])) . '</td>
+        </tr>
+        <tr>
+            <td><label>Data:</label></td><td><input type="text" name="orientadorData" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td>
+        </tr>
+        <tr>
+            <td><label>Justificativa:</label></td><td><textarea name="justificativa" style="width:100%"></textarea></td>
+        </tr>
+        <tr>
+            <td></td><td><label style="text-align: left;"><input type="checkbox" name="atual" value="1">Orientador atual?</label></td>
+        </tr>
+        </table>
+            </td>
+        <tr>
+    </table>
+';
+
+
+    $coorientadores = '
+    <table width="100%">
+            <td>
+            ' . $this->partial('partials/flexigrid.phtml',
+                    array(
+                        'isCrud' => true,
+                        'table' => $this->coorientadores,
+                        'doubleClick' => "carregaBoxCoorientadores(this.className)",
+                        'functionDelete' => 'deleteCoorientador',
+                        'exclude' => array('id_orientador', 'id_ingresso', 'atual', 'id_professor', 'id_area_de_concentracao', 'data_semmascara', 'id_coorientador'),
+                        'headers' => array('nome' => 'Coorientador', 'data' => 'Data da Reunião', 'area_de_concentracao' => 'Área de Concentração', 'justificativa' => 'Justificativa', 'eh_atual' => 'Coorientador atual?'),
+                        'ifNull' => array('nome', 'data', 'area_de_concentracao', 'justificativa', 'eh_atual')
+            )) . '
+            </td>
+        </tr>
+        <tr>
+            <td align="right"><a href="javascript:;" onClick="$(\'#novoCoorientador\').toggle(null, $(\'#novoCoorientador\').attr(\'width\', \'100%\'));" class="crud-toggle-button">Adicionar novo</a></td>
+        </tr>
+        <tr>
+            <td>
+        <table width="100%" id="novoCoorientador" style="display: none;"><colgroup><col width="190"></colgroup><tr>
+            <td><label>Nome do Coorientador:</label></td><td>' . $this->partial('partials/combobox.phtml', array('name' => 'id_coorientador_prof', 'data' => $this->professores)) . '</td>
+        </tr>
+        <tr>
+            <td><label>Área de concentração:</label></td><td>' . $this->partial('partials/combobox.phtml', array('name' => 'id_area_de_concentracao_coorientador', 'data' => $this->areasDeConcentracao, 'selected' => $item['id_area_de_concentracao'])) . '</td>
+        </tr>
+        <tr>
+            <td><label>Data:</label></td><td><input type="text" name="coorientadorData" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td>
+        </tr>
+        <tr>
+            <td><label>Justificativa:</label></td><td><textarea name="justificativa" style="width:100%"></textarea></td>
+        </tr>
+        <tr>
+            <td></td><td><label style="text-align: left;"><input type="checkbox" name="atual_co" value="1">Coorientador atual?</label></td>
+        </tr>
+        </table>
+            </td>
+        <tr>
+    </table>
+';
+    ?>
+    <script type="text/javascript">
+
+        
+        function daysInMonth(month,year) {
+            var dd = new Date(year, month, 0);
+            return dd.getDate();
+        }
+<?php if ($this->tipocurso == 'mestrado') { ?>
+
+         var anosASomar = 4;
+         var tipoCurso = 'mestrado';
+<?php } else { ?>
+        var anosASomar = 6;
+        var tipoCurso = 'doutorado';
+<?php } ?>
+
+   function somadias(data, dias) {
+       //alert('1')
+       data=data.split('/');
+       //alert('2')
+       //diafuturo=parseInt(data[0])+dias;
+       //alert('3')
+       diafuturo=1*data[0]+dias;
+       //mes=parseInt(data[1]);
+       //ano=parseInt(data[0]);
+       
+        mes=1*data[1];
+       ano=1*data[2];
+       while(diafuturo>daysInMonth(mes,ano)) {
+           diafuturo-=daysInMonth(mes,ano);
+           mes++;
+           if(mes>12) {
+               mes=1;
+               ano++;
+           }
+       }
+           if(mes<10)
+               mes='0'+mes;
+           
+         if(diafuturo<10)
+               diafuturo='0'+diafuturo;
+           
+       return diafuturo+"/"+mes+"/"+ano;
+   }
+
+    $(document).ready(
+    function () {
+
+
+        $('#dataIngresso').keyup(function() {
+
+            var srtDate = $(this).val();
+                
+            if($(this).val().length>=7 )
+            {
+
+                var arrData=srtDate.split("/");
+                    
+                if(arrData[0].length==2 && arrData[1].length==4)
+                {
+                    data=arrData;
+                    if(tipoCurso == 'mestrado' && data[0] > 6 && data[1] >= 2012) anosASomar = 3;
+                    if(1*data[0]==1)
+                    {
+                        data[0]="12";                        
+                        data[1]=1*data[1]+anosASomar-1;
+                    }else {
+
+                        // alert(data[0]);
+                        data[0]=1*data[0]-1;
+   
+                        data[1]=1*data[1]+anosASomar;
+                    }
+
+                    if(1*data[0]<10){
+
+                        data[0]='0'+data[0];
+                    }
+
+                    $('#date_int').val(data[0]+'/'+data[1]);
+                }
+            }
+        });
+            
+        $('#periodoFim').keyup(function() {
+
+            var srtDate = $(this).val();
+
+            // alert($('#periodoFim').val().length);
+            if($(this).val().length>=4 )
+            {
+                var arrData=srtDate.split("/");
+                if(arrData[0].length==2 && arrData[1].length==4)
+                {
+                    var dias=daysInMonth(arrData[0],arrData[1]);
+                    $('#dataPrevisto').val(dias+'/'+arrData[0]+'/'+arrData[1]);
+                }
+            }
+        });
+        
+         $('.dataPareceristaEnvio').keyup(function() {
+            //   alert(':3');
+               
+           var srtDate = $(this).val();
+               //alert(srtDate);
+               if(srtDate.length>=10)
+                   $('.dataPareceristaDevolucao').val(somadias(srtDate,30));               
+           
+       });
+       
+  
+
+    });
+    
+    function calculaData(data){
+        
+         if(data.length>=10)
+                   $('#dataPareceristaDevolucaoEdicao').val(somadias(data,30));               
+           
+    }
+
+    </script>
+<?php 
+    $relatorios = '
+    <table width="100%">
+    <tr>
+        <td>' . $this->partial('partials/flexigrid.phtml',
+                    array(
+                        'table' => $this->relatorios,
+                        'exclude' => array('id_relatorio','aluno_data_previsto' ,'parecerista_data_devolucao', 'parecerista_termino_envio', 'parecerista_envio','parecerista_data_entrega', 'parecerista_data_prevista','parecerista_data_inicio','aluno_data_entrega','id_ingresso', 'id_professor', 'aprovado', 'data_devolucao_prevista', 'data_devolucao_entrega'),
+                        'headers' => array(
+                            'nome' => 'Parecerista',
+                            'aluno_data_inicio' => 'Aluno - início periodo',
+                            'area_de_concentracao' => 'Área de Concentração',         
+                            'aluno_data_fim' => 'Aluno - fim periodo',   
+                            'foi_aprovado' => 'Aprovado?',
+                            'parecer' => 'Parecer',
+                            'eh_atual' => 'Orientador atual?'),
+                        'isCrud' => true,
+                        'table' => $this->relatorios,
+                        'doubleClick' => "carregaBoxRelatorios(this.className)",
+                        'functionDelete' => 'deleteRelatorios',
+                        'ifNull' => array('nome',
+                            'aluno_data_inicio',
+                            'aluno_data_previsto',
+                            'aluno_data_entrega',
+                            'aluno_data_entrega',
+                            'area_de_concentracao',
+                            'parecerista_data_inicio',
+                            'parecerista_data_prevista',
+                            'parecerista_data_entrega',
+                            'foi_aprovado',
+                            'parecer',
+                            'justificativa',
+                            'eh_atual')
+            ))
+            . '</td>
+    </tr>
+    <tr><td align="right"><a href="javascript:;" onClick="$(\'#novoRelatorio\').toggle(null, $(\'#novoRelatorio\').attr(\'width\', \'100%\'));" class="crud-toggle-button">Adicionar novo</a></td></tr>
+    <tr><td>
+        <table id="novoRelatorio" style="display: none;" width="100%"><colgroup><col width="190"></colgroup><tr>
+        <tr><td colspan="2"><h4>Aluno</h4><td></tr>
+        <tr>
+            <td><label>Período início:</label></td>
+            <td><input type="text" name="periodoInicio" maxlength="7" onkeypress="formataCampo(this, \'00/0000\', event);"></td>
+        </tr>
+        <tr>
+            <td><label>Período fim:</label></td>
+            <td><input type="text" name="periodoFim" id="periodoFim" maxlength="7" onkeypress="formataCampo(this, \'00/0000\', event);"></td>
+        </tr>
+        <tr>
+            <td><label>Data previsto para entrega:</label></td>
+            <td><input type="text" name="dataPrevisto" id="dataPrevisto" maxlength="10" onkeypress="formataCampo(this, \'00/00/0000\', event);"></td>
+        </tr>
+        <tr>
+            <td><label>Data de entrega:</label></td>
+            <td><input type="text" name="dataAlunoEntrega" maxlength="10" onkeypress="formataCampo(this, \'00/00/0000\', event);"></td>
+        </tr>
+        <tr><td colspan="2"><h4>Parecerista</h4><td></tr>
+        <tr>
+            <td><label>Data de envio:</label></td>
+            <td><input type="text" name="dataPareceristaEnvio" class="dataPareceristaEnvio" maxlength="10" onkeypress="formataCampo(this, \'00/00/0000\', event);"></td>
+        </tr>
+<!--          <tr>
+            <td><label>Data de término:</label></td>
+            <td><input type="text" name="dataPareceristaTerminoEnvio" maxlength="10" onkeypress="formataCampo(this, \'00/00/0000\', event);"></td>
+        </tr>  -->
+        <tr>
+            <td><label>Data de término previsto:</label></td>
+            <td><input type="text" name="dataPareceristaDevolucao" class="dataPareceristaDevolucao" maxlength="10" onkeypress="formataCampo(this, \'00/00/0000\', event);"></td>
+        </tr>
+<!--        <tr>
+            <td><label>Data de início:</label></td>
+            <td><input type="text" name="dataPareceristaInicio" maxlength="10" onkeypress="formataCampo(this, \'00/00/0000\', event);"></td>
+        </tr> 
+        <tr>
+            <td><label>Data de término prevista:</label></td>
+            <td><input type="text" name="dataPareceristaTermino" maxlength="10" onkeypress="formataCampo(this, \'00/00/0000\', event);"></td>
+        </tr> -->
+        <tr>
+            <td><label>Data de entrega:</label></td>
+            <td><input type="text" name="dataPareceristaEntrega" maxlength="10" onkeypress="formataCampo(this, \'00/00/0000\', event);"></td>
+        </tr>
+        <tr>
+            <td><label>Parecerista:</label></td>
+            <td>' . $this->partial('partials/combobox.phtml', array('name' => 'id_parecerista', 'data' => $this->professores, 'selected' => $item['id_parecerista'])) . '</td>
+        </tr>
+        <tr>
+            <td><label>Aprovado?</label></td>
+            <td><label style="text-align:left;"> <input type="radio" name="parecerAprovado" value="1"> Sim </label> <label style="float:left;"> <input type="radio" name="parecerAprovado" value="0"> Não</label></td>
+        </tr>
+        <tr>
+            <td><label>Parecer:</label></td>
+            <td><textarea name="parecer" style="width:100%"></textarea></td>
+        </tr>
+ <!--       <tr><td colspan="2"><h4>Devolução</h4><td></tr>
+        <tr>
+            <td><label>Data de devolução prevista:</label></td>
+            <td><input type="text" name="dataDevolucaoPrevista" maxlength="10" onkeypress="formataCampo(this, \'00/00/0000\', event);" value="' . '"></td>
+        </tr>
+        <tr>
+            <td><label>Data de devolução efetiva:</label></td>
+            <td><input type="text" name="dataDevolucaoEntrega" maxlength="10" onkeypress="formataCampo(this, \'00/00/0000\', event);" value="' . '"></td>
+        </tr> -->
+        </table>
+        </td>
+        </tr>
+        </table>
+';
+
+    $situacao = $this->partial('partials/flexigrid.phtml',
+                    array(
+                        'table' => $this->situacao,
+                        'headers' => array(
+                            'situacao' => 'Situação', 'data' => 'Data', 'detalhes' => 'Detalhes'),
+                        'ifNull' => array('situacao', 'data', 'detalhes')));
+
+
+    $trancamentos = '
+    <table width="100%">
+<tr>
+        <td colspan="2">' . $this->partial('partials/flexigrid.phtml',
+                    array(
+                        'table' => $this->trancamentos,
+                        'doubleClick' => "carregaBoxTrancamentos(this.className)",
+                        'isCrud' => true,
+                        'functionDelete' => 'deleteTrancamento',
+                        'exclude' => array('id', 'id_ingresso', 'id_tipo_trancamento', 'id_trancamento'),
+                        'headers' => array('tipo_trancamento' => 'Tipo de trancamento', 'meses' => 'Meses', 'data_trancamento' => 'Data de Trancamento', 'periodo' => 'Periodo', 'observacoes' => 'Observações'),
+                        'ifNull' => array('id', 'id_ingresso', 'tipo_trancamento', 'meses', 'data_trancamento', 'observacoes')
+            )) . '</td>
+    </tr>    
+        <tr>
+            <td align="right"><a href="javascript:;" onClick="$(\'#novoTrancamento\').toggle(null, $(\'#novoTrancamento\').attr(\'width\', \'100%\'));" class="crud-toggle-button">Adicionar novo</a></td>
+        </tr>
+    <tr>
+        <td><table id="novoTrancamento" style="display: none;" width="100%">
+        <colgroup><col width="190"></colgroup><tr><tr>
+        <td><label>Tipo:</label></td>
+        <td>' . $this->partial('partials/combobox.phtml', array('name' => 'id_tipo_de_trancamento', 'data' => $this->tiposDeTrancamento, 'selected' => $item['id_tipo_de_trancamento'])) . '</td>
+    </tr>
+    <tr>
+        <td><label>Duração (em meses):</label></td>
+        <td><input type="text" name="trancamentoDuracao"></td>
+    </tr>
+    <tr>
+        <td><label>Início trancamento:</label></td>
+        <td><input type="text" name="início_trancamento" maxlength="10" onkeypress="formataCampo(this, \'00/00/0000\', event);"></td>
+    </tr>
+    <tr>
+         <td><label>Período de trancamento:</label></td>
+         <td>' . $this->partial('partials/combobox.phtml', array('name' => 'id_trancamento_periodo', 'data' => $this->trancamentoPeriodo, 'selected' => $item['id_trancamento_periodo'])) . '</td>
+    </tr>
+    <tr>
+        <td><label>Observações:</label></td>
+        <td><textarea name="trancamentoObservacoes" style="width:100%"></textarea></td>
+    </tr>
+    </table></td></tr></table>
+    ';
+
+    $area_de_concentracao = '
+    <table width="100%">
+            <td>
+            ' . $this->partial('partials/flexigrid.phtml',
+                    array(
+                        'isCrud' => true,
+                        'table' => $this->pos_area_de_concentracao,
+                        'doubleClick' => "carregaBoxArea(this.className)",
+                        'functionDelete' => 'deleteAreadeconcentracao',
+                        'exclude' => array('id', 'id_pos', 'id_area_de_concentracao'),
+                        'headers' => array('area_de_concentracao' => 'Área de Concentração', 'data' => 'Data de Mudança', 'observacoes' => 'Observações'),
+                        'ifNull' => array('area_de_concentracao', 'data', 'observacoes')
+            )) . '
+            </td>
+        </tr>
+        <tr>
+            <td align="right"><a href="javascript:;" onClick="$(\'#novoAreaDeConcentracao\').toggle(null, $(\'#novoAreaDeConcentracao\').attr(\'width\', \'100%\'));" class="crud-toggle-button">Adicionar novo</a></td>
+        </tr>
+        <tr>
+            <td>
+        <table width="100%" id="novoAreaDeConcentracao" style="display: none;"><colgroup><col width="190"></colgroup><tr>
+            <td><label>Área de concentração:</label></td><td>' . $this->partial('partials/combobox.phtml', array('name' => 'areaId', 'data' => $this->areasDeConcentracao, 'selected' => $item['id_area_de_concentracao'])) . '</td>
+        </tr>
+        <tr>
+            <td><label>Data:</label></td><td><input type="text" name="areaData" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td>
+        </tr>
+        <tr>
+            <td><label>Observações:</label></td><td><textarea name="areaObservacoes" style="width:100%"></textarea></td>
+        </tr>
+        </table>
+            </td>
+        <tr>
+    </table>
+';
+
+    $reingresso = '
+	<table id="reingressoTable" width="100%"><colgroup><col width="190"></colgroup>
+		<tr>
+		<td>
+            ' . $this->partial('partials/flexigrid.phtml',
+                    array(
+                        'isCrud' => true,
+                        'table' => $this->reingresso,
+                        'doubleClick' => "carregaBoxReingresso(this.className)",
+                        'functionDelete' => 'deleteReingresso',
+                        'exclude' => array('id', 'id_pos_graduacao', 'id_linha_pesquisa', 'id_motivo', 'tipo', 'id_periodo', 'observacoes',
+                            'data_desligamento', 'aluno_desligado', 'id_motivo_desligamento'),
+                        'headers' => array('tipo_nome' => 'Tipo de Reingresso', 'data_reingresso' => 'Data de Reingresso', 'data_integralizacao' => 'Data de Integralizaçao'),
+                        'ifNull' => array('area_de_concentracao', 'data', 'observacoes')
+            )) . '
+            </td>
+        </tr>
+        <tr>
+		<td>
+			<table id="novoReingresso" style="display: none;">
+				<tr>
+					<td width="200"><label>Tipo:</label></td>
+					<td valign="top"><span style="font-size: 12px; font-weight: bold;">Defesa<input id="reingressoAncora" onclick="reingressoD2(this);" ' . $tipo0 . ' type="radio" name="reingressoTipo" value="0" /> Nova Volta<input onclick="reingressoD2(this);"  ' . $tipo1 . ' type="radio" name="reingressoTipo" value="1" /></span></td>
+				</tr>
+				<tr>
+		            <td><label>Data de Reingresso:</label></td><td><input type="text" name="reingressoData" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td>
+		        </tr>
+				<tr>
+				    <td><label>Período:</label></td><td>' . $this->partial('partials/combobox.phtml', array('name' => 'reingressoPeriodo', 'data' => $this->trancamentoPeriodo)) . '</td>
+		        </tr>
+		        <tr>
+		            <td><label>Data de Integralização:</label></td><td><input type="text" name="reingressoDataIntegralizacao" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td>
+		        </tr>
+	        </table>
+        </td>
+        </tr>
+        
+        <tr>
+		<td>
+			<table id="reingresso2" style="display: none;">
+		        <tr>
+				    <td width="200"><label>Linha Pesquisa:</label></td><td>' . $this->partial('partials/combobox.phtml', array('name' => 'reingressoLinhasDePesquisa', 'data' => $this->linhasDePesquisa)) . '</td>
+		        </tr>
+		        <tr>
+				    <td><label>Aluno Desligado:</label></td><td><input id="reingressoDesligado" onclick="reingressoD3(this);" type="checkbox" name="reingressoAlunoDesligado" /></td>
+		        </tr>
+	        </table>
+        </td>
+        </tr>
+        
+        <tr>
+			<td>
+			<table width="100%" id="reingresso3" style="display: none;">
+		        <tr>
+				    <td width="200"><label>Motivo do Desligamento:</label></td><td>' . $this->partial('partials/combobox.phtml', array('name' => 'reingressoDesligamento', 'data' => $this->desligado)) . '</td>
+		        </tr>
+		        <tr>
+		            <td><label>Data do Desligamento:</label></td><td><input type="text" name="reingressoDataDesligamento" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td>
+		        </tr>
+		        <tr>
+		            <td><label>Observações:</label></td><td><textarea name="reingressoObservacoes" style="width:100%"></textarea></td>
+		        </tr>
+	        </table>
+	        </td>
+        </tr>
+        
+        <tr>
+            <td align="right"><a href="javascript:;" onClick="$(\'#novoReingresso\').toggle(null, $(\'#novoReingresso\').attr(\'width\', \'100%\'));" class="crud-toggle-button">Adicionar novo</a></td>
+        </tr>
+	</table>';
+
+    if (count($this->reingresso) <= 0
+
+        )$display1 = 'none';
+    else
+        $display1 = 'inline';
+?>
+    <div style="display: <?php echo $display1; ?>;" id="boxReingresso">
+    <?php
+    echo $this->partial('partials/fieldset.phtml', array(
+        'title' => '<input type="text" id="inputAncora" style="display:none;"/>' . 'Reingresso',
+        'content' => $reingresso,
+        'name' => 'reingresso',
+        'id' => 'reingresso',
+    ));
+    ?>
+        <input type="submit" class="botao" value="Gravar" onClick="window.onbeforeunload=null" />
+        <input type="button" class="botao" value="Reingresso" onclick="boxReingresso();" />
+    </div>
+        <?php
+        echo $this->partial('partials/fieldset.phtml', array(
+            'title' => 'Ingresso',
+            'height' => '360',
+            'content' => $ingressoGeral
+        ));
+        ?><input type="submit" class="botao" value="Gravar" onClick="window.onbeforeunload=null" />
+    <?php
+        echo $this->partial('partials/fieldset.phtml', array(
+            'title' => 'Orientadores',
+            'height' => '400',
+            'content' => $orientadores
+        ));
+    ?><input type="submit" class="botao" value="Gravar" onClick="window.onbeforeunload=null" />
+    <?php
+        echo $this->partial('partials/fieldset.phtml', array(
+            'title' => 'Coorientadores',
+            'height' => '400',
+            'content' => $coorientadores
+        ));
+    ?><input type="submit" class="botao" value="Gravar" onClick="window.onbeforeunload=null" />
+    <?php
+        echo $this->partial('partials/fieldset.phtml', array(
+            'title' => 'Area de Concentração',
+            'height' => '400',
+            'content' => $area_de_concentracao
+        ));
+    ?><input type="submit" class="botao" value="Gravar" onClick="window.onbeforeunload=null" />
+    <?php
+        echo $this->partial('partials/fieldset.phtml', array(
+            'title' => 'Entrega de relatórios',
+            'height' => '400',
+            'content' => $relatorios
+        ));
+    ?><input type="submit" class="botao" value="Gravar" onClick="window.onbeforeunload=null" />
+    <?php
+        echo $this->partial('partials/fieldset.phtml', array(
+            'title' => 'Situação do aluno',
+            'height' => '400',
+            'content' => $situacao
+        ));
+    ?><input type="submit" class="botao" value="Gravar" onClick="window.onbeforeunload=null" />
+    <?php
+        echo $this->partial('partials/fieldset.phtml', array(
+            'title' => 'Trancamento',
+            'height' => '400',
+            'content' => $trancamentos,
+            'name' => 'tipo_trancamento',
+            'id' => 'tipo_trancamento',
+        ));
+    ?>
+        <input type="submit" class="botao" value="Gravar" onClick="window.onbeforeunload=null" />
+        <input type="button" class="botao" value="Reingresso" onclick="boxReingresso();" />
+    </form>
+    <div id="divProfessorInv" style="display: block; visibility: hidden;" > <?php echo $professor; ?></div>
+    <div id="divCoorientadorInv" style="display: block; visibility: hidden;" > <?php echo $coorientador; ?></div>
+    <div id="divAreaConcentracaoInv" style="display: block; visibility: hidden;" > <?php echo $areaDeConcentracao; ?></div>
+    <div id="divTrancamentoInv" style="display: block; visibility: hidden;" > <?php echo $tipoTrancamento; ?></div>
+    <div id="divPeriodosInv" style="display: block; visibility: hidden;" > <?php echo $tipoPeriodos; ?></div>
+    <div id="divPesquisasInv" style="display: block; visibility: hidden;" > <?php echo $tipoPesquisas; ?></div>
+    <div id="divDesligamentoInv" style="display: block; visibility: hidden;" > <?php echo $tipoDesligamento; ?></div>
+
+    <script type="text/javascript">
+        function reingressoD2(x){
+            var y = x.value;
+
+            if(x.name!='reingressoTipoU'){
+                if(y==1){
+                    $('#reingresso2').show();
+                    if(document.getElementById('reingressoDesligado').checked == true){
+                        $('#reingresso3').show();
+                    }
+                }else{
+                    $('#reingresso2').hide();
+                    $('#reingresso3').hide();
+                }
+            }else{
+                if(y==1){
+                  
+                    $('.reingresso2').show();
+                    if(document.getElementById('reingressoDesligadoU').checked == true){
+                        $('.reingresso3').show();
+                    }
+                }else{
+                    $('.reingresso2').hide();
+                    $('.reingresso3').hide();
+                }
+            }
+        }
+        function reingressoD3(x)
+        {
+            if(x.name != 'reingressoAlunoDesligadoU')
+            {
+                if(x.checked == true )$('#reingresso3').show();
+                else $('#reingresso3').hide();
+            }
+            else
+            {
+                if(x.checked == true )$('.reingresso3').show();
+                else $('.reingresso3').hide();
+            }
+        }
+        function boxReingresso()
+        {
+            $('#boxReingresso').show();
+            $( 'html, body' ).animate( { scrollTop: 0 }, 'slow' );
+            //$('#reingressoTable').select();
+        }
+        function carregaBox(data)
+        {
+            var re = new RegExp('\{[^}]*\}', "g");
+            var m0 = re.exec(data);
+            var pResult = m0[0].substring(1, m0[0].length - 1);
+            var arrResult = new Array();
+            arrResult = pResult.split(',');
+            params    = new Array();
+            for(i = 0; i < arrResult.length; i++){
+                var tmp = arrResult[i].split(":");
+                params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+            }
+
+        }
+        function carregaBoxOrientadores(data)
+        {
+            var re = new RegExp('\{[^}]*\}', "g");
+            var m0 = re.exec(data);
+            var pResult = m0[0].substring(1, m0[0].length - 1);
+            var arrResult = new Array();
+            arrResult = pResult.split(',');
+            params    = new Array();
+            for(i = 0; i < arrResult.length; i++)
+            {
+                var tmp = arrResult[i].split(":");
+                params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+            }
+            //  alert(data);
+            jQuery.facebox('<div id="faceboxForm">');
+            //alert(params['atual']);
+            var tabela='\
+                <form action="<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'ingressos', 'action' => 'updateorientadores', 'id_ingresso' => $this->idIngresso, 'id_pos_graduacao' => $this->idPosGraduacao, 'tipo' => $this->tipoPosGraduacao)); ?>" class="zend_form" method="post" id="formCreate"> \
+                            <input type="hidden" name="id_orientador" id="id_orientador" value="' + params['id_orientador'] + '"> \
+                    <input type="hidden" name="id_pos_graduacao" id="id_pos_graduacao" value="' + $('#idPosGraduacao').val()+ '"> \
+                    <table> \
+                    <tr><td>Professor:</td><td><div id="divProfessor" name="divProfessor"></div></td></tr> \
+                    <tr><td>Área de Concentração:</td><td><div id="divAreaConcentracao" name="divAreaConcentracao"></div></td></tr> \
+                    <tr><td>Data:</td><td><input type="text" id="data" name="data" maxlength="10" onkeypress="formataCampo(this, \'00/00/0000\', event);" value="' + params['data'] + '"></td></tr> \
+                    <tr><td>Justificativa:</td><td><textarea id="justificativa" name="justificativa">'+ params['justificativa'] +'</textarea></td></tr> \
+                    <tr><td>Atual?</td><td><input type="checkbox" id="atual" name="atual" value="1" '+(params['atual']=='1'?'checked=\"checked\"':'')+' ></td></tr> \
+                        <tr><td></td><td><input type="submit" value="Ok" onClick="window.onbeforeunload=null"></td></tr> \
+                                    </table> \
+                                    </form>';
+
+
+                                $('#faceboxForm').append(tabela);
+
+                                $('#professor').clone().attr('id', 'professorU').attr('name', 'professorU').appendTo('#divProfessor');
+                                $('#areaConcentracao').clone().attr('id', 'areaConcentracaoU').attr('name', 'areaConcentracaoU').appendTo('#divAreaConcentracao');
+                                $('#professorU').val(params['id_professor']);
+                                $('#areaConcentracaoU').val(params['id_area_de_concentracao']);
+
+                                tabela=null;
+
+                            }
+
+                            function carregaBoxCoorientadores(data)
+                            {
+                                var re = new RegExp('\{[^}]*\}', "g");
+                                var m0 = re.exec(data);
+                                var pResult = m0[0].substring(1, m0[0].length - 1);
+                                var arrResult = new Array();
+                                arrResult = pResult.split(',');
+                                params    = new Array();
+                                for(i = 0; i < arrResult.length; i++)
+                                {
+                                    var tmp = arrResult[i].split(":");
+                                    params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+                                }
+                                //  alert(data);
+                                jQuery.facebox('<div id="faceboxForm">');
+
+
+                                var tabela='\
+                                    <form action="<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'ingressos', 'action' => 'updatecoorientadores', 'id_ingresso' => $this->idIngresso, 'id_pos_graduacao' => $this->idPosGraduacao, 'tipo' => $this->tipoPosGraduacao)); ?>" class="zend_form" method="post" id="formCreate"> \
+                            <input type="hidden" name="id_coorientador" id="id_coorientador" value="' + params['id_coorientador'] + '"> \
+                    <input type="hidden" name="id_pos_graduacao" id="id_pos_graduacao" value="' + $('#idPosGraduacao').val()+ '"> \
+                    <table> \
+                    <tr><td>Professor:</td><td><div id="divProfessor" name="divProfessor"></div></td></tr> \
+                    <tr><td>Área de Concentração:</td><td><div id="divAreaConcentracao" name="divAreaConcentracao"></div></td></tr> \
+                    <tr><td>Data:</td><td><input type="text" id="data" name="data" maxlength="10" onkeypress="formataCampo(this, \'00/00/0000\', event);" value="' + params['data'] + '"></td></tr> \
+                    <tr><td>Justificativa:</td><td><textarea id="justificativa" name="justificativa">'+ params['justificativa'] +'</textarea></td></tr> \
+                    <tr><td>Atual?</td><td><input type="checkbox" id="atual" name="atual" value="1" '+(params['atual']==1?'checked=\"checked\"':'')+' ></td></tr> \
+                        <tr><td></td><td><input type="submit" value="Ok" onClick="window.onbeforeunload=null"></td></tr> \
+                                    </table> \
+                                    </form>';
+                                $('#faceboxForm').append(tabela);
+
+                                $('#professor').clone().attr('id', 'professorU').attr('name', 'professorU').appendTo('#divProfessor');
+                                $('#areaConcentracao').clone().attr('id', 'areaConcentracaoU').attr('name', 'areaConcentracaoU').appendTo('#divAreaConcentracao');
+                                $('#professorU').val(params['id_professor']);
+                                $('#areaConcentracaoU').val(params['id_area_de_concentracao']);
+
+                                tabela=null;
+
+                            }
+
+
+
+                            function carregaBoxCoorientadores2(data)
+                            {
+                                var re = new RegExp('\{[^}]*\}', "g");
+                                var m0 = re.exec(data);
+                                var pResult = m0[0].substring(1, m0[0].length - 1);
+                                var arrResult = new Array();
+                                arrResult = pResult.split(',');
+                                params    = new Array();
+                                for(i = 0; i < arrResult.length; i++)
+                                {
+                                    var tmp = arrResult[i].split(":");
+                                    params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+                                }
+                                alert(data);
+                                jQuery.facebox('<div id="faceboxForm">');
+
+
+                                var tabela='\
+                                    <form action="<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'ingressos', 'action' => 'updatecoorientadores', 'id_ingresso' => $this->idIngresso, 'id_pos_graduacao' => $this->idPosGraduacao, 'tipo' => $this->tipoPosGraduacao)); ?>" class="zend_form" method="post" id="formCreate"> \
+                            <input type="hidden" name="id_professor" id="id_professor" value="' + params['id_profesor'] + '"> \
+                    <input type="hidden" name="id_pos_graduacao" id="id_pos_graduacao" value="' + $('#idPosGraduacao').val()+ '"> \
+                    <table> \
+                    <tr><td>Coorientador:</td><td><div id="divCoorientador" name="divCoorientador"></div></td></tr> \
+                    <tr><td>Área de Concentração:</td><td><div id="divAreaConcentracao" name="divAreaConcentracao"></div></td></tr> \
+                    <tr><td>Data:</td><td><input type="text" id="data" name="data" maxlength="10" onkeypress="formataCampo(this, \'00/00/0000\', event);" value="' + params['data'] + '"></td></tr> \
+                    <tr><td>Justificativa:</td><td><textarea id="justificativa" name="justificativa">'+ params['justificativa'] +'</textarea></td></tr> \
+                    <tr><td>Atual?</td><td><input type="checkbox" id="atual" name="atual" value="1" "'+(params['atual']==1?'checked=\"checked\"':'')+'" ></td></tr> \
+                        <tr><td></td><td><input type="submit" value="Ok" onClick="window.onbeforeunload=null"></td></tr> \
+                                    </table> \
+                                    </form>';
+                                $('#faceboxForm').append(tabela);
+
+                                $('#coorientador').clone().attr('id', 'coorientadorU').attr('name', 'coorientadorU').appendTo('#divCoorientador');
+                                $('#areaConcentracao').clone().attr('id', 'areaConcentracaoU').attr('name', 'areaConcentracaoU').appendTo('#divAreaConcentracao');
+                                $('#coorienadorU').val(params['id_coorientador']);
+                                $('#areaConcentracaoU').val(params['id_area_de_concentracao']);
+
+                                tabela=null;
+
+                            }
+
+                            function carregaBoxArea(data)
+                            {
+                                var re = new RegExp('\{[^}]*\}', "g");
+                                var m0 = re.exec(data);
+                                var pResult = m0[0].substring(1, m0[0].length - 1);
+                                var arrResult = new Array();
+                                arrResult = pResult.split(',');
+                                params    = new Array();
+                                for(i = 0; i < arrResult.length; i++)
+                                {
+                                    var tmp = arrResult[i].split(":");
+                                    params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+                                }
+                                //  alert(data);
+                                jQuery.facebox('<div id="faceboxForm">');
+
+                                var tabela='\
+                                    <form action="<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'ingressos', 'action' => 'updatearea', 'id_ingresso' => $this->idIngresso, 'id_pos_graduacao' => $this->idPosGraduacao, 'tipo' => $this->tipoPosGraduacao)); ?>" class="zend_form" method="post" id="formCreate"> \
+                    <input type="hidden" name="id_pos_area_de_concentracao" id="id_pos_area_de_concentracao" value="' + params['id'] + '"> \
+                    <input type="hidden" name="id_pos_graduacao" id="id_pos_graduacao" value="' + $('#idPosGraduacao').val()+ '"> \
+                    <table> \
+                    <tr><td>Área de Concentração:</td><td><div id="divAreaConcentracao" name="divAreaConcentracao"></div></td></tr> \
+                    <tr><td>Data:</td><td><input type="text" id="data" name="data" maxlength="10" onkeypress="formataCampo(this, \'00/00/0000\', event);" value="' + params['data'] + '"></td></tr> \
+                    <tr><td>Observações:</td><td><textarea id="observacoes" name="observacoes">'+ params['observacoes'] +'</textarea></td></tr> \
+                    <tr><td></td><td><input type="submit" value="Ok" onClick="window.onbeforeunload=null"></td></tr> \
+                                </table> \
+                                </form>';
+                            $('#faceboxForm').append(tabela);
+                            $('#areaConcentracao').clone().attr('id', 'areaConcentracaoU').attr('name', 'areaConcentracao').appendTo('#divAreaConcentracao');
+                            $('#areaConcentracaoU').val(params['id_area_de_concentracao']);
+
+                            tabela=null;
+
+                        }
+                        function carregaBoxRelatorios(data)
+                        {
+                            var re = new RegExp('\{[^}]*\}', "g");
+                            var m0 = re.exec(data);
+                            var pResult = m0[0].substring(1, m0[0].length - 1);
+                            var arrResult = new Array();
+                            arrResult = pResult.split(',');
+                            params    = new Array();
+                            for(i = 0; i < arrResult.length; i++){
+                                arrResult[i] = arrResult[i].replace(":","/|/");
+                                var tmp = arrResult[i].split("/|/");
+                                params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+                            }
+                            
+                            jQuery.facebox('<div id="faceboxForm">');
+
+                            var tabela='\
+                                <form action="<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'ingressos', 'action' => 'updaterelatorio', 'id_ingresso' => $this->idIngresso, 'id_pos_graduacao' => $this->idPosGraduacao, 'tipo' => $this->tipoPosGraduacao)); ?>" class="zend_form" method="post" id="formCreate"> \
+                    <input type="hidden" name="id" id="id" value="' + params['id_relatorio'] + '"> \
+                    <input type="hidden" name="id_pos_graduacao" id="id_pos_graduacao" value="' + $('#idPosGraduacao').val()+ '"> \
+                    <table> \
+                    <tr><td>Período início:</td><td><input maxlength="7" type="text" name="periodoInicio" value="' + params['aluno_data_inicio'] + '"  onkeypress="formataCampo(this, \'00/0000\', event);"></td></tr> \
+                    <tr><td>Período fim:</td><td><input type="text" maxlength="7" name="periodoFim" value="' + params['aluno_data_fim'] + '"  onkeypress="formataCampo(this, \'00/0000\', event);"></td></tr> \
+                    <tr><td>Data previsto para entrega:</td><td><input maxlength="10" type="text" id="dataPrevisto" name="dataPrevisto"  onkeypress="formataCampo(this, \'00/00/0000\', event);" value="' + params['aluno_data_previsto'] + '"></td></tr> \
+                    <tr><td>Data de entrega:</td><td><input type="text" maxlength="10" id="dataentrega" name="dataAlunoEntrega"  onkeypress="formataCampo(this, \'00/00/0000\', event);" value="' + params['aluno_data_entrega'] + '"></td></tr> \
+                                <br\>\
+                    <tr><td>Parecerista:</td><td><div id="divProfessor" name="divProfessor"></div></td></tr> \
+                                <br\>\
+                    <tr><td>Data de Envio:</td><td><input maxlength="10" type="text"  name="dataPareceristaEnvio" id="dataPareceristaEnvio" onkeyup="calculaData(this.value);" onkeypress="formataCampo(this, \'00/00/0000\', event);"  value="' + params['parecerista_envio'] + '"></td></tr> \
+                    <tr><td>Data de término previsto:</td><td><input maxlength="10" type="text"  name="dataPareceristaDevolucaos" id="dataPareceristaDevolucaoEdicao" value="' + params['parecerista_data_devolucao'] + '"  onkeypress="formataCampo(this, \'00/00/0000\', event);" ></td></tr> \
+                   <tr><td>Parecerista Data Entrega:</td><td><input maxlength="10" type="text" id="pareceristadataentrega" name="pareceristadataentrega" value="' + params['parecerista_data_entrega'] + '"  onkeypress="formataCampo(this, \'00/00/0000\', event);" ></td></tr> \
+                                <br\>\
+                    <tr><td>Aprovado:</td><td><input type="checkbox" id="aprovado" name="aprovado" value="1" '+(1*params['aprovado']==1?'checked=\"checked\"':'')+' ></td></tr> \
+                    <tr><td>Parecer :</td><td><textarea id="parecer" name="parecer" width="500" height="150" style="width:500px;height:150px;">'+ params['parecer'] +'</textarea></td></tr> \
+                    <tr><td></td><td><input type="submit" value="Ok" onClick="window.onbeforeunload=null"></td></tr> \
+                                </table> \
+                                </form>';
+
+                            $('#faceboxForm').append(tabela);
+                             //   alert(params['aprovado']);
+                            $('#professor').clone().attr('id', 'professorU').attr('name', 'professorU').appendTo('#divProfessor');
+                            $('#professorU').val(params['id_professor']);
+
+                            tabela=null;
+                        }
+                        function carregaBoxTrancamentos(data)
+                        {
+                            var re = new RegExp('\{[^}]*\}', "g");
+                            var m0 = re.exec(data);
+                            var pResult = m0[0].substring(1, m0[0].length - 1);
+                            var arrResult = new Array();
+                            arrResult = pResult.split(',');
+                            params    = new Array();
+                            for(i = 0; i < arrResult.length; i++)
+                            {
+                                var tmp = arrResult[i].split(":");
+                                params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+                            }
+                            //alert(data);
+                            tabela=
+                                jQuery.facebox('<div id="faceboxForm">');
+
+                            var tabela='\
+                                <form action="<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'ingressos', 'action' => 'updatetrancamento', 'id_ingresso' => $this->idIngresso, 'id_pos_graduacao' => $this->idPosGraduacao, 'tipo' => $this->tipoPosGraduacao)); ?>"  " class="zend_form" method="post" id="formCreate"> \
+                    <input type="hidden" name="id" id="id" value="' + params['id'] + '"> \
+                    <input type="hidden" name="id_pos_graduacao" id="id_pos_graduacao" value="' + $('#idPosGraduacao').val()+ '"> \
+                    <table> \
+                    <tr><td>Tipo:</td><td><div id="divTipoTrancamento"></div></td></tr> \
+                    <tr><td>Duração em meses:</td><td><input type="text" id="meses" name="meses" value="' + params['meses'] + '"></td></tr> \
+                    <tr><td>Data Trancamento:</td><td><input type="text" id="data_trancamento" name="data_trancamento" value="' + params['data_trancamento'] + '"></td></tr> \
+                    <tr><td>Observações:</td><td><textarea id="observacoes" name="observacoes">'+ params['observacoes'] +'</textarea></td></tr> \
+                    <tr><td></td><td><input type="submit" value="Ok" onClick="window.onbeforeunload=null"></td></tr> \
+                                </table> \
+                                </form>';
+                            $('#faceboxForm').append(tabela);
+
+
+                            $('#tipo_trancamento').clone().attr('id', 'tipo_trancamentoU').attr('name', 'tipo_trancamentoU').appendTo('#divTipoTrancamento');
+                            $('#tipo_trancamentoU').val(params['id_tipo_trancamento']);
+
+                            tabela=null;
+                        }
+                        function carregaBoxReingresso(data)
+                        {
+                            var re = new RegExp('\{[^}]*\}', "g");
+                            var m0 = re.exec(data);
+                            var pResult = m0[0].substring(1, m0[0].length - 1);
+                            var arrResult = new Array();
+                            arrResult = pResult.split(',');
+                            params    = new Array();
+                            for(i = 0; i < arrResult.length; i++)
+                            {
+                                var tmp = arrResult[i].split(":");
+                                params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+                            }
+                            //alert(data);
+                            jQuery.facebox('<div id="faceboxForm">');
+                            $('#faceboxForm').append('\
+                                <form action="<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'ingressos', 'action' => 'updatereingresso', 'id_ingresso' => $this->idIngresso, 'id_pos_graduacao' => $this->idPosGraduacao, 'tipo' => $this->tipoPosGraduacao)); ?>"  " class="zend_form" method="post" id="formCreate"> \
+                    <input type="hidden" name="id" id="id" value="' + params['id'] + '"> \
+                    <input type="hidden" name="id_pos_graduacao" id="id_pos_graduacao" value="' + $('#idPosGraduacao').val()+ '"> \
+                    <table> \
+                    <tr><td>Tipo:</td><td>Defesa<input id="reingressoTipo0" type="radio" onclick="reingressoD2(this);" name="reingressoTipoU" value="0" /> Nova volta<input onclick="reingressoD2(this);" id="reingressoTipo1" name="reingressoTipoU" type="radio" value="1" /></td></tr> \
+                    <tr><td>Periodos:</td><td><div id="divTipoPeriodos"></div></td></tr> \
+                    <tr><td>Reingresso:</td><td><input type="text" id="reingressoData" name="reingressoDataU" value="' + params['data_reingresso'] + '"></td></tr> \
+                    <tr><td>Integralizacao:</td><td><input type="text" id="reingressoIntegralizacao" name="reingressoDataIntegralizacaoU" value="' + params['data_integralizacao'] + '"></td></tr> \
+                    <tr class="reingresso2"><td>Linha Pesquisa:</td><td><div id="divTipoPesquisas"></div></td></tr> \
+                    <tr class="reingresso2"><td>Aluno Desligado:</td><td><input type="checkbox" name="reingressoAlunoDesligadoU" onclick="reingressoD3(this)" id="reingressoAlunoDesligadoU" /></td></tr> \
+                    <tr class="reingresso3"><td>Motivo Desligamento:</td><td><div id="divTipoDesligamentos"></div></td></tr> \
+                    <tr class="reingresso3"><td>Data Desligamento:</td><td><input type="text" id="reingressoDataDesligamentoU" name="reingressoDataDesligamentoU" value="' + params['data_desligamento'] + '"></td></tr> \
+                    <tr class="reingresso3"><td>Observações:</td><td><textarea id="reingressoObservacoesU" name="reingressoObservacoesU">'+ params['observacoes'] +'</textarea></td></tr> \
+                    <tr><td></td><td><input type="submit" value="Ok" onClick="window.onbeforeunload=null"></td></tr> \
+                                </table> \
+                                </form>');
+
+
+                            $('#tipo_periodos').clone().attr('id', 'reingresso_periodosU').attr('name', 'reingressoPeriodoU').appendTo('#divTipoPeriodos');
+                            $('#reingresso_periodosU').val(params['id_periodo']);
+                            $('#tipo_pesquisas').clone().attr('id', 'reingresso_pesquisasU').attr('name', 'reingressoLinhasDePesquisaU').appendTo('#divTipoPesquisas');
+                            $('#reingresso_pesquisasU').val(params['id_linha_pesquisa']);
+                            $('#tipo_desligamentos').clone().attr('id', 'reingresso_desligamentosU').attr('name', 'reingressoDesligamentoU').appendTo('#divTipoDesligamentos');
+                            $('#reingresso_desligamentosU').val(params['id_motivo_desligamento']);
+                            if(params['aluno_desligado']==1)
+                            {
+                                $('#reingressoAlunoDesligadoU').attr('checked','checked');
+                                $('.reingresso3').css({'display':'inline'});
+                            }
+                            else
+                            {
+                                $('.reingresso3').css({'display':'none'});
+                            }
+                            if(params['tipo']==1)
+                            {
+                                $('#reingressoTipo1').attr('checked','checked');
+                                $('.reingresso2').css({'display':'inline'});
+                            }
+                            else
+                            {
+                                $('#reingressoTipo0').attr('checked','checked');
+                                $('.reingresso2').css({'display':'none'});
+                                $('.reingresso3').css({'display':'none'});
+                            }
+
+                            tabela=null;
+                        }
+                        function deleteTrancamento(data)
+                        {
+                            p = getParams(data);
+                            $("#date_int").val('');
+                            location.href='<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'ingressos', 'action' => 'delete')); ?>/id_trancamento/' + p['id'];
+                        }
+                        function deleteAreadeconcentracao(data)
+                        {
+                            p = getParams(data);
+                            location.href='<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'ingressos', 'action' => 'delete')); ?>/id_pos_area_de_concentracao/' + p['id'];
+                        }
+                        function deleteReingresso(data)
+                        {
+                            p = getParams(data);
+                            location.href='<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'ingressos', 'action' => 'delete')); ?>/id_reingresso/' + p['id'];
+                        }
+                        function deleteRelatorios(data)
+                        {
+                            p = getParams(data);
+                            location.href='<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'ingressos', 'action' => 'delete')); ?>/id_relatorio/' + p['id_relatorio'];
+                        }
+                        function deleteBancaQualificacao(data)
+                        {
+                            p = getParams(data);
+                            location.href='<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'ingressos', 'action' => 'delete')); ?>/id_banca_qualificacao/' + p['id_banca'];
+                        }
+                        function deleteOrientador(data)
+                        {
+                            p = getParams(data);
+                            location.href="<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'ingressos', 'action' => 'delete')); ?>/id_orientador/" + p['id_orientador'];
+                        }
+                        function deleteCoorientador(data)
+                        {
+                            p = getParams(data);
+                            location.href="<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'ingressos', 'action' => 'delete')); ?>/id_coorientador/" + p['id_coorientador'];
+                    }
+</script>

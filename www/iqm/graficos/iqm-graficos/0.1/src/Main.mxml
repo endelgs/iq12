@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical" creationComplete="init()" width="800" height="600" backgroundColor="#ffffff" backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#FFFFFF, #FFFFFF]">
+	<mx:Metadata>
+		[Event(name='dataLoaded',type="flash.events.Event")]
+	</mx:Metadata>
+	<mx:Style>
+        DataTip {
+            fontFamily: "Verdana";
+            fontSize: 12; 
+            fontWeight:bold;
+        }
+        
+    </mx:Style>
+	<mx:Script>
+		<![CDATA[
+			import mx.utils.SHA256;
+			import mx.charts.Legend;
+			import mx.printing.FlexPrintJobScaleType;
+			import mx.printing.FlexPrintJob;
+			import eccen.xmlmapping.XMLResponse;
+			import mx.utils.ObjectUtil;
+			import mx.controls.Alert;
+			import mx.rpc.events.ResultEvent;
+			import eccen.graphs.HTTPUtil;
+			import mx.events.ListEvent;
+
+			import eccen.graphs.EColumnChart;
+			import eccen.graphs.EBarChart;
+			import eccen.graphs.EPieChart;
+
+			import mx.collections.ArrayCollection;
+			
+			[Bindable] private var chartType:ArrayCollection = new ArrayCollection();
+			[Bindable] private var fieldsMeta:ArrayCollection = new ArrayCollection();
+			[Bindable] private var mainAxisField:String = '';
+			[Bindable] private var mainAxisLabel:String = '';
+			[Bindable] private var secondaryAxisField:String = '';
+			[Bindable] private var chartTitle:String = 'Título';
+			[Bindable] private var chartDesc:String = 'Descrição';
+			
+			[Bindable] private var dataProvider:ArrayCollection = new ArrayCollection();  
+
+			private function init():void
+			{
+				addEventListener('dataLoaded',insertChart);
+				
+				chartType.addItem({	tipo:EBarChart,
+									label:'Barras'});
+				chartType.addItem({	tipo:EColumnChart,
+									label:'Colunas'});
+				chartType.addItem({	tipo:EPieChart,	
+									label:'Setores'});
+				
+				// Especifico o caminho de onde vem os dados
+				var dataUrl = 	Application.application.parameters.s +
+								Application.application.parameters.p
+				
+				// Nome do metodo PHP que sera executado
+				var action:String = Application.application.parameters.a;
+				
+				var request:Object 	= new Object();
+				request['action'] 	= action;
+				
+				// Uso uma chave encriptada pra garantir que ninguem vai ver os dados 'de graca'
+				request['4a9cef46394effc1a5922d63a7bae5a4']	= '57088fb4a102f279fbbdeefba13813e848e4b209';
+				
+				HTTPUtil.loadData(dataUrl,request,resultListener);
+				
+			}
+			
+			private function resultListener(event:ResultEvent):void
+			{
+				dataProvider.removeAll();
+				
+				var response:Object = event.result.response;
+				
+				if(response.metadata.affectedRows == 1)
+					dataProvider.addItem(response.data.row);
+				else if(response.metadata.affectedRows > 1)
+					dataProvider = response.data.row as ArrayCollection;
+
+				if(response.metadata.numFields == 1)
+					fieldsMeta.addItem(response.fMeta.field);
+				else if(response.metadata.numFields > 1)
+					fieldsMeta = response.fMeta.field as ArrayCollection;
+				
+				chartDesc 	= response.metadata.relatorio.desc;
+				chartTitle 	= response.metadata.relatorio.name;
+				
+				mainAxisField = response.metadata.relatorio.mainAxisField;
+				mainAxisLabel =response.metadata.relatorio.mainAxisLabel;
+				secondaryAxisField = response.metadata.relatorio.secondaryAxisField;
+				
+				dispatchEvent(new Event('dataLoaded'));
+			}
+
+			private function printChart():void
+			{
+				var fpj:FlexPrintJob = new FlexPrintJob();
+				if (fpj.start())
+				{
+					fpj.addObject(this,FlexPrintJobScaleType.SHOW_ALL);
+					fpj.send();
+				}
+			}
+			private function filter():void
+			{
+				dataProvider.filterFunction = filterFunction;
+				dataProvider.refresh();
+			}
+			private function insertChart(event:Event):void
+			{
+				vbGrafico.removeAllChildren();
+
+				var chartType:Class = cbxTipoGrafico.selectedItem.tipo as Class;
+				var chart = new chartType();
+				
+				chart.width = 600;
+				chart.percentHeight = 100;
+				chart.showDataTips = true;
+				
+				chart.dataProvider = dataProvider;
+				chart.displayName 	= mainAxisLabel;
+				chart.quantityField = mainAxisField;
+				chart.labelField 	= secondaryAxisField;
+				
+				var lgLegenda:Legend = new Legend();
+				lgLegenda.direction = 'horizontal';
+					
+				lgLegenda.dataProvider = chart;
+				
+				vbGrafico.addChild(chart);
+				vbGrafico.addChild(lgLegenda);
+			}
+
+			// Funcao que filtra o grafico
+			private function filterFunction(row:Object):Boolean
+			{
+				var prop:String = cbxFiltro.selectedItem.name;
+				var expression:Boolean = true;
+				if(txtF.text != '')
+					expression = (expression && row[prop] <= parseInt(txtF.text));
+				if(txtFZero.text != '')
+					expression = (expression && row[prop] >= parseInt(txtFZero.text));
+				return expression;
+			}
+				
+		]]>
+	</mx:Script>
+	
+	<mx:Fade alphaFrom="0" alphaTo="1" id="fxFade" duration="500" />
+	
+	<mx:VBox width="100%" verticalAlign="middle">
+		<mx:Label text="{chartTitle}" fontWeight="bold" fontSize="19" textAlign="left"/>
+		<mx:Label text="{chartDesc}" fontWeight="normal" fontSize="14"/>
+	</mx:VBox>
+	<mx:VBox width="100%" height="100%" horizontalAlign="left" verticalAlign="middle">
+		<mx:HBox width="100%" height="100%">
+			<mx:VBox id="vbGrafico" width="600" height="100%" 
+				horizontalAlign="center" 
+				verticalAlign="middle" 
+				resizeEffect="fxFade">
+			</mx:VBox>
+			<mx:VBox width="100%" height="100%" verticalAlign="top" horizontalAlign="left">
+				<mx:Label text="Filtrar por" fontWeight="bold" fontSize="12"/>
+				<mx:ComboBox id="cbxFiltro" 
+					dataProvider="{fieldsMeta}" 
+					labelField="displayName"
+					width="100%"/>
+				<mx:HBox width="100%">
+					<mx:TextInput width="50" id="txtFZero" />
+					<mx:Label text="a" fontWeight="bold" fontSize="12"/>
+					<mx:TextInput width="50" id="txtF" />	
+				</mx:HBox>
+				
+				<mx:Button label="Filtrar" click="filter()"/>
+				<mx:HRule width="100%"/>
+				<mx:Label text="Tipo de gráfico" fontWeight="bold" fontSize="12"/>
+				<mx:ComboBox id="cbxTipoGrafico" 
+					dataProvider="{chartType}" 
+					change="insertChart(event)" 
+					labelField="label" width="100%"/>
+				<mx:Button label="Imprimir" click="printChart()"/>
+			</mx:VBox>
+		</mx:HBox>
+	</mx:VBox>
+</mx:Application>

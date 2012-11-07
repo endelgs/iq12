@@ -1,0 +1,118 @@
+<?php 
+$agencias = $this->partial('partials/combobox.phtml', array(
+	'name'=>'agencia',
+ 	'data'=>$this->agencias,
+	'id'  => 'agencia',
+	
+));
+$niveis = $this->partial('partials/combobox.phtml', array(
+	'name'=>'nivelbolsa',
+ 	'data'=>$this->niveis,
+	'id'  => 'nivelbolsa',
+	
+));
+echo $this->partial('partials/pessoaheader.phtml', array('nome' => $this->nomePessoa));
+echo $this->partial('partials/posgraduacaoheader.phtml', array('tipo' => '6'));
+
+echo $this->partial('partials/fieldset.phtml', array(
+	'height' => '400',
+	'title' => 'Bolsa de Produtividade',
+	'content' => $this->partial('partials/flexigrid.phtml', array(
+	        	'isCrud' => true,
+	            'table' => $this->bolsa_grid,
+	        	'doubleClick' => "carregaBox(this.className)",
+        		'functionDelete' => 'deleteData',
+	            'exclude' => array(
+				'id_agencia','id_nivel','id_docente','id','data_termino'
+				),
+
+	            'headers' => array(	'agencia' 	=> 'Agência',
+									'data_aquisicao' => 'Data aquisição',
+									'nivelbolsa' => 'Nível da Bolsa')
+	        	)
+	        ).
+	        '
+<div class="crud-c">
+<p style="text-align:right"><a href="#" class="crud-toggle-button">Cadastrar bolsa</a></p>
+<form id="formCreate" action='.$this->url(array('module'=> 'docente', 'controller'=> 'bolsa', 'action' => 'post')).' class="zend_form crud-toggle" method="post" onsubmit="return validarDatas(this)">
+	<table width="100%">
+	<tr><td width="20%"><label>Agência:</td><td width="80%" colspan="2">'.$agencias.'</label></td></tr>
+	<tr><td width="20%"><label>Níveis:</label></td><td width="80%" colspan="2">'.$niveis.'</td></tr>
+	<tr><td width="20%"><label>Início:</td><td width="80%"><input type="text" name="datainicio" id="datainicio" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></label></td></tr>
+        <tr><td width="20%"><label>Fim:</td><td width="80%"><input type="text" name="dataFim" id="datafim" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></label></td></tr>
+        <tr><td></td><td><input id="gravar" type="submit" class="submit"  value="Gravar" /></td></tr>
+	</table>
+</form>
+</div>'.
+"<div style='display:none'></div>"
+));
+?>
+<script type="text/javascript">
+$(document).ready(function()
+        {
+            $('#pessoa-docente').addClass('selecionado');
+            $('#docente-bolsa').addClass('selecionado');
+            $('input').attr('onBlur', 'mudancaDeValor()');
+        });
+function carregaBox(data)
+{
+	var re = new RegExp('\{[^}]*\}', "g");
+    var m0 = re.exec(data);
+    var pResult = m0[0].substring(1, m0[0].length - 1);
+    var arrResult = new Array();
+    arrResult = pResult.split(',');
+    params    = new Array();
+    for(i = 0; i < arrResult.length; i++)
+    {
+        var tmp = arrResult[i].split(":");
+        params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+    }  
+	jQuery.facebox('<div id="faceboxForm">');
+	$('#faceboxForm').append('\
+		<form action="<?php echo $this->url(array('module'=> 'docente', 'controller'=> 'bolsa', 'action' => 'update')); ?>" class="zend_form" method="post" id="formUpdate" onsubmit="return validarDatas(this)"> \
+			<input type="hidden" name="id" id="id" value="' + params['id'] + '"> \
+	        <table class="tbl_facebox"> \
+	        <tr><td>Agência:</td><td><div id="divAgencia" name="divAgencia"></div></td></tr> \
+	        <tr><td>Nível:</td><td><div id="divNivel" name="divNivel"></div></td></tr> \
+	        <tr><td>Data de Início:</td><td><input type="text" id="data_aquisicao" name="data_aquisicao" value="' + params['data_aquisicao'] + '" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr> \
+	        <tr><td>Data de Término:</td><td><input type="text" id="data_termino" name="data_termino" value="' + params['data_termino'] + '" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr> \
+	        <tr><td></td><td><input type="submit" value="Ok" class="submit" onClick="window.onbeforeunload=null"></td></tr> \
+	        </table> \
+	    </form>');
+
+		$('#nivelbolsa').clone().attr('id', 'nivelU').attr('name', 'nivelU').appendTo('#divNivel');
+		$('#agencia').clone().attr('id', 'agenciaU').attr('name', 'agenciaU').appendTo('#divAgencia');
+        $('#nivelU').val(params['id_nivel']);
+
+        var nivel = params['id_nivel'];
+        if($("#nivelU").val()!=nivel)
+		{
+			var opt = $('#nivelU').html();
+			var newopt = '<option value="'+nivel+'">'+params['nivelbolsa']+'</option>';
+			$('#nivelU').html(newopt + opt);
+			$('#nivelU').val(nivel);
+		}
+        else
+        {
+        	$('#nivelU').val();
+        }
+
+		var agencia = params['id_agencia'];
+        if($("#agenciaU").val()!=agencia)
+		{
+			var opt = $('#agenciaU').html();
+			var newopt = '<option value="'+agencia+'">'+params['agencia']+'</option>';
+			$('#agenciaU').html(newopt + opt);
+			$('#agenciaU').val(agencia);
+		}
+        else
+        {
+        	$('#agenciaU').val();
+        }
+}
+function deleteData(data)
+{
+	p = getParams(data);
+    location.href='<?php echo $this->url(array('module'=> 'docente', 'controller'=> 'bolsa', 'action' => 'delete')); ?>/id/' + p['id']; 
+}
+</script>

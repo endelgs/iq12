@@ -1,0 +1,72 @@
+<?php ob_start(); ?>
+<form id="formCreate" action="<?php echo $this->url(array('module' => 'docente', 'controller' => 'projetos', 'action' => 'post')); ?>" class="zend_form crud-toggle" method="post" onsubmit="return validarDatas(this)">
+    <table width="100%">
+        <tr><td><label>Título:</label></td><td><input type="text" name="titulo" class="titulo" size="60"></td></tr>
+        <tr><td><label>Texto:</label></td><td><textarea  name="texto" class="texto" rows="6" cols="46"></textarea></td></tr>
+        <input  type="hidden" name="id" class="id" value="">
+        <tr><td></td><td><input id="gravar" type="submit"  class="submit" value="Gravar" /></td></tr>
+    </table>
+</form>
+
+<?php
+$html = ob_get_contents();
+ob_end_clean();
+$htmlJS = preg_replace('/\s/', ' ', $html);
+echo $this->partial('partials/pessoaheader.phtml', array('nome' => $this->nomePessoa));
+echo $this->partial('partials/posgraduacaoheader.phtml', array('tipo' => '6'));
+echo $this->partial('partials/fieldset.phtml', array(
+    'height' => '400',
+    'title' => 'Projetos',
+    'content' => $this->partial('partials/flexigrid.phtml', array(
+        'isCrud' => true,
+        'table' => $this->bolsa_grid,
+        'doubleClick' => "carregaBox(this.className)",
+        'functionDelete' => 'deleteData',
+        'exclude' => array(
+            'id_projeto', 'texto', 'deletado', 'id_pessoa_docente'
+        ),
+        'headers' => array(
+            'titulo' => 'Título',)
+            )
+    ) .
+    '
+<div class="crud-c">
+<p style="text-align:right"><a href="#" class="crud-toggle-button">Cadastrar Projeto</a></p>
+' . $html . '
+</div>' .
+    "<div style='display:none'></div>"
+));
+?>
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        $('#pessoa-docente').addClass('selecionado');
+        $('#docente-projetos').addClass('selecionado');
+        $('input').attr('onBlur', 'mudancaDeValor()');
+    });
+    function carregaBox(data)
+    {
+        var re = new RegExp('\{[^}]*\}', "g");
+        var m0 = re.exec(data);
+        var pResult = m0[0].substring(1, m0[0].length - 1);
+        var arrResult = new Array();
+        arrResult = pResult.split(',');
+        params    = new Array();
+        for(i = 0; i < arrResult.length; i++)
+        {
+            var tmp = arrResult[i].split(":");
+            params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+        }
+        jQuery.facebox('<div id="faceboxForm">');
+        $('#faceboxForm').append('<?php echo $htmlJS; ?>');
+
+        $('.titulo').val(params['titulo']);
+        $('.texto').val(params['texto']);
+        $('.id').val(params['id_projeto']);
+    }
+    function deleteData(data)
+    {
+        p = getParams(data);
+        location.href='<?php echo $this->url(array('module' => 'docente', 'controller' => 'projetos', 'action' => 'delete')); ?>/id/' + p['id_projeto'];
+    }
+</script>

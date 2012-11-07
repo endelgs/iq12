@@ -1,0 +1,88 @@
+<?php
+$periodo = $this->partial('partials/combobox.phtml', array(
+            'name' => 'id_periodo',
+            'data' => $this->periodos,
+            'selected' => $this->id_periodo,
+            'aditional' => 'class="periodos"'
+        ));
+
+ob_start();
+?>
+<form class="zend_form crud-toggle" method="post">
+    <table width="100%">
+        <tr>
+            <td width="40%">
+                <label>Nome Coordenador:</label>
+            </td>
+            <td width="60%">
+                <input size="50" type="text" name="nome_coordenador" class="nome_coordenador" />
+                <input  type="hidden" name="id" class="id" value="" />
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="submit" value="Gravar" />
+            </td>
+        </tr>
+    </table>
+</form>
+
+<?php
+$html = ob_get_contents();
+ob_end_clean();
+$htmlJS = preg_replace('/\s/', ' ', $html);
+
+$html = '<div class="crud-c">
+         <p style="text-align:right"></p>
+     ' . $html . '</div>';
+
+$a0 = range(0, 1000, 1);
+echo $this->partial('partials/fieldset.phtml', array(
+'height' => 400,
+ 'title' => 'Coordenador da Pós-Graduação (para assinar formulários)',
+ 'content' => $this->partial('partials/flexigrid.phtml',
+ array(
+'isCrud' => false,
+ 'doubleClick' => "carregaBox(this.className)",
+ 'table' => $this->data,
+ 'functionDelete' => 'deleteData',
+ 'exclude' => array('id_coordenador', 'deletado'),
+ 'headers' => array('nome_coordenador' => 'Coordenador')
+)
+) . $html
+));
+?>
+<script type="text/javascript">
+
+    function carregaBox(data)
+    {
+        var re = new RegExp('\{[^}]*\}', "g");
+        var m0 = re.exec(data);
+        var pResult = m0[0].substring(1, m0[0].length - 1);
+        var arrResult = new Array();
+        arrResult = pResult.split(',');
+        params    = new Array();
+        for(i = 0; i < arrResult.length; i++)
+        {
+            var tmp = arrResult[i].split(":");
+            params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+        }
+        //alert(data);
+        jQuery.facebox('<div id="faceboxForm">');
+        var tabela='<?php echo $htmlJS; ?>';
+        $('#faceboxForm').append(tabela+'</div>');
+
+        $('.nome_coordenador').val(params['nome_coordenador']);
+        $('.id').val('1');
+
+
+
+    }
+    function deleteData(data)
+    {
+        p = getParams(data);
+        location.href='<?php echo $this->url(array('module' => 'gerenciar', 'controller' => 'coordenadores', 'action' => 'delete')); ?>/id/' + p['id_coordenador'];
+        //alert('Excluindo dado ' + );
+    }
+</script>

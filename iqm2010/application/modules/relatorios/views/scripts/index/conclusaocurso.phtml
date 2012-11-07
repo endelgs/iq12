@@ -1,0 +1,32 @@
+<?php
+// usar method get para manter parametros fixos
+if($this->tipo=='5')
+	$check5='checked="checked"';
+else
+	$check3='checked="checked"';
+	
+$html = '
+<form action="" method="get">
+<br/>
+<p>
+<label for="tipo"> <b>Tipo: </b> </label>
+<input type="radio" name="tipo" '.$check3.' value="3"> 
+Mestrado
+<input type="radio" name="tipo" '.$check5.' value="5">
+Doutorado
+</p>
+<p>
+<label for="tipo"> <b>Mostrar integralização até: </b> </label>
+<input type="text" value="'.$this->meses.'" name="meses" style="width: 80px;" /> Meses
+<br/>
+<input type="submit" value="Listar" />
+</p>
+</form><br/><br/>';
+$html .= $this->flex;
+
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Relatório de prazo para conclusão de curso',
+	'height' => 500,
+	'content' => $html
+	));
+?>	

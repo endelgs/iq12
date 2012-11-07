@@ -1,0 +1,1 @@
+corrigido o problema das barras de rolagem horizontais que apareciam

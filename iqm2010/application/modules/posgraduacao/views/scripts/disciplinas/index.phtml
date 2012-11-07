@@ -1,0 +1,428 @@
+<?php ?>
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        $('#pessoa-<?php echo $this->tipocurso; ?>').addClass('selecionado');
+        $('#<?php echo $this->tipocurso; ?>-disciplinas').addClass('selecionado');
+        $('input').attr('onBlur', 'mudancaDeValor()');
+    });
+
+    function mudancaDeValor()
+    {
+        window.onbeforeunload = function(){ return 'Você perderá todas as alterações';}
+
+        //alert('Modificado');
+        //$('body').attr('onUnload', 'if !window.confirm("Dados podem ter sido alterados. Deseja sair sem gravar?")){return false}');
+    }
+
+
+    $(document).ready(function(){
+        $('#convalidado').click(function() {
+            if ($('#convalidado').is(':checked'))
+            {	
+                $('.detalhesConvalidado').show();
+            }
+            else
+            {
+                $('.detalhesConvalidado').hide();
+            }
+        });
+    });
+
+    //is(':checked')
+
+</script>
+
+<?php
+$instituicoes = $this->partial('partials/combobox.phtml', array(
+            'name' => 'id_instituicao',
+            'data' => $this->instituicoes,
+            'id' => 'id_instituicao'
+        ));
+$anos = $this->partial('partials/combobox.phtml', array(
+            'name' => 'ano',
+            'data' => $this->anos,
+            'id' => 'ano',
+            'selected' => $this->anoPes
+        ));
+
+$periodos = $this->partial('partials/combobox.phtml', array(
+            'name' => 'periodo',
+            'data' => $this->periodos,
+            'id' => 'periodo',
+            'selected' => $this->periPes
+        ));
+
+$listaHidden = $this->partial('partials/listahidden.phtml', array(
+            'name' => 'docente',
+            'data' => $this->docenteDisciplinas
+        ));
+
+$formulario = '<tr>
+		<tr><td width="20%"><label>Ano:</label></td>
+			<td width="80%" colspan="2">' . $anos . '</td>
+		</tr>
+		<tr>
+		<tr>
+		<tr><td width="20%"><label>Período:</label></td>
+			<td width="80%" colspan="2">' . $periodos . '</td>
+		</tr>';
+
+$botao = 'Pesquisar';
+
+
+
+if ((is_array($this->disciplinas)) || (is_array($this->turmas))) {
+    $disciplinas = $this->partial('partials/combobox.phtml', array(
+                'name' => 'disciplinas',
+                'data' => $this->disciplinas,
+                'id' => 'disciplinas',));
+
+    $disciplinasForm = '<tr><td width="20%"><label>Disciplinas:</label></td><td width="80%" colspan="2">' . $disciplinas . '</td></tr>';
+
+    $disciplaFormHidden = '<input type="hidden" name="anoG" value="' . $this->anoPes . '" />	
+					 <input type="hidden" name="periG" value="' . $this->periPes . '" />';
+}
+
+if (is_array($this->turmas)) {
+    $turmas = $this->partial('partials/combobox.phtml', array(
+                'name' => 'turmas',
+                'data' => $this->turmas,
+                'id' => 'turmas',));
+
+    //var_dump($this->turmas);
+
+    $turmasForm = '<tr>
+					<td width="20%"><label>Turmas:</label></td>
+					<td width="80%" colspan="2">' . $turmas . '</td>
+				  </tr>';
+    ?>	
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+            $('.zend_form').show();
+            $('#form_add').show();
+            $('#form_add2').show();
+            $('#ano').val('<?php echo $this->ano2; ?>');
+            $('#periodo').val('<?php echo $this->periodo2; ?>'); 
+            $('#disciplinas').val('<?php echo $this->desciplina2; ?>');
+        });
+
+    </script>
+    <?php
+}
+if (isset($this->periPes)) {
+    ?>
+    <div style="height: 0; visibility: hidden; display: none;">
+        <div id="divAtividadeInv"><?php echo $instituicoes; ?></div>
+    </div>
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+            $('.zend_form').show();
+            $('#form_add2').show();
+        });
+
+    </script>
+
+    <?php
+}
+echo $this->partial('partials/pessoaheader.phtml', array('nome' => $this->nomePessoa));
+echo $this->partial('partials/posgraduacaoheader.phtml', array('tipo' => $this->tipoPosGraduacao));
+
+
+
+
+echo $this->partial('partials/fieldset.phtml', array(
+    'title' => 'Disciplinas',
+    'height' => 400,
+    'content' => $this->partial('partials/flexigrid.phtml', array(
+        'isCrud' => true,
+        'doubleClick' => "carregaBox(this.className)",
+        'table' => $this->grid,
+        'functionDelete' => 'deleteData',
+        'exclude' => array('id_pg_disciplina', 'nome', 'materia', 'deletado', 'id_disciplina', 'convalida', 'con_disciplina', 'cancelado', 'con_codigo', 'con_credito', 'con_data', 'con_conceito', 'id_pos_graduacao', 'id_inst', 'instituicao', 'pre_requisitos', 'min_alunos', 'max_alunos', 'bibliografia', 'coordenador', 'creditos', 'carga_horaria', 'horario', 'oferecimento', 'observacoes', 'titulo', 'subtitulo', 'id_periodo', 'id_turma'),
+        'headers' => array('turma' => 'Turma', 'codigo' => 'Código', 'msgCancelado' => 'Cancelado?', 'msgConvalidado' => 'Convalidado?', 'conceito' => 'Conceito', 'periodo' => 'Periodo', 'ano' => 'Ano', 'msgOferecimento' => 'Oferecimento'),
+            )
+    ) . '
+<div class="crud-c" >
+<p style="text-align:right"><a href="#" class="crud-toggle-button">Associar aluno a uma disciplina</a></p>
+<form class="zend_form crud-toggle" method="post" action="" >
+	<table width="100%">' . $formulario . '
+		<tr><td></td><td><input type="submit" class="submit"  value="Pesquisar" 
+
+onClick="window.onbeforeunload=null" /></td></tr>
+	</table>
+</form>
+<form class="zend_form crud-toggle" method="post" action="" >
+	<table width="100%" id="form_add2" style="display:none;">
+		' . $disciplinasForm . '
+		' . $disciplaFormHidden . '
+		<tr><td></td><td><input type="submit" class="submit"  value="Pesquisar" 
+
+onClick="window.onbeforeunload=null" /></td></tr>
+
+	</table>
+			
+</form>
+<form class="zend_form crud-toggle" method="post" action="" >
+	<table width="100%"  id="form_add" style="display:none;">
+		' . $turmasForm . '
+		 <tr>
+		 	<td width="20%">
+		 		<label>Conceito:
+		 	</td>
+		 	<td width="80%">
+		 		<input type="text" name="conceito" id="conceito">
+		 		</label>
+		 	</td>
+		 </tr>
+		 <tr>
+		 	<td width="20%">
+		 		<label>Cancelada?
+		 	</td>
+		 	<td width="80%">
+		 		<input type="checkbox" name="cancelada" id="cancelada">
+		 		</label>
+		 	</td>
+		 </tr>
+		 <tr>
+		 	<td width="20%">
+		 		<label>Convalidado?
+		 	</td>
+		 	<td width="80%">
+		 		<input type="checkbox"  name="convalidado" id="convalidado">
+		 		</label>
+		 	</td>
+		 </tr>
+
+
+		<tr class="detalhesConvalidado" style="display:none;">
+		 	<td width="20%" >
+		 		<label>Nome da disciplina:
+		 	</td>
+		 	<td width="80%">
+		 		<input type="text" name="conDisciplina" id="conDisciplina">
+		 		</label>
+		 	</td>
+		</tr>
+		
+		<tr class="detalhesConvalidado" style="display:none;">
+		 	<td width="20%" >
+		 		<label>Código da disciplina:
+		 	</td>
+		 	<td width="80%">
+		 		<input type="text" name="conCod" id="conCod">
+		 		</label>
+		 	</td>
+		</tr>
+		<tr class="detalhesConvalidado" style="display:none;">
+		 	<td width="20%" >
+		 		<label>Instituição:
+		 	</td>
+		 	<td width="70%">
+		 		' . $instituicoes . '
+		 		</label>
+		 	</td>
+		</tr>
+		<tr class="detalhesConvalidado" style="display:none;">
+		 	<td width="20%" >
+		 		<label>Créditos:
+		 	</td>
+		 	<td width="80%">
+		 		<input type="text" name="conCred" id="conCred">
+		 		</label>
+		 	</td>
+		</tr>
+		
+		<tr class="detalhesConvalidado" style="display:none;">
+		 	<td width="20%">
+		 		<label>Data de convalidação:
+		 	</td>
+		 	<td width="80%">
+		 		<input type="text" name="condata" id="condata" 
+
+onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10">
+		 		</label>
+		 	</td>
+		 </tr>
+		 <tr class="detalhesConvalidado" style="display:none;">
+		 	<td width="20%" >
+		 		<label>Conceito:
+		 	</td>
+		 	<td width="80%">
+		 		<input type="text" name="conConceito" id="conConceito">
+		 		</label>
+		 	</td>
+		</tr>
+		<tr><td></td><td><input type="submit" class="submit"  value="Gravar" 
+
+onClick="window.onbeforeunload=null" /></td></tr>
+	</table>
+</form>
+</div>	
+'
+));
+?>
+<script type="text/javascript">
+
+    function carregaBox(data)
+    {	
+  
+        var re = new RegExp('\{[^}]*\}', "g");
+        var m0 = re.exec(data);
+        var pResult = m0[0].substring(1, m0[0].length - 1);
+        var arrResult = new Array();
+        arrResult = pResult.split(',');
+        
+        var params    = new Array();
+        for(i = 0; i < arrResult.length; i++)
+        {
+            var tmp = arrResult[i].split(":");
+          //  alert(trim(tmp[0].replace(':', '')));
+            params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+        }   
+        
+        jQuery.facebox('<div id="faceboxForm"></div>');
+
+        var tabela='\
+                        <form action="" class="zend_form" method="post" id="formCreate"> \
+                <input type="hidden" name="id" id="id" value="' + params['id_pg_disciplina'] + '"> \
+                <table> \
+                <tr><td><b>Código:</b></td><td>' + params['codigo'] + '</td></tr>\
+                <tr><td><b>Turma:</b></td><td>' + params['turma'] + '</td></tr>\
+                <tr><td><br/></td></tr>\
+                    <tr><td colspan="2"><a href="#" id="detalhesD"> Veja mais detalhes desta disciplina. </a></td></tr>\
+                <tr><td><br></td></tr>\
+                <tr><td>Conceito:</td><td><input type="text" id="conceito" name="conceito" value="' + params['conceito'] + '"></td></tr> \
+                <tr><td>Cancelada:</td><td><input type="checkbox" name="canceladaEd" id="canceladaEd"></td></tr> \
+                <tr><td>Convalidado:</td><td><input type="checkbox" class="convalidado" name="convalidadoEd" id="convalidadoEd"></td></tr> \
+                <tr class="detalhesConvalidadoED" style="display:none;"><td>Nome da disciplina:</td><td><input type="text" id="con_disciplina" name="con_disciplina" value="' + params['con_disciplina'] + '"></td></tr> \
+                <tr class="detalhesConvalidadoED" style="display:none;"><td>Código da disciplina:</td><td><input type="text" id="con_codigo" name="con_codigo" value="' + params['con_codigo'] + '"></td></tr> \
+                <tr class="detalhesConvalidadoED" style="display:none;"><td>Instituição</td><td><div id="divInstiuicao"></div></td></tr> \
+                <tr class="detalhesConvalidadoED" style="display:none;"><td>Créditos:</td><td><input type="text" id="con_credito" name="con_credito" value="' + params['con_credito'] + '"></td></tr> \
+                <tr class="detalhesConvalidadoED" style="display:none;"><td>Data de convalidação:</td><td><input type="text" id="con_data" name="con_data" value="' + params['con_data'] + '" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr> \
+                <tr class="detalhesConvalidadoED" style="display:none;"><td>Conceito:</td><td><input type="text" id="con_conceito" name="con_conceito" value="' + params['con_conceito'] + '"></td></tr>\
+                <tr><td></td><td><input type="submit" class="submit" value="Ok" onClick="window.onbeforeunload=null"></td></tr> \
+                </table> \
+                        </form>\
+                <div id="detalhesDisciplina" style="display:none;width:500px;">\
+                <h2>Detalhes da disciplina</h2>\
+                <table style="width:100%"> \
+                <tr><td><b>Código da matéria: </b></td><td>' + params['codigo'] + '</td></tr>\
+                <tr><td width="160px"><b>Título:</b></td><td width="250px">' + params['titulo'] + '</td></td></tr>\
+                <tr><td><b>Subtítulo:</b></td><td >' + params['subtitulo'] + '</td></tr>\
+                <tr><td><br/></td></tr>\
+                <tr><td><b>Pré Requisitos:</b></td><td >' + params['pre_requisitos'] + '</td></tr>\
+                <tr><td><b>Créditos:</b></td><td>' + params['creditos'] + '</td></tr>\
+                <tr><td><b>Carga Horária:</b></td><td>' + params['carga_horaria'] + '</td></tr>\
+                <tr><td><b>Oferecimento:</b></td><td>' + params['msgOferecimento'] + '</td></tr>\
+                <tr><td><b>Bibliografia:</b></td><td>' + params['bibliografia'] + '</td></tr>\
+                <tr><td><br/></td></tr>\
+                <tr><td><b>Turma:</b></td><td >' + params['turma'] + '</td></tr>\
+                <tr><td><b>Período:</b></td><td>' + params['periodo'] + '</td>\
+                <tr><td><b>Horário:</b></td><td>' + params['horario'] + '</td>\
+                <tr><td><b>Coordenador:</b></td><td >' + params['nome'] + '</td></tr>\
+                <tr><td><b>Professores:</b></td>\
+                <td ><div id="divDocentes"></div></td></tr>\
+                <tr><td><br/></td></tr>\
+                <tr><td><b>Número Mínimo de Alunos:</b></td><td>' + params['min_alunos'] + '</td></tr>\
+                <tr><td><b>Número Máximo de Alunos:</b></td><td>' + params['max_alunos'] + '</td></tr>\
+                </table>\
+                <a href="#" id="voltarD"> <br> Voltar à edição </a>\
+                </div>';
+
+
+                        $('#faceboxForm').append(tabela);
+        
+                        geraCombobox(params['id_disciplina']);
+                        if(params['cancelado']=='1')
+                        {	
+                            $('#canceladaEd').attr('checked','checked');
+                        }
+		        	
+                        if(params['convalida']=='1')
+                        {	
+                            $('#convalidadoEd').attr('checked','checked');	 
+                            $('.detalhesConvalidadoED').show();    
+                        }
+
+                        $('#id_instituicao').clone().attr('id', 'instiuicaoU').attr('name', 'instiuicaoU').appendTo('#divInstiuicao');
+                        $('#instiuicaoU').val(params['id_inst']);	 
+
+                        $('#convalidadoEd').click(function() {
+                            if ($('#convalidadoEd').is(':checked'))
+                            {	
+                                $('.detalhesConvalidadoED').show();
+                            }
+                            else
+                            {
+                                $('.detalhesConvalidadoED').hide();
+                            }
+                        });    
+
+                        $('#detalhesD').click(function(){
+				
+                            $('#formCreate').hide();
+                            $('#detalhesDisciplina').show();
+
+                        });
+         
+                        $('#voltarD').click(function(){
+				
+                            $('#formCreate').show();
+                            $('#detalhesDisciplina').hide();
+
+                        });
+
+                        tabela=null;
+
+                    }
+ 
+                    function geraCombobox(id_disciplina)
+                    {
+
+                        var i=0;
+                        var div = document.getElementById('divlistahidden');
+                        var html='';
+ 	
+                        while(i< div.childNodes.length)
+                        {
+                            i++;
+                            var nome="docente";
+                            var nomevariavel='#'+nome+i;
+                            var variavel= $(nomevariavel).val();
+
+                            if( variavel!=undefined)
+                            {
+                                var quebra=variavel.split("#");
+
+                                if(quebra[1]==id_disciplina)
+                                {
+                                    html=html+'<p style="font-size: 15px;" id="divProf'+i+'">'+quebra[3]+'';
+                                    html=html+'</p>';
+                                } 
+                            }
+                        }
+                        $('#divDocentes').html(html);
+                    }
+
+                    function deleteData(data)
+                    {
+                        p = getParams(data);
+                        location.href='<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'Disciplinas', 'action' => 'delete')); ?>/id/' + p['id_pg_disciplina']; 
+                    }
+</script>
+
+<style type="text/css">
+    #facebox
+    {margin-top: 100px;
+     margin-left: -90px;
+
+    }
+
+</style>
+
+
+<?php echo $listaHidden; ?>
+ 

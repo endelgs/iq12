@@ -1,0 +1,119 @@
+<?php
+$oferecimentos = $this->partial('partials/combobox.phtml', array(
+            'name' => 'oferecimento',
+            'data' => $this->oferecimento
+        ));
+
+$oferecimentosjs = $this->partial('partials/comboboxjs.phtml', array(
+            'name' => 'oferecimento',
+            'data' => $this->oferecimento
+        ));
+
+$listaHidden = $this->partial('partials/listahidden.phtml', array(
+            'name' => 'docente',
+            'data' => $this->docenteDisciplinas
+        ));
+
+$a0 = range(0, 1000, 1);
+echo $this->partial('partials/fieldset.phtml', array(
+    'height' => 400,
+    'title' => 'Disciplinas',
+    'content' => $this->partial('partials/flexigrid.phtml', array(
+        'isCrud' => true,
+        'doubleClick' => "carregaBox(this.className)",
+        'table' => $this->data,
+        'functionDelete' => 'deleteData',
+        'exclude' => array('id_disciplina','bibliografia','observacoes','turma','carga_horaria','coordenador','subtitulo' , 'pre_requisitos','max_alunos','min_alunos' ,'ementa','deletado', 'periodo', 'oferecimento', 'coordenador'),
+        'headers' => array(
+            'codigo' => 'Código',
+            'titulo' => 'Título',
+
+            'creditos' => 'Créditos',
+
+            'horario' => 'Horário',
+
+            'nome_periodo' => 'Período',
+            'nome_oferecimento' => 'Oferecimento',
+
+        )
+            )
+    ) . '
+<div class="crud-c">
+<p style="text-align:right"><a href="#" class="crud-toggle-button">Nova Disciplina</a></p>
+<form class="zend_form crud-toggle" method="post">
+<table width="100%">
+	<tr><td width="20%"><label>Título:</td><td width="80%"  colspan="3"><input style="width:100%" type="text" name="titulo" id="titulo"></label></td></tr>
+	<tr><td><label>Subtítulo:</td><td colspan="3"><input style="width:100%" type="text" name="subtitulo" id="subtitulo"></label></td></tr>
+	<tr><td><label>Código:</td><td colspan="3"><input style="width:100%" type="text" name="codigo" id="codigo"></label></td></tr>
+	<tr><td><label>Pré Requisitos:</td><td colspan="3"><input style="width:100%" type="text" name="pre_requisitos" id="pre_requisitos"></label></td></tr>
+        <tr><td><label>Ementa:</td><td colspan="3"><textarea style="width:100%; height: 150px;" name="ementa" id="ementa"></textarea></label></td></tr>
+	<tr><td><label>Bibliografia:</td><td colspan="3"><textarea style="width:100%" name="bibliografia" id="bibliografia"></textarea></label></td></tr>
+	<tr><td></td><td colspan="3"><table width="100%" id="tblDisciplinas" name="tblDisciplinas" border="1"></table></td></tr>
+	<tr><td><label>Créditos:</td><td><input style="width:100%" type="text" name="creditos" id="creditos"></label></td>
+	<td><label>Carga Horária:</td><td><input style="width:100%" type="text" name="carga_horaria" id="carga_horaria"></label></td></tr>
+	<td width="20%"><label>Oferecimento:</td><td>' . $oferecimentos . '</label></td></tr>
+	<tr><td><label>Observações:</td><td  colspan="3"><input style="width:100%" type="text" name="observacoes" id="observacoes"></label></td></tr>
+	<tr><td></td><td><input type="submit" value="Gravar" /></td></tr>
+	</table>
+</form>
+</div>
+'
+));
+?>
+<script type="text/javascript">
+    var varDelete="";
+    function carregaBox(data)
+    {
+
+        idNovaTabela = Math.ceil(Math.random()*10000);
+	
+        var re = new RegExp('\{[^}]*\}', "g");
+        var m0 = re.exec(data);
+        var pResult = m0[0].substring(1, m0[0].length - 1);
+        var arrResult = new Array();
+        arrResult = pResult.split(',');
+        params    = new Array();
+        for(i = 0; i < arrResult.length; i++)
+        {
+            var tmp = arrResult[i].split(":");
+            params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+        }   
+        //    alert(data);
+     
+        jQuery.facebox('<div id="faceboxForm">');
+
+        var tabela= '\
+                        <form action="" class="zend_form" method="post" id="formCreate"> \
+                <input type="hidden" name="id" id="id" value="' + params['id_disciplina'] + '"> \
+                <table style="width:100%;" > \
+                <tr><td width="120px;"><label style="font-size: 10px;">Título:</td><td width="80%"  colspan="3"><input style="width:100%" type="text" name="titulo" id="titulo" value="' + params['titulo'] + '"></label></td></tr>\
+                <tr><td><label style="font-size: 10px;">Subtítulo: </td><td colspan="3"><input style="width:100%" type="text" name="subtitulo" id="subtitulo" value="' + params['subtitulo'] + '"></label></td></tr>\
+                <tr><td><label style="font-size: 10px;">Código: </td><td colspan="3"><input style="width:100%" type="text" name="codigo" id="codigo" value="' + params['codigo'] + '"></label></td></tr>\
+                <tr><td><label style="font-size: 10px;">Pré Requisitos: </td><td colspan="3"><input style="width:100%" type="text" name="pre_requisitos" id="pre_requisitos" value="' + params['pre_requisitos'] + '"></label></td></tr>\
+                <tr><td><label style="font-size: 10px;">Ementa: </td><td colspan="3"><textarea style="width:100%;height:150px;" name="ementa" id="ementa" >'+ params['ementa'] +'</textarea></td></tr>\
+                <tr><td><label style="font-size: 10px;">Bibliografia: </td><td colspan="3"><textarea style="width:100%" name="bibliografia" id="bibliografia" >'+ params['bibliografia'] +'</textarea></td></tr>\
+                <tr><td style="font-size: 10px;"><label style="font-size: 10px;">Créditos: </td><td><input style="width:100%" type="text" name="creditos" id="creditos" value="' + params['creditos'] + '"></label></td>\
+                <td><label style="font-size: 10px;">Carga Horária: </td><td><input style="width:100%" type="text" name="carga_horaria" id="carga_horaria" value="' + params['carga_horaria'] + '"></label></td></tr>\
+                <tr>\
+                <tr><td width="20%"><label style="font-size: 10px;">Oferecimento: </td><td><?php echo $oferecimentosjs; ?></div></label></td></tr>\
+                <tr><td><label style="font-size: 10px;">&nbsp;&nbsp;&nbsp;&nbsp;Observações: </td><td  colspan="3"><input style="width:100%" type="text" name="observacoes" id="observacoes" value="' + params['observacoes'] + '"></label></td></tr>\
+                <tr><td></td><td colspan="2"><input type="submit" value="Ok"></td></tr> \
+                </table> \
+            </form>';
+                        $('#faceboxForm').append(tabela);
+        
+                        var strOferecimento=params['oferecimento'];
+                        $("#oferecimento option[value='"+strOferecimento+"']").attr("selected","selected");
+
+                        tabela = null;
+                    }
+                    function deleteData(data)
+                    {
+                            //alert('Oiiii');
+                        p = getParams(data);
+                        //alert(p['id_disciplina']);
+                        location.href='<?php echo $this->url(array('module' => 'gerenciar', 'controller' => 'disciplinas', 'action' => 'delete')); ?>/id/' + p['id_disciplina']; 
+                        //alert('Excluindo dado ' + );
+                    }
+
+</script>

@@ -1,0 +1,46 @@
+<script type="text/javascript">
+	function esqueciMinhaSenha()
+	{
+		$('#trEmail').toggle();
+		$('#trEmail2').toggle();
+	}
+
+	$('.superMenu').css('display', 'none');
+	$('#menu').css('display', 'none');
+</script>
+<table align="center">
+<tr><td align="center">
+<p style="text-align: center"><br /><br /><br /><br /><br /><img src="<?php echo $this->baseUrl().'/assets/img/logo-iq.jpg'?>" /></p>
+<h3 style="color: #FFF">Sistema de Pós-Graduação do Instituto de Química da UNICAMP</h3>
+<?php
+$errorMessage=$this->errorMessage;
+print_r('<b>'.$errorMessage.'</b>');
+
+$login='<form method="post"><center><table style="text-align: left;"  border="0"><tr><td>Login:</td><td><input style="width:180px" type="text" id="login" name="login"></td></tr>';
+$pass='<tr><td>Senha:</td><td><input  type="password" id="pass" name="pass" style="width:180px"></td></tr>';
+
+
+$esqueciMinhaSenha='<tr><td></td><td><br/><br/><a href="#" onClick="esqueciMinhaSenha();">Esqueci minha senha</a><br/></td></tr>';
+$esqueciMinhaSenhaInput='
+<tr id="trEmail2" style="display:none;"><td colspan=2><center><p style="font-size: small;color: #555;">Preencha o campo de login e o de e-mail que enviaremos a senha para o mesmo. </p></center></td></tr>
+<tr id="trEmail" style="display:none;"><td>E-mail:</td><td><input style="width:180px" type="text" id="email" name="email"></td></tr>';
+$btn='<tr><td></td><td><br/></td></tr>
+<tr><td></td><td><input type="submit" name="ok" id="ok"></td></tr></form></table></center>';
+
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Login',
+	'width' => 400,
+	'height' => 210,
+	'content' => '<table class="zend_form" width="100%">'.
+		$login.
+		$pass.
+		$esqueciMinhaSenhaInput.
+		$esqueciMinhaSenha.
+		$btn.
+	  '<div class="fieldset-block" align="right"><a href="' . $this->url(array('action'=>'troca')) . '/" class="linkButton"></a></div>' 
+));
+
+
+?>
+</td></tr></table>
+

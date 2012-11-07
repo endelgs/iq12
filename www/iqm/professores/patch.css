@@ -1,0 +1,123 @@
+@CHARSET "ISO-8859-1";
+th
+{
+	font-weight:bold;
+}
+h1
+{
+	font-size:18px;
+	font-weight:bold;
+}
+#rightContent table
+{
+	width:560px;	
+}
+#page
+{
+	width:760px;
+	margin:auto;
+}
+#top{
+	background: url(imagens/header.jpg) no-repeat left top;
+	font-size: 12px;
+	height: 56px;
+	width: 760px;
+}
+
+#top h1{
+	font-size: 9px;
+	color: white;
+	width: 100%;
+	text-align: center;
+	margin-top: 5px;
+	font-weight: normal;
+}
+
+#top p{
+	width: 751px;
+	text-align: right;
+	margin-top: 20px;
+	font-size: 11px;
+}
+#leftContent
+{
+	float:left;
+}
+#leftContent ul li
+{
+	/* margin-top:10px; */	
+}
+#leftContent ul li a
+{
+	margin-left:20px;
+	color: #01536b;
+	font-size: 11px;
+	text-decoration:none;
+	font-weight:bold;
+	display:block;
+	width:135px;
+	margin-bottom:7px;
+}
+
+#leftContent ul li a:hover
+{
+	color:#fff;	
+}
+#rightContent
+{
+	margin-left:160px;
+	width:598px;
+	background: url(imagens/principal-middle.jpg) repeat-y left top;
+	height:auto;
+}
+#rightContent .header
+{
+	background: url(imagens/principal-top.jpg) no-repeat left top;
+	height:51px;
+	margin:0px;	
+}
+#rightContent .header h1
+{
+	margin-left:20px;
+	font-weight:bold;
+	font-size:18px;	
+}
+#rightContent p.relDescription
+{
+	background:#EBF1F3 url('imagens/interrogacao.gif') no-repeat bottom right;
+	/*border: dashed 1px #B6CCD3;*/
+	/*text-align:center;*/
+	width:85%;
+	color:#888;
+	font-size:11px;
+	padding-bottom:5px;
+	padding-top:5px;
+	margin:auto;
+	margin-top:15px;
+	margin-bottom:15px;
+	/*font-weight:bold;*/
+}
+p.spacer
+{
+	height:13px;
+	visibility:hidden;
+}
+#rightContent table
+{
+	margin:0px;
+	position:relative;
+}
+.profileBolsa
+{
+	width:560px;
+	margin-left:20px;
+	color:#000;
+}
+#loginHeader
+{
+		text-align:center;
+}
+#rightContent h2.blue,#rightContent h2.ano
+{
+	background:none;
+}

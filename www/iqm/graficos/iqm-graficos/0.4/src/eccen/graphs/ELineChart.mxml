@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:LineChart xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:Script>
+		<![CDATA[
+			import mx.charts.series.LineSeries;
+			
+			public function addSeries(mainAxisField:String = '', secondaryAxisField:String = '', displayName = ''):void
+			{
+				categoryAxis.categoryField = mainAxisField;
+				
+				var series:LineSeries = new LineSeries();
+				series.xField = mainAxisField;
+				series.yField = secondaryAxisField;
+				series.displayName = displayName;
+				series.setStyle("showDataEffect", fxIn);
+				series.setStyle("hideDataEffect", fxOut);
+				this.series.push(series);
+
+			}
+		]]>
+	</mx:Script>
+	<mx:SeriesSlide id="fxIn" duration="500" direction="up"/>
+	<mx:SeriesSlide id="fxOut" duration="500" direction="down"/>
+	<mx:horizontalAxis>
+	<mx:CategoryAxis
+		id="categoryAxis"
+		dataProvider="{dataProvider}"
+	/>
+    </mx:horizontalAxis>
+</mx:LineChart>

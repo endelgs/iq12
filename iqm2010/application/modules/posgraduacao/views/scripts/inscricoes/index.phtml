@@ -1,0 +1,284 @@
+<form class="zend_form" method="post"
+	action="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'inscricoes','action'=>'post' )) ?>">
+<?php
+echo $this->partial('partials/pessoaheader.phtml', array('nome' => $this->nomePessoa));
+echo $this->partial('partials/posgraduacaoheader.phtml', array('tipo' => $this->tipoPosGraduacao));
+$cidade = $this->partial('partials/combobox.phtml', array(
+	'name'=>'cidade[]',
+ 	'data'=>$this->cidadesProva,
+	'selected'=>$this->id_cidade_prova,
+	'id'=>$i,
+));
+
+$periodo = $this->partial('partials/combobox.phtml', array(
+	'name'=>'periodos[]',
+ 	'data'=>$this->periodos,
+	'selected'=>$this->id_periodo,
+));
+
+$areaConcentracao = $this->partial('partials/combobox.phtml', array(
+	'name'=>'areaconcetracao[]',
+ 	'data'=>$this->areasDeConcentracao,
+	'selected'=>$this->id_area_de_concentracao,
+));
+$relacaoIes = $this->partial('partials/combobox.phtml', array(
+	'name'=>'relacao[]',
+ 	'data'=>$this->relacoesIes,
+	'selected'=>$this->id_relacao_instituicao_ies,
+));
+$professores = $this->partial('partials/combobox.phtml', array(
+	'name'=>'professores[]',
+ 	'data'=>$this->professores,
+	'selected'=>$this->id_professor,
+));
+$curso = $this->partial('partials/combobox.phtml', array(
+	'name'=>'curso[]',
+ 	'data'=>$this->curso,
+	'selected'=>$this->id_curso
+));
+$instituicoes = $this->partial('partials/combobox.phtml', array(
+    'name'=>'instituicao[]',
+    'data'=>$this->instituicoes,
+    'selected'=>$row['id_instituicao'],
+    'id'=>$i
+));
+$instituicoes_mestrado = $this->partial('partials/combobox.phtml', array(
+    'name'=>'instituicao_mestrado[]',
+    'data'=>$this->instituicoes,
+    'selected'=>$row['id_instituicao_mestrado'],
+    'id'=>$i
+));
+?> <script type="text/javascript">
+var tabelaCorrente = 1;
+$(document).ready(function()
+{
+	$('#pessoa-<?php echo $this->tipocurso;?>').addClass('selecionado');
+	$('#<?php echo $this->tipocurso;?>-inscricoes').addClass('selecionado');
+	$('input').attr('onBlur', 'mudancaDeValor()');
+});
+
+function mudancaDeValor()
+{
+    window.onbeforeunload = function(){ return 'Você perderá todas as alterações';}
+
+}
+function ConfirmExit()
+{
+    return window.confirm('');
+}
+</script> <script type="text/javascript">
+var i=1;
+var exame=false;
+var mestrado_exame;
+$(document).ready(function()
+{
+
+	if(!exame)
+	{	
+
+		$('.<?php echo $this->tipocurso;?>-exame').css('color', '#CCC').css('cursor', 'default').click(function(e)
+		{
+			return false;
+		});
+		<?php if($this->tipocurso=='doutorado'){; ?>
+		$('.<?php echo $this->tipocurso;?>-outros').css('color', '#CCC').css('cursor', 'default').click(function(e){return false;});
+		<?php } ?>
+	}
+	<?php if($this->tipocurso=='mestrado'){; ?>
+	if($("#outros").val()=='false')
+	{
+		$('.<?php echo $this->tipocurso;?>-outros').css('color', '#CCC').css('cursor', 'default').click(function(e){return false;});
+	}
+	<?php } ?>
+});
+function enableExame()
+{
+	if(!exame)
+	{	
+
+		var aux, aux2;
+		$("#<?php echo $this->tipocurso;?>-exames").attr({href:mestrado_exame});
+		exame=true;		
+	}	
+}
+
+
+function novaTabela()
+{
+	idNovaTabela = Math.ceil(Math.random()*10000);
+	/*alert(idNovaTabela);
+	alert(tabelaCorrente);*/
+	tabela = '<table class="fieldset" cellpadding="0" cellspacing="0" style="width: 100%; height:400px;" id="inscricoes-' + idNovaTabela + '">\
+		<tr class="fieldset-top"><td class="fieldset-top-l"></td><td class="fieldset-top-c"></td><td class="fieldset-top-r"></td></tr>\
+		<tr> \
+		        <td class="fieldset-center-l"></td> \
+		        <td class="fieldset-center-c" valign="top"> \
+		            <h1 class="fieldset-title">Inscrição</h1><div class="crud-c"> \
+		        <table width="100%"> \
+		        <colgroup> \
+		         <col width="300" /> \
+		         <col> \
+		        </colgroup> \
+		        <tr><td><label>Código da inscrição: </td><td><input type="text" id="data" value="" name="codigo[]" maxlength="30"></div></label></td></tr> \
+		        <tr><td><label>Data de inscrição: </td><td><input type="text" id="data" value="" name="data[]" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></label></td></tr> \
+		        <tr><td><label>Período de inscrição: </td><td><div id="divPeriodo' + idNovaTabela + '"></div></label></td></tr> \
+		        <tr><td><label>Orientador previsto: </td><td><div id="divProfessor' + idNovaTabela + '"></div></label></td></tr> \
+		        <tr><td><label>Área de concentração</td><td><div id="divAreaConcentracao' + idNovaTabela + '"></div></label></td></tr> \
+		        <tr><td><label>Cidade escolhida para a prova: </td><td><div id="divCidade' + idNovaTabela + '"></div></label></td></tr> \
+		        <tr><td><label>Graduação: </td><td><div id="divInstituicao' + idNovaTabela + '"></div></label></td></tr> \
+ <?php if($this->tipocurso=="doutorado") {?> <tr><td><label>Mestrado: </td><td><div id="divInstituicaoMestrado' + idNovaTabela + '"></div></label></td></tr> \ <?php }?>
+                        <tr><td><label>Curso: </td><td><div id="divCurso' + idNovaTabela + '"></div></label></td></tr> \
+		        <tr><td><label>Data de conclusão: </td><td><input type="text" id="dataConclusao" value="" name="dataConclusao[]" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></label></td></tr> \
+		        <td><label>Aluno em curso, apenas concorrendo à bolsa?</td><td><input type="checkbox" value="1" id="bolsa'+i+ '" name="bolsa'+i+'"></label></td></tr> \
+		        <td><label>Pretende aproveitamento de estudos?</td><td><input type="checkbox" value="1" id="aproveitamento'+i+ '" name="aproveitamento'+i+'"></label></td></tr> \
+		        <tr><td><label>Inscrição aceita?</td><td><input type="checkbox" id="aceita" value="1" name="aceita'+i+'"></label></td></tr> \
+		      <tr><td></td><td align="right"><a href="#" onClick="if(window.confirm(\'Deseja realmente excluir esta inscrição e o exame a esta relacionado?\\n\')){$(\'#inscricoes-' + idNovaTabela + '\').remove()}" class="linkRemove"><img src="<?php echo $this->baseUrl(); ?>/assets/img/cross.png" alt="[x]" align="absmiddle" />Remover</a></td></tr></table> \
+		    </div>      </td> \
+		        <td class="fieldset-center-r"></td> \
+		</tr><tr class="fieldset-bottom"><td class="fieldset-bottom-l"></td><td class="fieldset-bottom-c"></td><td class="fieldset-bottom-r"></td></tr></table>';
+//		if(window.confirm(\'Deseja realmente excluir esta inscrição e o exame a esta relacionado?\\n\')){$(\'#inscricoes-' . $randId . '\').toggle(\'slow\');$(\'#inscricoes-' . $randId . '\').remove()}
+		tabelaCorrente++;
+		
+	    $('#pnovo').append(tabela);
+	    $('#divProfessor' + idNovaTabela).html($('#divProfessorInv').html());
+	    $('#divAreaConcentracao' + idNovaTabela).html($('#divAreaConcetracaoInv').html());
+	    $('#relacaoIes' + idNovaTabela).html($('#relacaoIesInv').html());
+	    $('#divCidade' + idNovaTabela).html($('#divCidadeInv').html());
+	    $('#divPeriodo' + idNovaTabela).html($('#periodoInv').html());
+	    $('#divInstituicao' + idNovaTabela).html($('#divInstituicaoInv').html());
+	    $('#divInstituicaoMestrado' + idNovaTabela).html($('#divInstituicaoMestradoInv').html());
+            $('#divCurso' + idNovaTabela).html($('#divCursoInv').html());
+	i++;
+}
+</script> <?php 
+
+$strData=explode("-",$this->data);
+$dataInscricao=$strData[2]."/".$strData[1]."/".$strData[0];
+$dataInscricao=str_replace("00:00:00","",$dataInscricao);
+$k = 0;
+if(is_array($this->resultado))
+{
+
+	foreach($this->resultado as $row)
+	{
+		$dataConclusao=$row['data_conclusao'];
+
+                $data=explode('-',$dataConclusao);
+
+                $data['mes']=$data[1];
+		$data['ano']=$data[0];
+
+                $dataConclusao=$data['mes'].'/'.$data['ano'];
+                
+
+		$tipoDeUser=$_SESSION['tipo'];
+		$enviarParaDoutorado="";
+		if ($this->tipoPosGraduacao==3 && $tipoDeUser=='admin')
+		{
+			$enviarParaDoutorado='<a href="'.$this->url(array('module'=> 'posgraduacao', 'controller'=> 'inscricoes','action'=>'enviaparadoutorado', 'id_inscricao'=>$row['id_inscricao'] )).'" class="linkChange"><img align="absmiddle" src="' . $this->baseUrl() . '/assets/img/page_white_go.png" alt="" />Enviar para doutorado</a>';
+		}
+
+		$codigo=$row['codigo_inscricao'];
+		$instuicaoMestrado="";
+                
+                if($this->tipocurso=="doutorado")
+                $instuicaoMestrado='   <tr><td><label>Mestrado: </td><td><div id="divCidade' . $randId . '">'.$this->partial('partials/combobox.phtml', array(
+	    'name'=>'u_instituicao_mestrado[]',
+	    'data'=>$this->instituicoes,
+	    'selected'=>$row['id_instituicao_mestrado'],
+	    'id'=>$i,
+		)).'</div></label></td></tr>';
+                
+		$randId = rand(1000, 9000);
+		if($row['inscricao_aceita']==1)$aceita='checked="checked"';
+		else $aceita='';
+		if($row['bolsa']==1)$bolsa='checked="checked"';
+		else $bolsa='';
+    
+		if($row['pretende_aproveitamento']==1)$aproveitamento='checked="checked"';
+		else $aproveitamento='';
+		$tabelaInscricao= $this->partial('partials/fieldset.phtml', array(
+		'title' => 'Inscrição <span id="idInscrito'.$k.'" class="fakeText">número <input type="text" readonly="readonly" name="u_idInscricao[]" value="' . $row['id_inscricao'] . '"></span>',
+		'height'=> '400',
+	    'aditional' => 'id="inscricoes-' . $randId . '"',
+		'content' =>'<div class="crud-c">
+		<table width="100%">
+		<colgroup>
+	    <col width="300" />
+	    <col>
+	    </colgroup>
+	    <tr><td><label>Código da inscrição: </td><td><input type="text" id="data" value="'.$codigo.'" name="codigo[]" maxlength="30"></div></label></td></tr> 
+	    <tr><td><label>Data de inscrição: </td><td><input type="text" id="data" value="'.$this->partial('partials/data.phtml', array('tipo'=>'out', 'data'=>$row['data_inscricao'])).'" name="u_data[]" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></label></td></tr>
+		<tr><td><label>Período de inscrição: </td><td>' .$this->partial('partials/combobox.phtml', array(
+	    'name'=>'u_periodos[]',
+	    'data'=>$this->periodos,
+	    'selected'=>$row['id_periodo'],
+		)) . '</div></label></td></tr>
+		<tr><td><label>Orientador previsto: </td><td><div id="divProfessor' . $randId . '">' . $this->partial('partials/combobox.phtml', array(
+	    'name'=>'u_professores[]',
+	    'data'=>$this->professores,
+	    'selected'=>$row['id_professor'],
+		)) . '</div></label></td></tr>
+		<tr><td><label>Área de concentração</td><td><div id="divAreaConcentracao' . $randId . '">' . $this->partial('partials/combobox.phtml', array(
+	    'name'=>'u_areaconcetracao[]',
+	    'data'=>$this->areasDeConcentracao,
+	    'selected'=>$row['id_area_de_concentracao'],
+	    'id'=>$i,
+		)) .'</div></label></td></tr>
+	    <tr><td><label>Cidade escolhida para a prova: </td><td><div id="divCidade' . $randId . '">'.$this->partial('partials/combobox.phtml', array(
+	    'name'=>'u_cidade[]',
+	    'data'=>$this->cidadesProva,
+	    'selected'=>$row['id_cidade_prova'],
+	    'id'=>$i,
+		)).'</div></label></td></tr>
+	    <tr><td><label>Graduação: </td><td><div id="divCidade' . $randId . '">'.$this->partial('partials/combobox.phtml', array(
+	    'name'=>'u_instituicao[]',
+	    'data'=>$this->instituicoes,
+	    'selected'=>$row['id_instituicao'],
+	    'id'=>$i,
+		)).'</div></label></td></tr>'.$instuicaoMestrado.'
+	<tr><td><label>Curso: </td><td>' .$this->partial('partials/combobox.phtml', array(
+	    'name'=>'u_curso[]',
+	    'data'=>$this->curso,
+	    'selected'=>$row['id_curso']
+		)) . '</div></label></td></tr>
+	<tr><td><label>Data de conclusão: </td><td><input type="text" id="dataConclusao" value="'.$dataConclusao.'" name="u_dataConclusao[]" onkeypress="formataCampo(this, \'00/0000\', event);" maxlength="7"></label></td></tr>
+	<tr><td><label>Aluno em curso, apenas concorrendo à bolsa?</td><td><input value="1" type="checkbox" name="u_bolsa'.$k.'" '.$bolsa.' /></label></td></tr>
+	<td><label>Pretende aproveitamento de estudos?</td><td><input value="1" type="checkbox" id="aproveitamento'.$k.'" name="u_aproveitamento'.$k.'" '.$aproveitamento.' /></label></td></tr> 
+		<tr><td><label>Inscrição aceita?</td><td><input value="1" type="checkbox" id="aceita'.$k.'" name="u_aceita'.$k.'" '.$aceita.' /></label></td></tr>'.
+	    '<tr><td></td><td align="right">'.$enviarParaDoutorado.'<a href="#" onClick="if(window.confirm(\'Deseja realmente excluir esta inscrição e o exame a esta relacionado?\\n\')){$(\'#inscricoes-' . $randId . '\').toggle(\'slow\');$(\'#deletado' . $randId . '\').val(\'1\');}" class="linkRemove"><img src="' . $this->baseUrl(). '/assets/img/cross.png" alt="[x]" align="absmiddle" />Remover</a></td></tr>'. 
+		'</table>
+	</div>
+	<input value="'.$row['id_exame'].'" name="u_id_exame'.$k.'" type="hidden" />
+	<input value="0" name="u_deletado[]" id="deletado'.$randId.'" type="hidden" />
+	<input type="hidden" name="id_pos_graduacao" id="id_pos_graduacao" value="'.$row['id_pos_graduacao'].'"/>
+	'
+	));
+	$script.='if($("#aceita'.$k.'").is(":checked"))enableExame();';
+	$k++;
+	echo $tabelaInscricao;
+	}
+	echo '<script type="text/javascript">$(document).ready(function(){tabelaCorrente = ' . $k .';})</script>';
+}
+else echo '<script type="text/javascript">$(document).ready(function(){novaTabela()})</script>';
+echo '<script>'.$script.'</script>';
+echo '<input type="hidden" name="outros" id="outros" value="'.$this->outros.'"/>';
+
+?>
+<p id="pnovo"></p>
+<div><input class="botao" type="button" value="Nova Inscrição"
+	name="novo" id="novoBotao" onclick="novaTabela()" /> <input
+	class="botao" type="submit" value="Gravar"
+	onClick="window.onbeforeunload=null" /> <!-- <input class="botao" type="submit" value="Trocar para doutorado" /> -->
+</div>
+</form>
+<div style="visibility: hidden; display: none;">
+<div id="periodoInv"><?php  print_r($periodo); ?></div>
+<div id="relacaoIesInv"><?php  print_r($relacaoIes); ?></div>
+<div id="divAreaConcetracaoInv"><?php  print_r($areaConcentracao); ?></div>
+<div id="divCidadeInv"><?php  print_r($cidade); ?></div>
+<div id="divInstituicaoInv"><?php print_r($instituicoes); ?></div>
+<div id="divInstituicaoMestradoInv"><?php print_r($instituicoes_mestrado); ?></div>
+<div id="divProfessorInv"><?php  print_r($professores); ?></div>
+<div id="divCursoInv"><?php  print_r($curso); ?></div>
+</div>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- charts/BasicColumn.mxml -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="init()">
+  <mx:Script><![CDATA[
+  	import eccen.Request;
+  	import mx.utils.ObjectUtil;
+  	import mx.controls.Alert;
+     import mx.collections.ArrayCollection;
+     public var expenses:ArrayCollection = new ArrayCollection([
+        {Expense:"Taxes", Amount:2000},
+        {Expense:"Rent", Amount:1000},
+        {Expense:"Bills", Amount:100},
+        {Expense:"Car", Amount:450},
+        {Expense:"Gas", Amount:100},
+        {Expense:"Food", Amount:200}
+     ]);
+	public function init():void
+	{
+		Alert.show(ObjectUtil.toString(Request.toPHPArray(expenses.source)));
+	}
+  ]]></mx:Script>
+</mx:Application>

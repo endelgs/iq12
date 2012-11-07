@@ -1,0 +1,47 @@
+<?php
+if($this->cbTipo=='5')
+$check5='selected="selected"';
+elseif($this->cbTipo=='4')
+$check4='selected="selected"';
+elseif($this->cbTipo=='3')
+$check3='selected="selected"';
+elseif($this->cbTipo=='2')
+$check2='selected="selected"';
+else
+$check1='selected="selected"';
+$html='<form action="" method="get">
+<br/><br/>
+Ano de inscrição: <input type="text" id="dataInicio" name="dataInicio" value="'.$this->dataInicio.'">
+Tipo de curso: <select id="tipo_curso" name="tipo_curso">';
+if($this->tipo=="3")
+$html.='<option value="3" name="tipo" id="tipo" selected="selected">Mestrado</option>
+	<option value="5" name="tipo" id="tipo">Doutorado</option>';
+else
+$html.='<option value="3" name="tipo" id="tipo">Mestrado</option>
+	<option value="5" name="tipo" id="tipo" selected="selected">Doutorado</option>';
+
+$html.='</select>
+
+Filtrar por: <select name="cbTipo" id="cbTipo">
+<option value="1" '.$check1.' name="tipo" id="tipo">Todos</option>
+<option value="2" '.$check2.' name="tipo" id="tipo">Não aceitos</option>
+<option value="3" '.$check3.' name="tipo" id="tipo">Sem prova</option>
+<option value="4" '.$check4.' name="tipo" id="tipo">Reprovados</option>
+<option value="5" '.$check5.' name="tipo" id="tipo">Sem Matrícula</option>
+</select>
+
+<br/><br/>
+<input type="submit" value="Listar">
+<br/><br/>
+</form>';
+
+$html .= $this->flex;
+
+
+
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Relatório de alunos inscritos',
+	'height' => 500,
+	'content' => $html
+));
+?>

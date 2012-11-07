@@ -1,0 +1,112 @@
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+	$('#sem_bolsa').click(function(){
+
+		var sembolsa=$('#sem_bolsa').is(':checked');
+
+		if(sembolsa)
+		{
+			$('#agencia').attr("disabled","disabled");
+		}else {
+
+
+			$('#agencia').removeAttr("disabled");
+		
+		}
+
+	});
+
+});
+
+</script>
+<?php 
+echo $this->mascara;
+
+$cbOrientadores = $this->partial('partials/combobox.phtml', array(
+	'name'=>'orientsdores',
+ 	'data'=>$this->orientadores,
+	'selected'=>$this->orientador,
+	'id'=>'orientsdores'
+));
+
+$cbBolsas = $this->partial('partials/combobox.phtml', array(
+	'name'=>'agencia',
+ 	'data'=>$this->tiposBolsa,
+	'selected'=>$this->agencia,
+	'id'=>'agencia'	
+));
+
+
+$html='<br/><form action="" method="get">
+<p>
+Ativo no mês (mm/aaaa):
+<input type="text" name="data" class="data" value="'.$this->data.'"> 
+</p>
+<p>
+<input type="checkbox" name="agrupar" '.$checkagrupar.'/>
+Agrupar por Orientandor
+<input type="checkbox" name="vinculo" '.$checkvinculo.'/>
+Apenas Alunos com vínculo empregatício
+<input type="checkbox" name="sem_bolsa" id="sem_bolsa"  '.$checksembolsa.'/>
+Apenas alunos sem Bolsa
+<br/>
+</p>
+<p>
+Tipo de pós-graduação: <select id="tipo_curso" name="tipo_curso">';
+if($this->tipo=="3")
+	$html.='<option value="3" name="tipo" id="tipo" selected="selected">Mestrado</option>
+	<option value="5" name="tipo" id="tipo">Doutorado</option>
+	<option value="todos" name="tipo" id="tipo">Todos</option>';
+else if($this->tipo=="5")
+	$html.='<option value="3" name="tipo" id="tipo">Mestrado</option>
+	<option value="5" name="tipo" id="tipo" selected="selected">Doutorado</option>
+	<option value="todos" name="tipo" id="tipo">Todos</option>';
+else	
+	$html.='<option value="3" name="tipo" id="tipo">Mestrado</option>
+	<option value="5" name="tipo" id="tipo">Doutorado</option>
+	<option value="todos" name="tipo" id="tipo" selected="selected">Todos</option>';
+	
+if($this->vinculo!="")
+{
+	$checkvinculo="checked";
+}
+
+if($this->sembolsa!="")
+{
+	$checksembolsa="checked";
+?>
+<script>
+
+$(document).ready(function(){
+
+	$('#agencia').attr("disabled","disabled");
+
+});
+</script>
+<?php 
+}
+if($this->agrupar!="")
+{
+	$checkagrupar="checked";
+}
+
+$html.='</select>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Filtrar por Agência : '.$cbBolsas.'
+</p>
+<input type="submit" value="Listar">
+<br/>
+</form>';
+
+$html .= $this->flex;
+
+
+
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Relatório de alunos bolsistas',
+	'height' => 500,
+	'content' => $html
+	));
+?>

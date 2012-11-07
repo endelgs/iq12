@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:ColumnChart xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:Script>
+		<![CDATA[
+			[Bindable] public var quantityField:String = '';
+			[Bindable] public var labelField:String = '';
+			[Bindable] public var displayName:String = '';
+		]]>
+	</mx:Script>
+	<mx:SeriesSlide id="fxIn" duration="500" direction="up"/>
+	<mx:SeriesSlide id="fxOut" duration="500" direction="down"/>
+	<mx:horizontalAxis>
+	<mx:CategoryAxis
+		displayName="{displayName}"
+		dataProvider="{dataProvider}"
+		categoryField="{labelField}"
+	/>
+    </mx:horizontalAxis>
+	<mx:series>
+		<mx:ColumnSeries yField="{quantityField}" labelField="{labelField}" showDataEffect="fxIn" hideDataEffect="fxOut" />
+	</mx:series>
+</mx:ColumnChart>

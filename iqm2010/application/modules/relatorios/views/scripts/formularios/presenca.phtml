@@ -1,0 +1,33 @@
+
+<?php
+echo $this->mascara;
+
+if($this->bolsa=='sim')
+	$checksim='checked="checked"';
+else
+	$checknao='checked="checked"';
+
+$html = '<br/>
+<form action="" method="get">
+<p>
+Data (mm/aaaa):
+<input type="text" name="data" class="data" value="'.$this->data.'"> 
+</p>
+<p>
+<input type="radio" name="bolsa" '.$checknao.' value="nao">
+Todos
+<input type="radio" name="bolsa" '.$checksim.' value="sim">
+Apenas bolsistas
+</p>
+<p>
+<input type="submit" value="Filtrar">
+</p>
+</form><br/>';
+$html .= $this->flex;
+
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Frequência mensal',
+	'height' => 500,
+	'content' => $html
+	));
+?>	

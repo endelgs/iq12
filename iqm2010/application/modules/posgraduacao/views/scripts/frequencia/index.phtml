@@ -1,0 +1,22 @@
+<?php 
+echo $this->partial('partials/pessoaheader.phtml', array('nome' => $this->nomePessoa));
+echo $this->partial('partials/posgraduacaoheader.phtml', array('tipo' => $this->tipoPosGraduacao));
+?>
+<script type="text/javascript">
+$(document).ready(function()
+        {
+            $('#pessoa-<?php echo $this->tipocurso;?>').addClass('selecionado');
+            $('#<?php echo $this->tipocurso;?>-frequencia').addClass('selecionado');
+            $('input').attr('onBlur', 'mudancaDeValor()');
+        });
+      
+</script>
+<?php 
+$html = $this->flex;
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Frequência no mês <sub>(Só haverá registro caso não haja frequência.)</sub>',
+	'height' => 500,
+	'content' => $html
+	));
+	
+?>

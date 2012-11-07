@@ -1,0 +1,24 @@
+<!-- FieldSet Component : S -->
+<table class="fieldset<?php echo $this->addClass ?>" cellpadding="0" cellspacing="0" style="width: <?php echo ((int)$this->width != '' ? $this->width . 'px' : '100%'); ?>; height:<?php echo ($this->height != '' ? $this->height.'px' : '100%');  ?>;" <?php echo $this->aditional; ?>> 
+	<tr class="fieldset-top">
+		<td class="fieldset-top-l<?php echo $this->addClass ?>"></td>
+		<td class="fieldset-top-c<?php echo $this->addClass ?>"></td>
+		<td class="fieldset-top-r<?php echo $this->addClass ?>"></td>
+	</tr>
+	<tr>
+		<td class="fieldset-center-l<?php echo $this->addClass ?>"></td>
+		<td class="fieldset-center-c<?php echo $this->addClass ?>" valign="top">
+			<?php echo $this->title ? ("<h1 class='fieldset-title'>{$this->title}</h1>") : "" ?>
+<?php
+	echo $this->content;
+?>
+		</td>
+		<td class="fieldset-center-r<?php echo $this->addClass ?>"></td>
+	</tr>
+	<tr class="fieldset-bottom<?php echo $this->addClass ?>">
+		<td class="fieldset-bottom-l<?php echo $this->addClass ?>"></td>
+		<td class="fieldset-bottom-c<?php echo $this->addClass ?>"></td>
+		<td class="fieldset-bottom-r<?php echo $this->addClass ?>"></td>
+	</tr>
+</table>
+<!-- FieldSet Component : E -->

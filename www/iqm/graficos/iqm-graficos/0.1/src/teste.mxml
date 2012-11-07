@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
+	<mx:BarChart x="384" y="99" id="barchart1">
+		<mx:series>
+			<mx:BarSeries displayName="Series 1" xField=""/>
+		</mx:series>
+	</mx:BarChart>
+	<mx:Legend dataProvider="{barchart1}"/>
+	
+</mx:Application>

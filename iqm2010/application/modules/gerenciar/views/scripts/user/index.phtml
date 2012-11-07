@@ -1,0 +1,88 @@
+<?php 
+$a0 = range(0, 1000, 1);
+echo $this->partial('partials/fieldset.phtml', array(
+	'height' => 400,
+'title' => 'Usuários',
+	'content' => $this->partial('partials/flexigrid.phtml', 
+		array(
+			'isCrud'      => true,
+			'doubleClick' => "carregaBox(this.className)",
+            'table'       => $this->data,
+		    'functionDelete' => 'deleteData',
+		    'exclude'     => array('id', 'password', 'deletado', 'acesso'),
+		    'headers'     => array('username' => 'Usuário', 'email'=>'E-mail' )
+
+		)
+	) . '
+<div class="crud-c">
+<p style="text-align:right"><a href="#" class="crud-toggle-button">Novo usuário</a></p>
+<form class="zend_form crud-toggle" method="post">
+	<table width="100%">
+	<tr><td width="20%"><label>Usuário:</td><td width="80%"><input style="width:100%" type="text" name="user" id="user"></label></td></tr>
+	<tr><td width="20%"><label>Senha:</td><td width="80%"><input style="width:100%" type="password" name="senha" id="senha"></label></td></tr>
+	<tr><td width="20%"><label>Repita a senha:</td><td width="80%"><input style="width:100%" type="password" name="senha2" id="senha2"></label></td></tr>
+	<tr><td width="20%"><label>E-mail:</td><td width="80%"><input style="width:100%" type="text" name="email" id="email"></label></td></tr>
+	<tr><td width="20%"><label>Pode editar?</td><td width="80%">
+	<input type="radio" name="editar" id="editar" checked="checked" value="sim">Sim
+	<input type="radio" name="editar" id="editar" value="nao">Não
+	</label></td></tr>
+	<tr><td></td><td><input type="submit" class="submit"  value="Gravar" /></td></tr>
+	</table>
+</form>
+</div>	'
+));
+?>
+<script type="text/javascript">
+function carregaBox(data)
+{
+	var re = new RegExp('\{[^}]*\}', "g");
+    var m0 = re.exec(data);
+    var pResult = m0[0].substring(1, m0[0].length - 1);
+    var arrResult = new Array();
+    arrResult = pResult.split(',');
+    params    = new Array();
+    for(i = 0; i < arrResult.length; i++)
+    {
+        var tmp = arrResult[i].split(":");
+        params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+    }   
+    //alert(data);
+    var check1='';
+    var check2='';
+    if(params['acesso']=="admin")
+    {
+        check1='checked="checked"';
+    }else{
+    	check2='checked="checked"';
+    }
+
+	jQuery.facebox('<div id="faceboxForm">');
+
+        var tabela = '\
+			<form action="" class="zend_form" method="post" id="formCreate"> \
+	        <input type="hidden" name="id" id="id" value="' + params['id'] + '"> \
+	        <table style="width:100%"> \
+	        <tr><td>Nova Senha:</td><td><input type="password" style="width:100%" id="senha" name="senha" value=""></td></tr> \
+	        <tr><td>Repita a  nova senha:</td><td><input type="password" style="width:100%" id="senha2" name="senha2" value=""></td></tr> \
+	        <tr><td>E-mail:</td><td><input type="text" style="width:100%" id="email" name="email" value="' + params['email'] + '"></td></tr> \
+	    	<tr><td width="20%"><label>Pode editar?</td><td width="80%">\
+	    	    	<input type="radio" name="editar" id="editar" ' +  check1 + ' value="sim">Sim\
+	    	    	<input type="radio" name="editar" id="editar" ' +  check2 + ' value="nao">Não\
+	    	    	</label></td></tr>\
+	    	    	<input type="hidden" value="' + params['username'] + '" name="username" >\
+	        <tr><td></td><td><input type="submit" class="submit"  value="Ok"></td></tr> \
+	        <tr><td></td><td>Obs.: Caso os campos senhas não sejam editados, fiquem em branco, a senha não será alterada.</td></tr>\
+	        </table> \
+	    </form>';
+
+	$('#faceboxForm').append(tabela);
+
+        tabela=null;
+}
+function deleteData(data)
+{
+    p = getParams(data);
+    location.href='<?php echo $this->url(array('module'=> 'gerenciar', 'controller'=> 'user', 'action' => 'delete')); ?>/id/' + p['id']+'/username/'+p['username']; 
+	//alert('Excluindo dado ' + );
+}
+</script>

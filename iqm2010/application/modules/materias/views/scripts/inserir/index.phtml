@@ -1,0 +1,211 @@
+<h1>Inserir turmas</h1>
+<p class="advice"> Inserção de turmas.</p>
+
+
+<?php 
+$dropMateria=$this->dropMateria;
+$dropPeriodo=$this->dropPeriodo;
+$ultimoDocente=$this->ultimoDocente;
+
+$periodos = $this->partial('partials/combobox.phtml', array(
+	'name'=>'auxPeriodo',
+ 	'data'=>$this->periodos,
+	'selected'=>$dropPeriodo
+
+));
+
+$periodosjs = $this->partial('partials/comboboxjs.phtml', array(
+	'name'=>'periodo',
+ 	'data'=>$this->periodos
+
+));
+
+$materias = $this->partial('partials/combobox.phtml', array(
+	'name'=>'auxMateria',
+ 	'data'=>$this->materias,
+	'selected'=>$dropMateria
+
+));
+$materiasjs = $this->partial('partials/comboboxjs.phtml', array(
+	'name'=>'materia',
+ 	'data'=>$this->materias
+
+));
+
+
+$professores = $this->partial('partials/combobox.phtml', array(
+	'name'=>'professor[]',
+ 	'data'=>$this->professores
+
+));
+
+$professoresjs = $this->partial('partials/comboboxjs.phtml', array(
+	'name'=>'professor[]',
+ 	'data'=>$this->professores
+
+));
+
+$docentes = $this->partial('partials/combobox.phtml', array(
+	'name'=>'docente',
+ 	'data'=>$this->docentes,
+	'selected'=>$ultimoDocente
+));
+$docentesjs = $this->partial('partials/comboboxjs.phtml', array(
+	'name'=>'docente',
+ 	'data'=>$this->docentes
+
+));
+
+$listaHidden= $this->partial('partials/listahidden.phtml', array(
+	'name'=>'docente',
+	'data'=>$this->docenteTurmas
+));
+
+//
+$dropAno= $this->dropAno;
+
+if($this->data=="")
+{
+$style="display: none;";
+}
+
+$a0 = range(0, 1000, 1);
+echo $this->partial('partials/fieldset.phtml', array(
+	'height' => 400,
+	'title' => 'Turmas',
+	'content' =>'
+	<br/><br/>
+<form class="zend_form crud" method="post" action="">
+	<table width="100%" border="0">
+	<tr><td width="20%"><label>Disciplina:</td><td>'.$materias.'</label></td>
+	<td width="20%"><label>Período:</td><td >'.$periodos.'</label></td>
+	<td width="20%"><label>Ano:</td><td width="10%"><input style="width:100%" type="text" name="auxAno" id="auxAno" value="'.$dropAno.'"></label></td></tr>
+	<tr><td width="20%"><label>Turma:</td><td><input style="width:100%" type="text" name="turma" id="turma"></label></td>
+	<td width="20%"><label>Coordenador:</td><td colspan="3">'.$docentes.'</label></td></tr>
+	<tr><td width="20%"><label>Horário:</td><td><input style="width:100%" type="text" name="horario" id="horario"></label>
+	<td width="20%"><label>Número mínimo de alunos:</td><td ><input style="width:100PX" type="text" name="min_alunos" id="min_alunos"></label></td>
+	<td><label>Número máximo de alunos:</td><td ><input style="width:100PX" type="text" name="max_alunos" id="max_alunos"></label></td></tr>
+	<tr><td width="20%"><label>Dias:</td><td><input style="width:100%" type="text" name="dias" id="dias"></label>
+	<td width="20%"><label>Salas:</td><td ><input style="width:100PX" type="text" name="sala" id="sala"></label></td>
+	</tr>
+	<tr><td><label>Professores:</td><td colspan="6"></label><a href="#" onclick="novoDocente()">Adicionar novo docente</a></td></tr>
+	<tr><td></td><td colspan="5"><p id="pnovo"></p></td></tr>
+	<tr><td></td><td colspan="3"><input type="submit" class="submit"  value="Gravar" /></td></tr>
+	
+	</table>		
+</form>'
+));
+?>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('zform').show();
+});
+function carregaBox(data)
+{
+	var re = new RegExp('\{[^}]*\}', "g");
+    var m0 = re.exec(data);
+    var pResult = m0[0].substring(1, m0[0].length - 1);
+    var arrResult = new Array();
+    arrResult = pResult.split(',');
+    params    = new Array();
+    for(i = 0; i < arrResult.length; i++)
+    {
+        var tmp = arrResult[i].split(":");
+        params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+    }   
+    //alert(data);
+	jQuery.facebox('<div id="faceboxForm">');
+	$('#faceboxForm').append('\
+			<form action="" class="zend_form" method="post" id="formCreate"> \
+	        <input type="hidden" name="id" id="id" value="' + params['id_turma'] + '"> \
+	        <table style="width:100%"> \
+	        <tr><td width="20%"><label>Turma:</td><td><input style="width:100%" type="text" name="turma" id="turma" value="' + params['turma'] + '"></label></td>\
+	    	<td width="20%"><label>Coordenador:</td><td><?php echo $docentesjs;?></label></td></tr>\
+	    	<tr><td width="20%"><label>Disciplina:</td><td><?php echo $materiasjs;?></label></td>\
+	    	<td width="20%"><label>Período:</td><td colspan="3"><?php echo $periodosjs;?></label></td></tr>\
+	    	<tr><td><label>Professores: </td><td colspan="3"></label>&nbsp;&nbsp;<a href="#" onclick="novoDocenteJ()" style="font-size: 10px;">Adicionar novo docente</a></td></tr>\
+	    	<tr><td></td><td colspan="3"> <div id="divDocentes"></div><input type="hidden" id="docenteExcluir" name="docenteExcluir"> </td></tr> \
+	    	<tr><td></td><td><p id="pnovoJ"></p></td></tr>\
+	    	<tr><td width="20%"><label>Ano:</td><td ><input style="width:100%" type="text" name="ano" id="ano"  value="' + params['ano'] + '"></label></td>\
+	    	<td width="20%"><label>Horário:</td><td><input style="width:100%" type="text" name="horario" id="horario"  value="' + params['horario'] + '"></label></td></tr>\
+	    	<tr><td width="20%"><label>Número mínimo de alunos:</td><td ><input style="width:100%" type="text" name="min_alunos" id="min_alunos" value="' + params['min_alunos'] + '"></label></td>\
+	    	<td width="20%"><label>Número máximo de alunos:</td><td ><input style="width:100%" type="text" name="max_alunos" id="max_alunos" value="' + params['max_alunos'] + '"></label></td></tr>\
+	        <tr><td></td><td><input type="submit"  class="submit"  value="Ok"></td></tr> \
+	        </table> \
+	    </form>');
+	        geraCombobox(params['id_turma']);
+
+	        var materia=params['materia'];
+		    var periodo=params['periodo'];
+		    var docente=params['coordenador'];
+		    $("#docente option[value='"+docente+"']").attr("selected","selected"); 
+	        $("#materia option[value='"+materia+"']").attr("selected","selected");
+	        $("#periodo option[value='"+periodo+"']").attr("selected","selected"); 
+	        
+}
+
+function novoDocente()
+{
+	idNovaTabela = Math.ceil(Math.random()*10000);
+	componente='<div id="divProfessor' + idNovaTabela + '"></div>';
+    $('#pnovo').append(componente);
+    $('#divProfessor'+ idNovaTabela).html($('#divProfessorInv').html());
+}
+
+function deleteData(data)
+{
+    p = getParams(data);
+    alert(p['id_turma']);
+    location.href='<?php echo $this->url(array('module'=> 'gerenciar', 'controller'=> 'Turmas', 'action' => 'delete')); ?>/id/' + p['id_turma']; 
+	//alert('Excluindo dado ' + );
+}
+
+
+function geraCombobox(id_disciplina)
+{
+	var i=0;
+	var div = document.getElementById('divlistahidden');
+	var html='';
+	
+	while(i< div.childNodes.length)
+	{
+		i++;
+		var nome="docente";
+		var nomevariavel='#'+nome+i;
+		var variavel= $(nomevariavel).val();
+
+		if( variavel!=undefined)
+		{
+			var quebra=variavel.split("#");
+
+			if(quebra[1]==id_disciplina)
+			{
+				html=html+'<div id="divProf'+i+'"><input id="hdnomeDocente'+i+'" name="hdnomeDocente[]" type="text" value="'+quebra[3]+'">';
+				html=html+'<input id="hddocente'+i+'" name="hddocente[]" type="hidden" value="'+quebra[2]+'">';
+				html=html+'<a href="#" id="btnprofessor" onclick="deleteprofessor('+i+')">Excluir</a><br/></div>';
+			} 
+		}
+	}
+	 $('#divDocentes').html(html);
+}
+
+function deleteprofessor(i)
+{
+	var varid= $('#hddocente'+i).val();
+	varDelete=varDelete+'#'+varid;
+	$('#docenteExcluir').val(varDelete);
+	$('#divProf'+i).css('visibility','hidden');
+}
+
+function novoDocenteJ()
+{
+	idNovaTabela = Math.ceil(Math.random()*10000);
+	componente='<div id="divProfessor' + idNovaTabela + '"></div>';
+    $('#pnovoJ').append(componente);
+    $('#divProfessor'+ idNovaTabela).html($('#divProfessorInv').html());
+}
+</script>
+<?php print_r($listaHidden);?>
+<div style="visibility: hidden; display: none;">
+<div id="divProfessorInv"><?php print_r($professores); ?></div>
+</div>

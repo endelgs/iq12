@@ -1,0 +1,23 @@
+<?php
+// usar method get para manter parametros fixos
+$html = '
+<form action="" method="get">
+<p>
+<label for="nome"> Professor: </label>
+'.$this->professor.'
+</p>
+</form>
+<form method="get" action="" >
+<br/>
+De <input type="text" id="anoinicial" name="anoinicial"/> à <input type="text" id="anofinal" name="anofinal"/> 
+<input type="submit"><br/><br/>
+</form>
+';
+$html .= $this->flex;
+
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Comprovantes de participação em banca',
+	'height' => 500,
+	'content' => $html
+	));
+?>

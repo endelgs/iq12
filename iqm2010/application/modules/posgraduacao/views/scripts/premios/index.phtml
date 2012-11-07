@@ -1,0 +1,100 @@
+<?php 
+echo $this->partial('partials/pessoaheader.phtml', array('nome' => $this->nomePessoa));
+echo $this->partial('partials/posgraduacaoheader.phtml', array('tipo' => $this->tipoPosGraduacao));
+$lingua = $this->partial('partials/combobox.phtml', array(
+	'name'=>'premios',
+ 	'data'=>$this->premios,
+	'id'=>'premios',
+));
+?>
+<script type="text/javascript">
+$(document).ready(function()
+        {
+            $('#pessoa-<?php echo $this->tipocurso;?>').addClass('selecionado');
+            $('#<?php echo $this->tipocurso;?>-premios').addClass('selecionado');
+            $('input').attr('onBlur', 'mudancaDeValor()');
+        });
+
+function ConfirmExit()
+{
+    return window.confirm('');
+}        
+</script>
+
+<div style="height: 0; visibility: hidden; display: none;">
+<div id="divLinguaInv"><?php echo $lingua;?></div>
+<div id="divAprovadoInv"><?php echo $aprovado;?></div>
+</div>
+<?php  
+echo $this->partial('partials/fieldset.phtml', array(
+	'height' => 400,
+'title' => 'Prêmios',
+	'content' => $this->partial('partials/flexigrid.phtml', 
+		array(
+			'isCrud'      => true,
+			'doubleClick' => "carregaBox(this.className)",
+            'table'       => $this->grid,
+		    'functionDelete' => 'deleteData',
+		    'exclude'     => array('id_pos_graduacao','id_premio','deletado','tipo'),
+		    'headers'     => array('premios' => 'Prêmios',  'data' => 'Data')
+		)
+	) . '
+<div class="crud-c">
+<p style="text-align:right"><a href="#" class="crud-toggle-button">Novo Prêmio</a></p>
+<form class="zend_form crud-toggle" method="post">
+	<table width="100%">
+	<tr><td width="20%"><label>Prêmio:</td>
+	<td width="80%" colspan="2"><input type="text" id="premio" name="premio"></label></td></tr>
+	 <tr>
+     	<td><label>Descrição:</label></td>
+     	<td><textarea name="descricao" style="width:100%;"></textarea></td>
+     </tr>
+	 <tr>
+     	<td><label>Data:</label></td>
+     	<td><input type="text" id="data" name="data" value="" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td>
+     </tr>
+	<tr><td></td><td><input type="submit" value="Gravar" class="submit"  onClick="window.onbeforeunload=null" /></td></tr>
+	</table>
+</form>
+</div>	'
+));
+
+?>
+<script type="text/javascript">
+function carregaBox(data)
+{
+	var re = new RegExp('\{[^}]*\}', "g");
+    var m0 = re.exec(data);
+    var pResult = m0[0].substring(1, m0[0].length - 1);
+    var arrResult = new Array();
+    arrResult = pResult.split(',');
+    params    = new Array();
+    
+    for(i = 0; i < arrResult.length; i++)
+    {
+        var tmp = arrResult[i].split(":");
+        params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+    }   
+	jQuery.facebox('<div id="faceboxForm">');
+
+        var tabela= '\
+			<form action="" class="zend_form" method="post" id="formCreate"> \
+	        <input type="hidden" name="id_premio" id="id_premio" value="' + params['id_premio'] + '"> \
+	        <table> \
+	        <tr><td><label>Prêmio:</label></td><td><input type="text" id="premio" name="premio" value="' + params['premio'] + '" ></td></tr>\
+	        <tr><td width="20%"><label>Descrição:</label></td><td><textarea style="width:100%;" id="descricao" name="descricao">' + params['descricao'] + '</textarea></td></tr>\
+	        <tr><td><label>Data:</label></td><td><input type="text" id="data" name="data" value="' + params['data'] + '" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr> \
+			<tr><td></td><td><input type="submit" class="submit"  value="Ok" onClick="window.onbeforeunload=null"></td></tr> \
+	        </table> \
+	    </form>';
+
+	$('#faceboxForm').append(tabela);
+
+        tabela=null;
+}
+function deleteData(data)
+{
+    p = getParams(data);
+    location.href='<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'premios', 'action' => 'delete')); ?>/id/' + p['id_premio']; 
+}
+</script>

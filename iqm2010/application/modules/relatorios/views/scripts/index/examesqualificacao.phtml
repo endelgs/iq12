@@ -1,0 +1,46 @@
+<?php 
+$cbTipoFiltro = $this->partial('partials/combobox.phtml', array(
+	'name'=>'tipo_curso',
+ 	'data'=>$this->fitroTipo,
+	'selected'=>$this->tipocurso
+));
+
+echo $this->mask;
+
+
+$html='<form action="" method="get">
+<br/><br/>
+<table border="0">
+<tr>
+<td>
+Tipo de curso: '.$cbTipoFiltro;
+	
+$html.='
+<td>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Período
+</td>
+<td>
+<label> de  </label>
+<input type="text" class="data" name="datainicio" value="'.$this->datainicio.'"> 
+<td>
+<label> a </label>
+<input type="text" class="data" name="datafim" value="'.$this->datafim.'">
+</td>
+</tr>
+<tr><td><br/><input type="submit" value="Listar"></td></tr>
+</table>
+<br/><br/>
+</form>
+';
+
+
+$html .= $this->flex;
+
+
+
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Relatório de exames de qualificação',
+	'height' => 500,
+	'content' => $html
+	));
+?>

@@ -1,0 +1,83 @@
+<script type="text/javascript">
+	$('.superMenu').css('display', 'none');
+</script>
+<table align="center">
+<tr><td align="center">
+<p style="text-align: center"><br /><br /><br /><br /><br /><img src="<?php echo $this->baseUrl().'/assets/img/logo-iq.jpg'?>" /></p>
+<h3 style="color: #FFF">Sistema de Pós-Graduação</h3>
+<?php 
+
+// Decorators: http://zendgeek.blogspot.com/2009/07/zend-form-decorators.html
+
+$zf = new Zend_Form();
+$login = new Zend_Form_Element_Text('login');
+$login->setLabel('Login:')
+	  ->setRequired(true)
+      ->addFilter('StripTags')
+      ->addFilter('StringTrim')
+      ->addValidator('NotEmpty')
+      ->setDecorators(array(
+                   'ViewHelper',
+                   'Description',
+                   'Errors',
+                   array(array('data'=>'HtmlTag'), array('tag' => 'td')),
+                   array('Label', array('tag' => 'td', 'style' =>'font-weight: normal')),
+                   array(array('row'=>'HtmlTag'),array('tag'=>'tr'))
+           ));
+      
+$pass = new Zend_Form_Element_Password('pass');
+$pass->setLabel('Senha atual:')
+	  ->setRequired(true)
+      ->addFilter('StripTags')
+      ->addFilter('StringTrim')
+      ->addValidator('NotEmpty')
+      ->setDecorators(array(
+                   'ViewHelper',
+                   'Description',
+                   'Errors',
+                   array(array('data'=>'HtmlTag'), array('tag' => 'td')),
+                   array('Label', array('tag' => 'td', 'style' =>'font-weight: normal')),
+                   array(array('row'=>'HtmlTag'),array('tag'=>'tr'))
+           ));
+      
+$pass2 = new Zend_Form_Element_Password('pass2');
+      $pass2->setLabel('Nova senha:')
+	  ->setRequired(true)
+      ->addFilter('StripTags')
+      ->addFilter('StringTrim')
+      ->addValidator('NotEmpty')
+      ->setDecorators(array(
+                   'ViewHelper',
+                   'Description',
+                   'Errors',
+                   array(array('data'=>'HtmlTag'), array('tag' => 'td')),
+                   array('Label', array('tag' => 'td', 'style' =>'font-weight: normal')),
+                   array(array('row'=>'HtmlTag'),array('tag'=>'tr'))
+           ));
+      
+$btn = new Zend_Form_Element_Submit('send');
+$btn->setLabel('Ok')
+     ->setDecorators(array(
+                   'ViewHelper',
+                   array(array('data'=>'HtmlTag'), array('tag' => 'td')),
+                   array('Label', array('tag' => 'td', 'style' =>'visibility: hidden')),
+                   array(array('row'=>'HtmlTag'),array('tag'=>'tr'))
+           ));
+
+      
+/*echo echo $this->url(array('controller'=>'index', 
+            'action'=>'edit', 'id'=>$album->id));*/
+
+
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Trocar Senha',
+	'width' => 400,
+	'height' => 210,
+	'content' => '<table class="zend_form" width="100%">'.$zf->addElements(array(
+		$login,
+		$pass,
+		$pass2,
+		$btn
+	)). '</table><div class="fieldset-block" align="right"><a href="' . $this->url(array('action'=>'index')) . '/" class="linkButton">Realizar login</a></div>' 
+));
+?></td></tr></table>

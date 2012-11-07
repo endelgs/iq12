@@ -1,0 +1,61 @@
+<?php
+echo $this->partial('partials/fieldset.phtml', array(
+	'height' => 400,
+	'title' => 'Motivos de cancelamento',
+	'content' => $this->partial('partials/flexigrid.phtml', 
+		array(
+			'isCrud'      => true,
+			'doubleClick' => "carregaBox(this.className)",
+            'table'       => $this->data,
+		    'functionDelete' => 'deleteData',
+		    'exclude'     => array('id_motivo_cancelamento', 'deletado'),
+            'headers'     => array('motivo_cancelamento' => 'Descrição')
+		)
+	). '
+<div class="crud-c">
+<p style="text-align:right"><a href="#" class="crud-toggle-button">Novo motivo</a></p>
+<form action="'.$this->url(array('module' => 'gerenciar','controller'=>'motivos-de-cancelamento','action' => 'post')).'" class="zend_form crud-toggle" method="post">
+	<table width="100%">
+	<tr><td width="20%"><label>Motivo:</td><td width="80%"><input style="width:100%" type="text" name="dado" id="dado"></label></td></tr>
+	<tr><td></td><td><input type="submit" class="submit"  value="Gravar" /></td></tr>
+	</table>
+</form>
+</div>'
+)
+);
+?>
+<script type="text/javascript">
+function carregaBox(data)
+{
+	var re = new RegExp('\{[^}]*\}', "g");
+    var m0 = re.exec(data);
+    var pResult = m0[0].substring(1, m0[0].length - 1);
+    var arrResult = new Array();
+    arrResult = pResult.split(',');
+    params    = new Array();
+    for(i = 0; i < arrResult.length; i++)
+    {
+        var tmp = arrResult[i].split(":");
+        params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+    }   
+    jQuery.facebox('<div id="faceboxForm">');
+
+    var tabela='\
+			<form action="<?php echo $this->url(array('module' => 'gerenciar','controller'=>'motivos-de-cancelamento','action' => 'post')); ?>" class="zend_form" method="post" id="formCreate"> \
+	        <input type="hidden" name="id" id="id" value="' + params['id_motivo_cancelamento'] + '"> \
+	        <table style="width:100%"> \
+	        <tr><td>Motivo de cancelamento:</td><td><input type="text" style="width:100%" id="dado" name="dado" value="' + params['motivo_cancelamento'] + '"></td></tr> \
+	        <tr><td></td><td><input type="submit" class="submit"  value="Ok"></td></tr> \
+	        </table> \
+	    </form>';
+	$('#faceboxForm').append(tabela);
+
+        tabela=null;
+}
+function deleteData(data)
+{
+    p = getParams(data);
+    location.href='<?php echo $this->url(array('module'=> 'gerenciar', 'controller'=> 'motivos-de-cancelamento', 'action' => 'delete')); ?>/id/' + p['id_motivo_cancelamento']; 
+	//alert('Excluindo dado ' + );
+}
+</script>

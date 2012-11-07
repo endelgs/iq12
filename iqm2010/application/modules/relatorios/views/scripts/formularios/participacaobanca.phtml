@@ -1,0 +1,82 @@
+<script type="text/javascript">
+<!--
+$(document).ready(function(){
+
+	$('#tipo').change(function(){
+
+		if($(this).val()!="2")
+			$('#orientador').hide();
+		else
+			$('#orientador').show();
+	});
+
+	<?php if($this->tipo=="2") { ?>
+	
+		$('#orientador').show();
+	<?php } ?>
+});
+
+
+//-->
+</script>
+<?php 
+$cbOrientadores = $this->partial('partials/combobox.phtml', array(
+	'name'=>'orientador',
+ 	'data'=>$this->orientadoresbancas,
+	'selected'=>$this->orientador
+));
+
+
+
+$html='<br/><form action="" method="get">
+<table border="0">
+<tr>
+<td>
+	Listar: <select id="tipo" name="tipo">';
+	
+	if($this->tipo=="2")
+		$html.='<option value="1" name="tipo" id="tipo">Por Docente</option>
+		<option value="2" name="tipo" id="tipo" selected="selected">Por Banca</option>';
+	else
+		$html.='<option value="1" name="tipo" id="tipo" selected="selected">Por Docente</option>
+		<option value="2" name="tipo" id="tipo">Por Banca</option>';
+	$html.='</select>
+
+</td>';
+
+extract($_GET);
+
+//	if($tipo==1 or $tipo=="")
+		$html.='<td id="orientador" style="display:none;">Orientador: '.$cbOrientadores.'</td>';
+//		else
+//		$html.='<td width="620px;"></td>';
+	
+$check=$this->mostrar;
+$check=str_replace('on', 'checked', $check);
+$html.='
+</tr>
+<tr>
+	<td colspan="2">
+	<p>Mostrar:
+			<input type="checkbox" name="mostrar[mestrado]" '.$check['mestrado'].'> Dissertação de mestrado
+			<input type="checkbox" name="mostrar[doutorado]" '.$check['doutorado'].'> Tese de Doutorado 	     
+			<input type="checkbox" name="mostrar[qualificacao]" '.$check['qualificacao'].'> Exame de Qualificação    
+	</p>
+	</td>
+</tr>
+<tr><td><p><input type="submit" value="Listar"></p></td></tr>
+</table>
+</form><br/>
+';
+
+
+$html .= $this->flex;
+
+
+
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Comprovantes de participação em banca',
+	'height' => 500,
+	'content' => $html
+	));
+?>

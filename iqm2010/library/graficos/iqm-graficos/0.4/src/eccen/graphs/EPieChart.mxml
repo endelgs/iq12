@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:PieChart xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:Script>
+		<![CDATA[
+			import mx.charts.series.PieSeries;
+			import mx.collections.ArrayCollection;
+
+			public function addSeries(mainAxisField:String = '', secondaryAxisField:String = '', displayName = ''):void
+			{
+				var series:PieSeries = new PieSeries();
+				series.field = secondaryAxisField;
+				series.nameField = mainAxisField;
+				series.displayName = displayName;
+				series.setStyle("showDataEffect", fxIn);
+				series.setStyle("hideDataEffect", fxOut);
+				this.series.push(series);
+			}
+		]]>
+	</mx:Script>
+	<mx:SeriesSlide id="fxIn" duration="500" direction="up"/>
+	<mx:SeriesSlide id="fxOut" duration="500" direction="down"/>
+	<mx:SeriesInterpolate id="fxInterpolate" duration="500" />
+</mx:PieChart>

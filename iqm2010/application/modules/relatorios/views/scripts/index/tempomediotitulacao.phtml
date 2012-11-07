@@ -1,0 +1,34 @@
+<?php
+$mask = new mascara();
+
+$html='<form action="" method="get">
+<br/><br/>
+Data de início: <input type="text" id="dataInicio" name="dataInicio" value="'.$mask->datetimeSQLToMascaraData($this->dataInicio).'">
+Data de defesa: <input type="text" id="dataFim" name="dataFim" value="'.$mask->datetimeSQLToMascaraData($this->dataFim).'">
+Tipo de curso: <select id="tipo_curso" name="tipo_curso">';
+
+if($this->tipo=="3")
+	$html.='<option value="3" name="tipo" id="tipo" selected="selected">Mestrado</option>
+	<option value="5" name="tipo" id="tipo">Doutorado</option>';
+else
+	$html.='<option value="3" name="tipo" id="tipo">Mestrado</option>
+	<option value="5" name="tipo" id="tipo" selected="selected">Doutorado</option>';
+	
+$html.='</select>
+<br/><br/>
+<input type="submit" value="Listar">
+<br/><br/>
+</form>';
+
+$html .= $this->flex;
+$html .='<b>Média total do período:</b><br/>  '.$this->total;
+$html .='<br/> <br/> <b>Média por ano:</b><br/>  '.$this->mediaAno;
+$html .='<br/><br/>';
+
+
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Relatório de tempo médio de titulação',
+	'height' => 500,
+	'content' => $html
+	));
+?>

@@ -1,0 +1,138 @@
+<?php 
+echo $this->partial('partials/pessoaheader.phtml', array('nome' => $this->nomePessoa));
+echo $this->partial('partials/posgraduacaoheader.phtml', array('tipo' => $this->tipoPosGraduacao));
+
+$professor = $this->partial('partials/combobox.phtml', array(
+	'name'=>'professor',
+ 	'data'=>$this->professor,
+	'id'=>'professor',
+));
+
+$atividade = $this->partial('partials/combobox.phtml', array(
+	'name'=>'atividade',
+ 	'data'=>$this->atividade,
+	'id'=>'atividade',
+));
+
+$disciplinas = $this->partial('partials/combobox.phtml', array(
+	'name'=>'disciplinas',
+ 	'data'=>$this->disciplinas,
+	'id'=>'disciplinas',
+));
+?>
+<script type="text/javascript">
+$(document).ready(function()
+        {
+            $('#pessoa-<?php echo $this->tipocurso;?>').addClass('selecionado');
+            $('#<?php echo $this->tipocurso;?>-atividades').addClass('selecionado');
+            $('input').attr('onBlur', 'mudancaDeValor()');
+});
+
+function mudancaDeValor()
+{
+   // window.onbeforeunload = function(){ return 'Você perderá todas as alterações';}
+
+    //alert('Modificado');
+    //$('body').attr('onUnload', 'if !window.confirm("Dados podem ter sido alterados. Deseja sair sem gravar?")){return false}');
+}
+function ConfirmExit()
+{
+    //alert('')
+    //Pode se utilizar um window.confirm aqui também...
+    return window.confirm('');
+}        
+</script>
+
+<div style="height: 0; visibility: hidden; display: none;">
+<div id="divAtividadeInv"><?php echo $atividade;?></div>
+<div id="divProfessorInv"><?php echo $professor;?></div>
+<div id="divDisciplinaInv"><?php echo $disciplinas;?></div>
+</div>
+
+</div>
+<?php  
+//$a0 = range(0, 1000, 1);
+echo $this->partial('partials/fieldset.phtml', array(
+	'height' => 400,
+'title' => 'Atividades',
+	'content' => $this->partial('partials/flexigrid.phtml', 
+		array(
+			'isCrud'      => true,
+			'doubleClick' => "carregaBox(this.className)",
+            'table'       => $this->data,
+		    'functionDelete' => 'deleteData',
+		    'exclude'     => array('id_professor', 'id_pos_graduacao','id_disciplina','deletado', 'id', 'cancelado', 'id_tipo_atividade'),
+		    'headers'     => array('atividade' => 'Atividade', 'inicio' => 'Data de Início', 'termino' => 'Data de Término', 'data_cancelamento' => 'Data de Cancelamento', 'observacoes' => 'Observações', 'professor' => 'Professor','codigo'=>'Disciplina', 'cancelada' => 'Cancelada?')
+
+		)
+	) . '
+<div class="crud-c">
+<p style="text-align:right"><a href="#" class="crud-toggle-button">Nova Atividade</a></p>
+<form class="zend_form crud-toggle" method="post">
+	<table width="100%">
+	<tr><td width="20%"><label>Atividade:</td><td width="80%" colspan="2">'.$atividade.'</label></td></tr>
+	<tr><td width="20%"><label>Data Inicio:</td><td width="80%"><input type="text" name="datainicio" id="datainicio" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></label></td></tr>
+	<tr><td width="20%"><label>Data Fim:</td><td width="80%"><input type="text" name="datafim" id="datafim" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></label></td></tr>
+	<tr><td width="20%"><label>Professor:</label></td><td width="80%" colspan="2">'.$professor.'</td></tr>
+	<tr><td width="20%"><label>Disciplina:</label></td><td width="80%" colspan="2">'.$disciplinas.'</td></tr>
+	<tr><td width="20%"><label>Observações:</td><td width="80%" colspan="2"><textarea name="observacoes" id="observacoes" style="width: 100%"></textarea></label></td></tr>
+	<tr><td width="20%"><label>Atividade cancelada:</td><td width="80%" colspan="2"><input type="checkbox" name="cancelada" id="cancelada" value="1"></label></td></tr>
+	<tr><td width="20%"><label>Data de Cancelamento:</td><td width="80%"><input type="text" name="data_cancelamento" id="data_cancelamento" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></label></td></tr>
+	<tr><td></td><td><input type="submit" value="Gravar" class="submit"  onClick="window.onbeforeunload=null" /></td></tr>
+	</table>
+</form>
+</div>	'
+));
+
+?>
+<script type="text/javascript">
+function carregaBox(data)
+{	
+	var re = new RegExp('\{[^}]*\}', "g");
+    var m0 = re.exec(data);
+    var pResult = m0[0].substring(1, m0[0].length - 1);
+    var arrResult = new Array();
+    arrResult = pResult.split(',');
+    params    = new Array();
+    for(i = 0; i < arrResult.length; i++)
+    {
+        var tmp = arrResult[i].split(":");
+        params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+    }   
+    //alert(data);
+	jQuery.facebox('<div id="faceboxForm">');
+
+        var tabela='\
+			<form action="" class="zend_form" method="post" id="formCreate"> \
+	        <input type="hidden" name="id" id="id" value="' + params['id'] + '"> \
+	        <table> \
+	        <tr><td>Atividade:</td><td><div id="divAtividade" name="divAtividade"></div></td></tr> \
+	        <tr><td>Data de Início:</td><td><input type="text" id="datainicio" name="datainicio" value="' + params['inicio'] + '" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr> \
+	        <tr><td>Data de Término:</td><td><input type="text" id="datafim" name="datafim" value="' + params['termino'] + '" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr> \
+	        <tr><td>Observações:</td><td><textarea id="observacoesU" name="observacoesU" value="' + params['observacoes'] + '" style="width: 100%"></textarea></td></tr> \
+	        <tr><td>Professor:</td><td><div id="divProfessor" name="divProfessor"></div></td></tr> \
+	        <tr><td>Disciplina:</td><td><div id="divDisciplina" name="divDisciplina"></div></td></tr> \
+	        <tr><td>Atividade cancelada:</td><td><input type="checkbox" id="cancelada" name="cancelada" value="1" "'+(params['cancelado']==1?'checked=\"checked\"':'')+'" ></td></tr> \
+	        <tr><td>Data de Cancelamento:</td><td><input type="text" id="data_cancelamento" name="data_cancelamento" value="' + params['data_cancelamento'] + '" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr> \
+	        <tr><td></td><td><input type="submit" class="submit"  value="Ok" onClick="window.onbeforeunload=null"></td></tr> \
+	        </table> \
+	    </form>';
+
+	$('#faceboxForm').append(tabela);
+	
+         $('#professor').clone().attr('id', 'professorU').attr('name', 'professorU').appendTo('#divProfessor');
+         $('#disciplinas').clone().attr('id', 'disciplinasU').attr('name', 'disciplinasU').appendTo('#divDisciplina');
+         $('#atividade').clone().attr('id', 'atividadeU').attr('name', 'atividadeU').appendTo('#divAtividade');
+         $('#observacoesU').text(params['observacoes']);
+         $('#professorU').val(params['id_professor']);
+         $('#atividadeU').val(params['id_tipo_atividade']);
+         $('#disciplinasU').val(params['id_disciplina']);
+
+	     
+	     }
+function deleteData(data)
+{
+    p = getParams(data);
+    location.href='<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'Atividades', 'action' => 'delete')); ?>/id/' + p['id']; 
+}
+</script>

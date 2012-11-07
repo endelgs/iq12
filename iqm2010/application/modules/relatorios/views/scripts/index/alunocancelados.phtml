@@ -1,0 +1,35 @@
+<?php
+echo ($this->mascara);
+// usar method get para manter parametros fixos
+if($this->tipo=='5')
+	$check5='checked="checked"';
+else
+	$check3='checked="checked"';
+	
+$html = '<br/>
+<form action="" method="get">
+<p>
+<label for="inicio">
+Filtrar por ingresso de 
+</label>
+<input type="text" name="inicio" id="inicio" class="data" value="'.$_REQUEST['inicio'].'"/>
+<label for="fim">
+a 
+</label>
+<input type="text" name="fim" id="fim" value="'.$_REQUEST['fim'].'" class="data" />
+<br/><br/>
+<label> <b>Tipo: </b> </label>
+<input type="radio" name="tipo" '.$check3.' id="tipo" value="3"> 
+<label for="tipo">Mestrado </label>
+<input type="radio" name="tipo" '.$check5.' id="tipo2" value="5">
+<label for="tipo2">Doutorado</label>
+<input type="submit" value="Listar">
+</p>
+</form>';
+$html .= $this->flex;
+
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Relatório de Alunos que cancelaram o curso',
+	'height' => 500,
+	'content' => $html
+	));

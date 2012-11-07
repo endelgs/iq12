@@ -1,0 +1,26 @@
+<div id="divlistahidden" name=divlistahidden">
+<?php
+$i=0;
+if($this->data)
+foreach($this->data as $k => $v)
+{
+	
+	$i++;
+	if(is_array($v))
+	{
+	?>
+	<input type="hidden" id="<?php echo ($this->id ? $this->id : $this->name).$i ;?>" name="<?php echo $this->name; ?>" 
+	<?php echo $this->aditional?> value="<?php echo $v?>">
+	<?php 
+	}
+	else
+	{
+?>
+		
+	<input type="hidden" id="<?php echo ($this->id ? $this->id : $this->name).$i ;?>" name="<?php echo $this->name; ?>" 
+	<?php echo $this->aditional?> value="<?php echo $v?>">
+<?php 		
+	} 
+}
+?>
+</div>

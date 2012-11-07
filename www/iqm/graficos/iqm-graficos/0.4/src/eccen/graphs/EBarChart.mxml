@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:BarChart xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.utils.ObjectUtil;
+			import mx.controls.Alert;
+			import mx.charts.series.BarSeries;
+			
+			public function addSeries(mainAxisField:String = '', secondaryAxisField:String = '', displayName = ''):void
+			{
+				categoryAxis.categoryField = mainAxisField;
+				
+				var series:BarSeries = new BarSeries();
+				series.yField = mainAxisField;
+				series.xField = secondaryAxisField;
+				series.displayName = displayName;
+				series.setStyle("showDataEffect", fxIn);
+				series.setStyle("hideDataEffect", fxOut);
+				this.series.push(series);
+
+			}
+		]]>
+	</mx:Script>
+	<mx:SeriesSlide id="fxIn" duration="500" direction="right"/>
+	<mx:SeriesSlide id="fxOut" duration="500" direction="left"/>
+	<mx:verticalAxis>
+       <mx:CategoryAxis id="categoryAxis" dataProvider="{this.dataProvider}" />
+    </mx:verticalAxis>
+</mx:BarChart>

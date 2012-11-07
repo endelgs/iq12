@@ -1,0 +1,173 @@
+<?php 
+echo $this->partial('partials/pessoaheader.phtml', array('nome' => $this->nomePessoa));
+echo $this->partial('partials/posgraduacaoheader.phtml', array('tipo' => $this->tipoPosGraduacao));
+
+$tipopublicacao = $this->partial('partials/combobox.phtml', array(
+	'name'=>'tipopublicacao',
+ 	'data'=>$this->tipopublicacao,
+	'id'=>'tipopublicacao',
+));
+
+?>
+<script type="text/javascript">
+$(document).ready(function()
+        {
+            $('#pessoa-<?php echo $this->tipocurso;?>').addClass('selecionado');
+            $('#<?php echo $this->tipocurso;?>-publicacoes').addClass('selecionado');
+            $('input').attr('onBlur', 'mudancaDeValor()');
+
+			
+            $('.detalhes').hide();
+            
+            $('.qualicapes').click(
+			function(){
+				$('.detalhes').show();
+			});
+
+            $('.qualicapesNao').click(
+        			function(){
+        				$('.detalhes').hide(); 
+        			});
+});
+
+function mudancaDeValor()
+{
+   // window.onbeforeunload = function(){ return 'Você perderá todas as alterações';}
+
+    //alert('Modificado');
+    //$('body').attr('onUnload', 'if !window.confirm("Dados podem ter sido alterados. Deseja sair sem gravar?")){return false}');
+}
+function ConfirmExit()
+{
+    //alert('')
+    //Pode se utilizar um window.confirm aqui também...
+    return window.confirm('');
+}        
+</script>
+
+<div style="height: 0; visibility: hidden; display: none;">
+<div id="divTipoPublicacaoInv"><?php echo $tipopublicacao;?></div>
+</div>
+
+</div>
+<?php  
+//$a0 = range(0, 1000, 1);
+echo $this->partial('partials/fieldset.phtml', array(
+	'height' => 400,
+'title' => 'Publicações',
+	'content' => $this->partial('partials/flexigrid.phtml', 
+		array(
+			'isCrud'      => true,
+			'doubleClick' => "carregaBox(this.className)",
+            'table'       => $this->data,
+		    'functionDelete' => 'deleteData',
+		    'exclude'     => array('id_pg_publicacoes', 'publicacao','id_pos_ou_docente','tipo','data','deletado', 'id_publicacao', 'artigo', 'qualicapes','congresso'),
+		    'headers'     => array('texto_qualicapes' => 'QualiCapes', 'texto_data' => 'Data', 'patente' => 'Patente', 'text_congresso'=>'Congresso')
+
+		)
+	) . '
+<div class="crud-c">
+<p style="text-align:right"><a href="#" class="crud-toggle-button">Nova Publicação</a></p>
+<form class="zend_form crud-toggle" method="post">
+	<table width="100%">
+	<tr><td width="20%"><label>QualiCapes:</label></td>
+	<td width="80%" colspan="2">
+			<table>
+				<tr><td><input  name="qualicapes" type="radio"  checked="checked" class="qualicapesNao" value="0" /></td><td>Não</td></tr> 
+		    	<tr><td><input  name="qualicapes" type="radio"  class="qualicapes" value="1" /></td><td>Sim</td></tr> 
+		    </table>
+	</td></tr>
+	<tr class="detalhes"><td width="20%"><label>Tipo de publicação:</label></td><td width="80%" colspan="2">'.$tipopublicacao.'</td></tr>
+	<tr><td width="20%"><label>Artigo:</label></td><td width="80%"><textarea name="artigo" id="artigo" style="width: 100%"></textarea></td></tr>
+	<tr><td width="20%"><label>Data:</td><td width="80%"><input type="text" name="data" id="data" onkeypress="formataCampo(this, \'00/0000\', event);" maxlength="7"></label></td></tr>
+	<tr><td width="20%"><label>Patente:</td><td width="80%"><input type="text" name="patente" id="patente"></label></td></tr>
+	<tr><td width="20%"><label>Participação em congresso?</label></td>
+	<td width="80%" colspan="2">
+			<table>
+		    	<tr><td><input checked="checked" name="congresso" type="radio" value="0" /></td><td>Nacional</td></tr> 
+		    	<tr><td><input  name="congresso" type="radio" value="1" /></td><td>Internacional</td></tr> 
+		    </table>
+	</td></tr>
+	<tr><td></td><td><input type="submit" class="submit" value="Gravar" onClick="window.onbeforeunload=null" /></td></tr>
+	</table>
+</form>
+</div>	'
+));
+
+?>
+<script type="text/javascript">
+function carregaBox(data)
+{	
+	var re = new RegExp('\{[^}]*\}', "g");
+    var m0 = re.exec(data);
+    var pResult = m0[0].substring(1, m0[0].length - 1);
+    var arrResult = new Array();
+    arrResult = pResult.split(',');
+    params    = new Array();
+    for(i = 0; i < arrResult.length; i++)
+    {
+        var tmp = arrResult[i].split(":");
+        params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+    }   
+	jQuery.facebox('<div id="faceboxForm">');
+
+         var tabela='\
+			<form action="" class="zend_form" method="post" id="formCreate"> \
+	        <input type="hidden" name="id" id="id" value="' + params['id_pg_publicacoes'] + '"> \
+	        <table>\
+	        <tr><td>QualiCapes:</td><td><table>\
+	        <tr><td><input  name="qualicapes" type="radio"  id="qualicapesNao" value="0" /></td><td>Não</td></tr>\
+	        <tr><td><input  name="qualicapes" type="radio"  id="qualicapes" value="1" /></td><td>Sim</td></tr>\
+	        </table></td></tr>\
+	        <tr id="detalhes2"><td>Tipo de publicação:</td><td><div id="divTipo"></div></td></tr> \
+	        <tr><td>Artigo:</td><td><textarea id="artigo" name="artigo" style="width: 100%">' + params['artigo'] + '</textarea></td></tr> \
+	        <tr><td>Data:</td><td><input type="text" id="data" name="data" value="' + params['texto_data'] + '" onkeypress="formataCampo(this, \'00/0000\', event);" maxlength="7"></td></tr> \
+	        <tr><td>Patente:</td><td><input type="text" id="patente" name="patente" value="' + params['patente'] + '" ></td></tr> \
+	        <tr><td>Participação em congresso?</td>\
+	        <td><table><tr><td><input  name="congresso" type="radio" id="congNacional" value="0" /></td><td>Nacional</td></tr>\
+	        <tr><td><input  name="congresso" type="radio" id="congInter"value="1" /></td><td>Internacional</td></tr></table></td></tr>\
+	    	<tr><td></td><td><input type="submit" value="Ok" onClick="window.onbeforeunload=null"></td></tr> \
+	        </table> \
+	    </form>';
+	$('#faceboxForm').append(tabela);
+	
+         $('#tipopublicacao').clone().attr('id', 'tipopublicacaoU').attr('name', 'tipopublicacaoU').appendTo('#divTipo');
+         $('#tipopublicacaoU').val(params['id_publicacao']);
+
+
+         if(params['qualicapes']=="1"){
+        	 $('#qualicapes').attr('checked','checked');
+        	 $('#detalhes2').show();
+         }else{
+        	 $('#qualicapesNao').attr('checked','checked');
+        	 $('#detalhes2').hide();
+         }
+
+
+         $('#qualicapes').click(
+     			function(){
+     				$('#detalhes2').show();
+     			});
+
+         $('#qualicapesNao').click(
+      			function(){
+      				$('#detalhes2').hide();
+      			});
+         
+         if(params['congresso']=="1"){
+        	 $('#congInter').attr('checked','checked');
+        	 
+         }else{
+        	 $('#congNacional').attr('checked','checked');
+         }
+         tabela=null;
+
+}
+	   
+function deleteData(data)
+{
+    p = getParams(data);
+    location.href='<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'publicacoes', 'action' => 'delete')); ?>/id/' + p['id_pg_publicacoes']; 
+}
+</script>
+

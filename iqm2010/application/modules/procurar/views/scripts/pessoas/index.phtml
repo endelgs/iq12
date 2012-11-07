@@ -1,0 +1,76 @@
+<script type="text/javascript">
+    function trim(str){
+        return str.replace(/^\s+|\s+$/g,"");
+    }
+    function getData(dado)
+    {
+ 
+        var re = new RegExp('\{[^}]*\}', "g");
+        var m0 = re.exec(dado);
+        var pResult = m0[0].substring(1, m0[0].length - 1);
+        var arrResult = new Array();
+        arrResult = pResult.split(',');
+        params    = new Array();
+        for(i = 0; i < arrResult.length; i++)
+        {
+            var tmp = arrResult[i].split(":");
+            params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+        }	
+        location.href='../pessoas/geral/index/id_pessoa/' + params['id'] + '/'; 
+        //alert();
+    }
+
+
+    function Teste(form)
+    {
+        if($('#query').val().length>=3)
+            return true;
+
+        return false;
+
+    }
+
+</script>
+<h1>Procurar pessoa</h1>
+<p class="advice">Essa é a busca simples de pessoas. Selecione o tipo de busca e digite parte do nome ou de algum documento para fazer a pesquisa.</p>
+<h3>Tipo de busca</h3>
+<blockquote style="font-size: 12px;">
+    <form class="zend_form" onsubmit="return Teste(this)" action="<?php echo $this->url(array('module' => 'procurar', 'controller' => 'pessoas', 'action' => 'index')) ?>" method="post">
+        <table>
+            <tr>
+                <td><input type="radio" name="tipo" value="1"/></td>
+                <td>Documento de identificação (CPF, RG, RNE, Passaporte ou RA)</td>
+            </tr>
+            <tr>
+                <td><input type="radio" name="tipo" value="2" checked="checked" /></td>
+                <td>Nome (ou parte dele)</td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td>Buscar por:</td><td><input type="text" name="query" id="query"/></td><td><input type="submit" value="Buscar" id="buscar" /></td>
+            </tr>
+            <tr>
+
+            </tr>
+        </table>
+
+    </form>
+</blockquote>
+<?php
+//print_r($this->res);
+$c = $this->partial('partials/flexigrid.phtml', array(
+            'table' => $this->res,
+            'doubleClick' => 'getData(this.className)',
+            'isCrud' => true,
+            'exclude' => array('id', 'dados', 'id_pais'),
+            'headers' => array('nome' => 'Nome', 'RA' => 'RA'),
+            'excecao' => 'Sim'
+                )
+);
+echo $this->partial('partials/fieldset.phtml', array(
+    'title' => 'Resultado',
+    'height' => 350,
+    'content' => $c
+        )
+);

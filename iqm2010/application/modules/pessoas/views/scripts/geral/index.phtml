@@ -1,0 +1,395 @@
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        enableDisable();
+<?php if ($this->id_pessoa == "") { ?>
+          $(".bordersInner").click(function(e){return false;}); 
+<?php } ?>
+           $('#pessoa-geral').addClass('selecionado');
+<?php
+if (isset($this->alert)) {
+    echo 'alert("' . $this->alert . '");';
+}
+?>
+                                if($('#id_pessoa').val() != '')
+                                {
+                                    $('input').attr('onBlur', 'mudancaDeValor()');
+                                    $('select, option').attr('onChange', 'mudancaDeValor()');
+                                    //alert($('#id_pessoa').val());
+                                }
+                                $("#nacionalidade").change(function(e) {
+
+                                    if($(this).val() == 27)
+                                    {
+                                        $('#rne').val('');
+                                        $('#rne').attr('disabled', 'disabled');
+                                        $('#passaporte').val('');
+                                        $('#passaporte').attr('disabled', 'disabled');
+                                        $('#rg').attr('disabled', '');
+                                        $('#unidadeFederativa').attr('disabled', '');
+                                    }
+                                    else
+                                    {
+                                        $('#rne').attr('disabled', '');
+                                        $('#passaporte').attr('disabled', '');
+
+                                        $('#rg').val('');
+                                        $('#rg').attr('disabled', 'disabled');
+                                        $('#unidadeFederativa').val('');
+                                        $('#unidadeFederativa').attr('disabled', 'disabled');
+                    
+                                    }			
+                                });
+			
+			
+                            });
+
+                            function enableDisable()
+                            {
+                                //' . if( == 27){ 'disabled="disabled"' }) . '
+                                if(parseInt(<?php echo $this->nacionalidade; ?>+0) == 27)
+                                {
+                                    $('#rne').val('');
+                                    $('#rne').attr('disabled', 'disabled');
+                                    $('#passaporte').val('');
+                                    $('#passaporte').attr('disabled', 'disabled');
+                                    $('#rg').attr('disabled', '');
+                                    $('#unidadeFederativa').attr('disabled', '');
+                                }
+                                else
+                                {
+                                    $('#rne').attr('disabled', '');
+                                    $('#passaporte').attr('disabled', '');
+
+                                    $('#rg').val('');
+                                    $('#rg').attr('disabled', 'disabled');
+                                    $('#unidadeFederativa').val('');
+                                    $('#unidadeFederativa').attr('disabled', 'disabled');
+        
+                                }           
+                            }
+                            function mudancaDeValor()
+                            {
+                                window.onbeforeunload = function(){ return 'Você perderá todas as alterações';}
+
+                                //alert('Modificado');
+                                //$('body').attr('onUnload', 'if !window.confirm("Dados podem ter sido alterados. Deseja sair sem gravar?")){return false}');
+                            }
+                            function ConfirmExit()
+                            {
+                                //alert('')
+                                //Pode se utilizar um window.confirm aqui também...
+                                return window.confirm('');
+                            }
+                            function excluiPessoa(id)
+                            {
+                                tf = window.confirm('Deseja excluir os dados?\nAtenção: esta operação não pode ser revertida.');
+                                if(tf)
+                                {
+               
+                                     location.href='<?php echo $this->url(array('module' => 'pessoas', 'controller' => 'geral', 'action' => 'delete')); ?>/id/' + id;
+                                }
+                                //alert(tf);
+                            }
+</script>
+<?php
+echo $this->partial('partials/pessoaheader.phtml', array('nome' => $this->nomePessoa));
+echo'<form class="zend_form" method="post" action="' . $this->url(array('module' => 'pessoas', 'controller' => 'geral', 'action' => 'index')) . '">';
+
+$estadoCivil = $this->partial('partials/combobox.phtml', array(
+            'name' => 'estadoCivil',
+            'data' => $this->estadosCivis,
+            'selected' => $this->estadocivil
+        ));
+
+
+if ($this->nacionalidade == "") {
+    $this->nacionalidade = '27';
+}
+
+$nacionalidade = $this->partial('partials/combobox.phtml', array(
+            'name' => 'nacionalidade',
+            'data' => $this->paises,
+            'selected' => $this->nacionalidade
+        ));
+
+$cidade = $this->partial('partials/combobox.phtml', array(
+            'name' => 'cidade',
+            'data' => $this->cidades,
+            'selected' => $this->cidade
+        ));
+
+$cidadeNascimento = $this->partial('partials/combobox.phtml', array(
+            'name' => 'id_local_nascimento',
+            'data' => $this->cidades,
+            'selected' => $this->idLocalNascimento
+        ));
+
+
+$cidadecomercial = $this->partial('partials/combobox.phtml', array(
+            'name' => 'cidadecomercial',
+            'data' => $this->cidades,
+            'selected' => $this->cidadecomercial
+        ));
+
+if ($this->trabalhando == 1)
+    $trabalhando = "checked='checked'";
+else
+    $trabalhando = "";
+
+if ($this->sexo == 1)
+    $sexom = "checked='checked'";
+if ($this->sexo == 2)
+    $sexof = "checked='checked'";
+
+if ($this->cpf == '..-') {
+    $this->cpf = '';
+}
+$a = <<<ZZZ
+
+	<table width="100%" style="margin-left:-100px;" >
+		<tr>
+			<td><label>Nome:</label></td>
+			<td><input type="text" value="{$this->nome}" name="nome" id="nome" style="width: 100%" /></td>
+		</tr>
+		<tr>
+			<td><label>Sexo:</label></td>
+			<td>
+				<label style="text-align: left; float: left;"><input {$sexom} type="radio" name="sexo" id="sexo1" value="1" style="display:inline; width: auto;" /> Masculino</label>
+				<label style="text-align: left;">&nbsp;&nbsp; <input {$sexof} type="radio" name="sexo" id="sexo2" value="2" style="display:inline; width: auto;" /> Feminino</label>
+			</td>
+		</tr>
+		<tr>
+			<td><label>Data de nascimento:</label></td>
+			<td><input type="text" value="{$this->partial('partials/data.phtml', array('tipo' => 'out', 'data' => $this->nascimento))}" name="nascimento" id="nascimento" onkeypress="formataCampo(this, '00/00/0000', event);" maxlength="10" /></td>
+		</tr>
+		<tr>
+			<td><label>Estado civil:</label></td>
+			<td>{$estadoCivil}</td>
+		</tr>
+        <tr>
+            <td><label>Nacionalidade:</label></td>
+            <td>{$nacionalidade}</td>
+        </tr>
+		<tr>
+			<td><label>Naturalidade:</label></td>
+			<td>{$cidadeNascimento}</td>
+		</tr>
+        <tr>
+          <td colspan="2">
+          <table >
+              <tr>
+            <td width="250"><label>Passaporte:</label></td>
+            <td><input type="text" value="{$this->passaporte}" name="passaporte" id="passaporte" /></td>
+            <td width="1"></td>
+            <td><label>RNE:</label></td>
+            <td><input type="text" value="{$this->rne}" name="rne" id="rne" /></td>
+           </tr>
+            </table>
+            </td>
+        </tr>
+		<tr>
+	  	  <td colspan="2">
+		  <table >
+		      <tr> 
+			<td  width="250"><label>CPF:</label></td>
+			<td><input type="text" value="{$this->cpf}" name="cpf" id="cpf" onkeypress="formataCampo(this, '000.000.000-00', event);" maxlength="14" /></td>
+			<td width="10"></td>
+            <td><label>RG:</label></td>
+            <td><input type="text" value="{$this->rg}" name="rg" id="rg" /></td>
+	 		</tr>
+			</table>
+		  </td> 
+		</tr>
+        <tr>
+          <td colspan="2">
+        <table >
+              <tr> 
+                <td  width="250"><label>Órgão emissor:</label></td>
+                <td><input type="text" value="{$this->rgorgemissor}" name="rgOrgaoEmissor" id="rgOrgaoEmissor" /></td>
+                <td width="10"></td>
+                <td><label>Data de emissão:</label></td>
+                <td><input type="text" value="{$this->partial('partials/data.phtml', array('tipo' => 'out', 'data' => $this->rgdataemissao))}" name="rgDataEmissao" id="rgDataEmissao" onkeypress="formataCampo(this, '00/00/0000', event);" maxlength="10" /></td>
+         		 <td><label>UF:</label></td>
+            <td><input size="2" type="text" value="{$this->unidadeFederativa}" name="unidadeFederativa" id="unidadeFederativa" /></td>
+         </tr>
+            </table>
+          </td>
+           
+        </tr>
+        <tr>
+			<td><label>Nome pai:</label></td>
+			<td><input type="text" value="{$this->pai}" name="pai" id="pai" style="width: 100%" /></td>
+		</tr>
+		<tr>
+			<td><label>Nome mãe:</label></td>
+			<td><input type="text" value="{$this->mae}" name="mae" id="mae" style="width: 100%" /></td>
+		</tr>
+		<tr>
+			<td><label>Currículum Lattes:</label></td>
+			<td><input type="text" value="{$this->lattes}" name="lattes" id="lattes" style="width: 100%" /></td>
+		</tr>
+		<tr>
+			<td><label>Email principal:</label></td>
+			<td><input type="text" value="{$this->emailprincipal}" name="email1" id="email1" style="width: 100%" /></td>
+		</tr>
+		<tr>
+			<td><label>Email secundário:</label></td>
+			<td><input type="text" value="{$this->emailsegundo}" name="email2" id="email2" style="width: 100%" /></td>
+		</tr>
+	</table>
+ZZZ;
+
+$b = <<<YYY
+	<table width="100%">
+		<colgroup>
+			<col width="180" />
+			<col>
+		</colgroup>
+		<tr>
+			<td><label>Endereço completo <br /><span style="font-size: 10px;">(Rua/Av., nome e bairro):</span></label></td>
+			<td><input value="{$this->endereco}" type="text" name="endereco" id="endereco" style="width: 100%" /></td>
+		</tr>
+		<tr>
+			<td><label>Complemento:</label></td>
+			<td><input value="{$this->complemento}" type="text" name="complemento" id="complemento" style="width: 100%" /></td>
+		</tr>
+		<tr>
+          <td colspan="2">
+          <table>
+           <tr>
+		    <td width="246"><label>CEP:</label></td>
+			<td><input value="{$this->cep}" type="text" name="cep" id="cep" /></td><td width="10"></td>
+            <td><label>Caixa Postal:</label></td>
+            <td><input value="{$this->caixapostal}" type="text" name="caixaPostal" id="caixaPostal" /></td>
+		   </tr>
+		</table>
+		  </td>
+		      </tr>
+				<tr>
+		</tr>
+				<tr>
+			<td><label>Cidade:</label></td>
+			<td>{$cidade}</td>
+		</tr>
+				<tr>
+          <td colspan="2">
+          <table>
+           <tr>
+				<td width="246"><label>Telefone Residencial:</label></td>
+			<td><input value="{$this->telefone}" type="text" name="telefoneResidencial" id="telefoneResidencial" /></td>
+			<td width="10"></td>
+			<td><label>Celular:</label></td>
+			<td><input value="{$this->celular}" type="text" name="celular" id="celular" /></td>
+		</tr>
+		</table>
+		</td>
+		</tr></table>
+	
+YYY;
+$c = <<<AAA
+
+	<table width="100%">
+		<colgroup>
+			<col width="180" />
+			<col>
+		</colgroup>
+		<tr>
+			<td><label>Nome da última empresa:</label></td>
+			<td><input value="{$this->ultimaempresa}" type="text" name="ultimaEmpresa" id="ultimaEmpresa"  style="width: 100%" /></td>
+		</tr>
+		<tr>
+			<td><label>Cargo:</label></td>
+			<td><input value="{$this->cargo}" type="text" name="ultimaCargo" id="ultimaCargo"  style="width: 100%" /></td>
+		</tr>
+				<tr>
+				<td colspan="2"><table>
+				<td width="235"><label>Vínculo empregatício:</label></td>
+			<td><label>início<br /><span style="font-size: 10px;">(dd/mm/aa)</span></label></td>
+			<td><input value="{$this->partial('partials/data.phtml', array('tipo' => 'out', 'full' => 'yes', 'data' => $this->datainicio))}" type="text" name="ultimaInicio" id="ultimaInicio" onkeypress="formataCampo(this, '00/00/0000', event);" maxlength="10" /></td>
+			<td><label>término <br /><span style="font-size: 10px;">(dd/mm/aa)</span></label></td>
+			<td><input value="{$this->partial('partials/data.phtml', array('tipo' => 'out', 'full' => 'yes', 'data' => $this->datatermino))}" type="text" name="ultimaTermino" id="ultimaTermino" onkeypress="formataCampo(this, '00/00/0000', event);" maxlength="10" /></td>
+			</tr></table></td>
+		</tr>
+				<tr>
+			<td><label>Ainda trabalhando?</label></td>
+			<td><input type="checkbox" {$trabalhando} name="ultimaAinda" value="1" id="ultimaAinda" /></td>
+		</tr>
+		<tr>
+			<td><label>Telefone comercial:</label></td>
+			<td><input value="{$this->telefonecomercial}" type="text" name="ultimaTelefone" id="ultimaTelefone" /></td>
+		</tr>
+		<tr>
+			<td><label>Endereço completo <span style="font-size: 10px;">(Rua/Av., nome e bairro):</span></label></td>
+			<td><input value="{$this->enderecocomercial}" type="text" name="ultimaEndereco" id="ultimaEndereco" style="width: 100%;" /></td>
+		</tr>
+		<tr>
+		  <td colspan="2">
+		      <table><tr>
+			<td width="235"><label>CEP:</label></td>
+			<td><input value="{$this->cepcomercial}" type="text" name="ultimaCep" id="ultimaCep" /></td>
+            <td width="10"></td>
+			<td><label>Caixa Postal:</label></td>
+			<td><input type="text" name="ultimaCP" id="ultimaCP" value="{$this->ultimaCP}" /></td>
+		</tr>
+		</table></td>
+		<tr>
+			<td><label>Cidade:</label></td>
+			<td>{$cidadecomercial}</td>
+		</tr>
+		<tr>
+			<td colspan="2"><hr /></td>
+		</tr>
+		<tr>
+			<td><label>Nome da Penúltima empresa:</label></td>
+			<td><input value="{$this->penultimaempresa}" type="text" name="penultimaEmpresa" id="penultimaEmpresa"  style="width: 100%;" /></td>
+		</tr>
+		<tr>
+			<td><label>Cargo:</label></td>
+			<td><input value="{$this->penultimocargo}" type="text" name="penultimaCargo" id="penultimaCargo"  style="width: 100%;" /></td>
+		</tr>
+                <tr>
+                <td colspan="2"><table>
+                <td width="234"><label>Vínculo empregatício:</label></td>
+            <td><label>início<br /><span style="font-size: 10px;">(dd/mm/aa)</span></label></td>
+            <td><input value="{$this->partial('partials/data.phtml', array('tipo' => 'out', 'full' => 'yes', 'data' => $this->penultimodatainicio))}" type="text" name="penultimaInicio" id="penultimaInicio" onkeypress="formataCampo(this, '00/00/0000', event);" maxlength="10" /></td>
+            <td><label>término <br /><span style="font-size: 10px;">(dd/mm/aa)</span></label></td>
+            <td><input value="{$this->partial('partials/data.phtml', array('tipo' => 'out', 'full' => 'yes', 'data' => $this->penultimodatatermino))}" type="text" name="penultimaTermino" id="penultimaTermino" onkeypress="formataCampo(this, '00/00/0000', event);" maxlength="10" /></td>
+            </tr></table></td>
+        </tr>
+		</table>
+	
+AAA;
+echo $this->partial('partials/fieldset.phtml', array(
+    'title' => 'Dados Gerais',
+    'height' => 500,
+    'content' => $a
+));
+
+echo $this->partial('partials/fieldset.phtml', array(
+    'title' => 'Dados Residenciais',
+    'height' => 200,
+    'content' => $b
+));
+
+echo $this->partial('partials/fieldset.phtml', array(
+    'title' => 'Dados Profissionais',
+    'height' => 500,
+    'content' => $c
+));
+//echo $a;
+?>
+<input
+    type="hidden" id="id_pessoa" name="id_pessoa"
+    value="<?php echo ($this->id_pessoa ? $this->id_pessoa : 0) ?>" />
+<table>
+    <tr>
+        <td><input type="submit" value="Gravar" class="botao"
+                   onClick="window.onbeforeunload=null"></td>
+        <td><input type="button" value="Excluir" class="botao" onClick="excluiPessoa(<?php echo ($this->id_pessoa ? $this->id_pessoa : 0); ?>)" style="visibility: <?php echo ($this->id_pessoa ? 'visible' : 'hidden') ?>;">
+        </td>
+    </tr>
+</table>
+
+
+</form>

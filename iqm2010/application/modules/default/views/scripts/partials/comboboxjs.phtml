@@ -1,0 +1,10 @@
+<select id="<?php echo ($this->id ? $this->id : $this->name) ?>" name="<?php echo $this->name ?>" <?php echo $this->aditional?>> \
+<?php
+	foreach($this->data as $k => $v)
+	{
+?>
+<option value="<?php echo $k?>" <?php if($k == $this->selected){ echo 'selected="selected"'; } ?>><?php echo $v?></option> \
+<?php 
+	}
+?>
+</select> \

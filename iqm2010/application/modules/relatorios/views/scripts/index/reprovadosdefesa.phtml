@@ -1,0 +1,31 @@
+<?php
+echo $this->mask;
+$html='<form action="" method="get">
+<br/><br/>
+Período do relatório: <input type="text" id="dataInicio" name="dataInicio" class="data" value="'.$this->dataInicio.'">
+a <input type="text" id="dataFim" name="dataFim" class="data" value="'.$this->dataFim.'">
+Tipo de curso: <select id="tipo_curso" name="tipo_curso">';
+
+if($this->tipoCurso=="3")
+	$html.='<option value="3" name="tipo" id="tipo" selected="selected">Mestrado</option>
+	<option value="5" name="tipo" id="tipo">Doutorado</option>';
+else
+	$html.='<option value="3" name="tipo" id="tipo">Mestrado</option>
+	<option value="5" name="tipo" id="tipo" selected="selected">Doutorado</option>';
+	
+$html.='</select>
+<br/><br/>
+<input type="submit" value="Listar">
+<br/><br/>
+</form>';
+
+$html .= $this->flex;
+
+
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Relatório de alunos reprovados na defesa',
+	'height' => 500,
+	'content' => $html
+	));
+	
+?>

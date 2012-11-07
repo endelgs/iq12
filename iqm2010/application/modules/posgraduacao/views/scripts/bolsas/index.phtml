@@ -1,0 +1,255 @@
+<?php 
+$agencias = $this->partial('partials/combobox.phtml', array(
+	'name'=>'agencia',
+ 	'data'=>$this->agencias,
+	'id'  => 'agencia',
+	
+));
+$professores = $this->partial('partials/combobox.phtml', array(
+	'name'=>'professor',
+ 	'data'=>$this->professores,
+	'id' => 'professor'
+));
+$periodos = $this->partial('partials/combobox.phtml', array(
+	'name'=>'periodo',
+ 	'data'=>$this->periodos,
+	'id'  => 'periodo'
+));
+$motivoSuspensao = $this->partial('partials/combobox.phtml', array(
+	'name'=>'motivo_suspensao',
+ 	'data'=>$this->motivoSuspensao,
+	'id'  => 'motivo_suspensao'	
+));
+$motivoCancelamento = $this->partial('partials/combobox.phtml', array(
+	'name'=>'motivo_cancelamento',
+ 	'data'=>$this->motivoCancelamento,
+	'id'  => 'motivo_cancelamento'
+));
+echo $this->partial('partials/pessoaheader.phtml', array('nome' => $this->nomePessoa));
+echo $this->partial('partials/posgraduacaoheader.phtml', array('tipo' => $this->tipoPosGraduacao));
+echo $this->partial('partials/fieldset.phtml', array(
+    'title' => 'Bolsas',
+    'height'=> '400',
+    'content' => $this->partial('partials/flexigrid.phtml', array(
+	        	'isCrud' => true,
+	            'table' => $this->bolsas,
+	        	'doubleClick' => "carregaBox(this.className)",
+        		'functionDelete' => 'deleteBolsa',
+	            'exclude' => array(	'id_pessoa', 
+	            					'id_tipo_curso', 
+	            					'id',
+	            					'id_agencia',
+									'id_professor',
+									'nome_professor',
+	            					'id_posgraduacao',
+									'cancelada',
+									'data_cancelamento_f',
+									'suspensa',
+									'suspensao_inicio_f',
+									'suspensao_fim_f',
+									'id_motivo_cancelamento',
+									'motivo_cancelamento',
+									'id_bolsa_suspensao_motivo',
+									'suspensao_motivo',
+									'id_periodo',
+									'periodo',
+									'inicio_f',
+									'fim_f',
+									'processo',
+									'observacao', 'tempo'),
+
+	            'headers' => array(	'agencia' 	=> 'Agência',
+									'tempousobolsa'		=> 'Tempo de uso',
+									'cancelada_f' => 'Cancelada',
+									'suspensa_f' => 'Teve suspensão?',
+									'tempo_susp' => 'Tempo de Suspensão')
+	        	)
+	        ).
+	        '
+<div class="crud-c">
+<p style="text-align:right"><a href="#" class="crud-toggle-button">Cadastrar bolsa</a></p>
+<form id="formCreate" action='.$this->url(array('module'=> 'posgraduacao', 'controller'=> 'bolsas', 'action' => 'post')).' class="zend_form crud-toggle" method="post" onsubmit="return validarDatas(this)">
+	<table width="100%">
+	<tr><td width="20%"><label>Agência:</td><td width="80%" colspan="2">'.$agencias.'</label></td></tr>
+	<tr><td width="20%"><label>Início:</td><td width="80%"><input type="text" name="datainicio" id="datainicio" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></label></td></tr>
+	<tr><td width="20%"><label>Término:</td><td width="80%"><input type="text" name="datafim" id="datafim" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></label></td></tr>
+	<tr><td width="20%"><label>Periodos:</label></td><td width="80%" colspan="2">'.$periodos.'</td></tr>
+	<tr><td width="20%"><label>Observações:</td><td width="80%" colspan="2"><textarea name="observacoes" id="observacoes" style="width: 100%"></textarea></label></td></tr>
+	<tr><td width="20%"><label>Processo:</td><td width="80%" colspan="2"><textarea name="processo" id="processo" style="width: 100%"></textarea></label></td></tr>
+	<tr><td></td><td><input id="gravar" type="submit" class="submit"  value="Gravar" /></td></tr>
+	</table>
+</form>
+</div>'.
+"<div style='display:none'>$motivoCancelamento $motivoSuspensao</div>"
+));
+?>
+<input type="hidden" id="mudancaDeValor" value="0" />
+<style type="text/css">
+.tbl_facebox tr td{ font-size:10px;}
+</style>
+<script type="text/javascript">
+function validarDatas(form)
+{
+	var inicio = "";
+	var fim = "";
+
+	var maiorField = 'datafim'; 
+	var menorField = 'datainicio';
+	var alerta = "A data de início deve ser menor que a de fim";
+
+	inicio 	= form.elements[menorField].value;
+	fim 	= form.elements[maiorField].value;
+	cancelamento	= form.elements['dataCancelamentoU'].value;
+	cancelado 	= form.elements['canceladaU'].checked;
+	//suspensaU.checked
+	
+	inicio 	= inicio.split('/');
+	fim 	= fim.split('/');
+	cancel	= cancelamento.split('/');
+
+	var totalDiasInicio= (parseFloat(inicio[2]))*360 + (parseFloat(inicio[1]))*30 +(parseFloat(inicio[0]));
+	var totalDiasFim= (parseFloat(fim[2]))*360 + (parseFloat(fim[1]))*30 +(parseFloat(fim[0]));
+	var totalDiasCancelado= (parseFloat(cancel[2]))*360 + (parseFloat(cancel[1]))*30 +(parseFloat(cancel[0]))
+
+	totalDiasInicio=parseFloat(totalDiasInicio-720000);
+	totalDiasFim=parseFloat(totalDiasFim-720000);
+	totalDiasCancelado=parseFloat(totalDiasCancelado-720000);
+
+	//alert('Data Canelamento: ' + totalDiasCancelado + ' Data Inicio:' + totalDiasInicio);
+	if(cancelado)
+	{
+		if(totalDiasCancelado<totalDiasInicio)
+		{
+			alert('A data de cancelamento deve ser maior que a data de início.');
+
+			return false;
+		}
+	}
+	
+	if(totalDiasInicio>=totalDiasFim)
+	{
+
+		alert(alerta);
+		form[menorField].focus();
+
+		return false;
+	}
+
+	return true;
+	
+	
+}
+//function liberaSuspensa()
+//{
+//	if(suspensaU.checked)
+//	{
+//		mCancelamentoU.enabled = true;
+//		dataCancelamentoU.enabled = true;
+//	}
+//	else
+//	{
+//		mCancelamentoU.enabled = true;
+//		dataCancelamentoU.enabled = true;
+//	}
+//}
+//function liberaCancelada()
+//{
+//
+//}
+$(document).ready(function()
+{
+    $('#pessoa-<?php echo $this->tipocurso;?>').addClass('selecionado');
+	$('#<?php echo $this->tipocurso;?>-bolsas').addClass('selecionado');
+	$('input').attr('onBlur', 'mudancaDeValor()');
+	$('#gravar').click(function(){
+		window.onbeforeunload=null;
+		$("#mudancaDeValor").val('1');	
+	});
+});
+function mudancaDeValor()
+{
+	if($("#mudancaDeValor").val()=='0')window.onbeforeunload = function(){ return 'Você perderá todas as alterações';}
+}
+function carregaBox(data)
+{
+	var re = new RegExp('\{[^}]*\}', "g");
+    var m0 = re.exec(data);
+    var pResult = m0[0].substring(1, m0[0].length - 1);
+    var arrResult = new Array();
+    arrResult = pResult.split(',');
+    params    = new Array();
+    for(i = 0; i < arrResult.length; i++)
+    {
+        var tmp = arrResult[i].split(":");
+        params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+    }   
+   	jQuery.facebox('<div id="faceboxForm">');
+        
+        var tabela='\
+			<form action="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'bolsas', 'action' => 'post')); ?>" class="zend_form" method="post" id="formUpdate" onsubmit="return validarDatas(this)"> \
+	        <input type="hidden" name="id" id="id" value="' + params['id'] + '"> \
+	        <table class="tbl_facebox"> \
+	        <tr><td>Agência:</td><td><div id="divAgencia" name="divAgencia"></div></td></tr> \
+	        <tr><td>Data de Início:</td><td><input type="text" id="datainicio" name="datainicio" value="' + params['inicio_f'] + '" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr> \
+	        <tr><td>Data de Término:</td><td><input type="text" id="datafim" name="datafim" value="' + params['fim_f'] + '" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr> \
+	        <tr><td>Período:</td><td><div id="divPeriodo" name="divPeriodo"></div></td></tr> \
+	        <tr><td>Observações:</td><td><textarea id="observacoesU" name="observacoesU" style="width: 100%">' + params['observacao'] + '</textarea></td></tr> \
+	        <tr><td>Processo:</td><td><textarea id="processoU" name="processoU" style="width: 100%">' + params['processo'] + '</textarea></td></tr> \
+	        <tr><td>Cancelada:</td><td><input onclick="habilita(this);" type="checkbox" name="canceladaU" id="canceladaU"  /></td></tr> \
+	        <tr class="cancelada"><td>Motivo de cancelamento:</td><td><div id="divMCancelamento" name="divMCancelamento"></div></td></tr> \
+	        <tr class="cancelada"><td>Data de Cancelamento:</td><td><input type="text" id="dataCancelamentoU" name="dataCancelamentoU" value="' + params['data_cancelamento_f'] + '" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr> \
+	        <tr><td>Suspensa:</td><td><input onclick="habilita(this);" type="checkbox" name="suspensaU" id="suspensaU" /></td></tr> \
+	        <tr class="suspensa"><td>Motivo de suspensão:</td><td><div id="divMSuspensao" name="divMSuspensao"></div></td></tr> \
+	        <tr class="suspensa"><td>Início:</td><td><input type="text" id="suspInicio" name="suspensaoInicioU" value="' + params['suspensao_inicio_f'] + '" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr> \
+	        <tr class="suspensa"><td>Término:</td><td><input type="text" id="suspFim" name="suspensaoFimU" value="' + params['suspensao_fim_f'] + '" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr> \
+	        <tr><td></td><td><input type="submit" class="submit"  value="Ok" onClick="window.onbeforeunload=null"></td></tr> \
+	        </table> \
+	    </form>';
+	$('#faceboxForm').append(tabela);
+	
+        $('#professor').clone().attr('id', 'professorU').attr('name', 'professorU').appendTo('#divProfessor');
+        $('#periodo').clone().attr('id', 'periodoU').attr('name', 'periodoU').appendTo('#divPeriodo');
+        $('#agencia').clone().attr('id', 'agenciaU').attr('name', 'agenciaU').appendTo('#divAgencia');
+        $('#motivo_cancelamento').clone().attr('id', 'mCancelamentoU').attr('name', 'mCancelamentoU').appendTo('#divMCancelamento');
+        $('#motivo_suspensao').clone().attr('id', 'mSuspensaoU').attr('name', 'mSuspensaoU').appendTo('#divMSuspensao');
+        $('#processoU').text(params['processo']);
+        $('#agenciaU').val(params['id_agencia']);
+		//alert(params['id_motivo_suspensao']);
+		// alert(data);
+        $('#mCancelamentoU').val(params['id_motivo_cancelamento']);
+        $('#periodoU').val(params['id_periodo']);
+        $('#mSuspensaoU').val(params['id_bolsa_suspensao_motivo']);
+		$('#canceladaU').attr('checked',(params['cancelada'] == '1')?true:false);
+		if(params['cancelada']=='0')
+		{
+			$('.cancelada').css({'display':'none'});
+		}
+		$('#suspensaU').attr('checked',(params['suspensa'] == '1')?true:false);
+		if(params['suspensa']=='0')
+		{
+			$('.suspensa').css({'display':'none'});
+		}
+
+                tabela = null;
+	     
+}
+function habilita(check)
+{
+	var tipo;
+	if(check.name=='canceladaU')tipo='cancelada';
+	if(check.name=='suspensaU')tipo='suspensa';
+	if(check.checked == true)
+	{
+		$('.'+tipo).show();
+	}
+	else
+	{
+		$('.'+tipo).hide();
+	}
+}
+function deleteBolsa(data)
+{
+    var p = getParams(data);   
+    location.href='<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'bolsas', 'action' => 'delete')); ?>/id/' + p['id']; 
+}
+</script>

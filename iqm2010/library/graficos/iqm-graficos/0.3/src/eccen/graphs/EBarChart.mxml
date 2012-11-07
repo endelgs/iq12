@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:BarChart xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:Script>
+		<![CDATA[
+			[Bindable] public var quantityField:String = '';
+			[Bindable] public var labelField:String = '';
+			[Bindable] public var displayName:String = '';
+		]]>
+	</mx:Script>
+	<mx:SeriesSlide id="fxIn" duration="500" direction="right"/>
+	<mx:SeriesSlide id="fxOut" duration="500" direction="left"/>
+	<mx:verticalAxis>
+       <mx:CategoryAxis
+       		displayName="{displayName}"
+            dataProvider="{dataProvider}" 
+            categoryField="{labelField}"
+            id="categoryAxis"
+   	/>
+    </mx:verticalAxis>
+
+	<mx:series>
+		<mx:BarSeries xField="{quantityField}" labelField="{labelField}" showDataEffect="fxIn" hideDataEffect="fxOut"/>
+	</mx:series>
+</mx:BarChart>

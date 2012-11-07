@@ -1,0 +1,28 @@
+<!-- Flexigrid Component : S -->
+<?php
+$tipoDeUser = $_SESSION['tipo'];
+
+if ($this->excecao != "Sim") {
+    if ($tipoDeUser != 'admin') {
+        $this->functionDelete = "";
+        $this->isCrud = false;
+        $this->doubleClick = "";
+        echo "<style>.crud-toggle-button{display:none;}</style>";
+    }
+}
+
+
+require_once(APPLICATION_PATH . '/../library/grid_google/grid.php');
+
+$arrDados = $this->table;
+$isCrud = $this->isCrud;
+$headers = $this->headers;
+$exclude = $this->exclude;
+$doubleClick = $this->doubleClick;
+$functionDelete = $this->functionDelete;
+$height = $this->height;
+
+echo grid($arrDados, $headers, $isCrud, $exclude, $doubleClick, $functionDelete, $height);
+
+?>
+<!-- Flexigrid Component : E -->

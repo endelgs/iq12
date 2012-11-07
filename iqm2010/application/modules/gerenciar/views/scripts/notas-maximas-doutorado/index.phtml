@@ -1,0 +1,115 @@
+<?php
+$periodo = $this->partial('partials/combobox.phtml', array(
+            'name' => 'id_periodo',
+            'data' => $this->periodos,
+            'selected' => $this->id_periodo,
+            'aditional' => 'class="periodos"'
+        ));
+
+ob_start();
+?>
+<form class="zend_form crud-toggle" method="post">
+    <table width="100%">
+        <tr>
+            <td width="40%">
+                <label>Nota máxima 1:</label>
+            </td>
+            <td width="60%">
+                <input style="width:40%" type="text" name="nota1" class="nota1">
+            </td>
+        </tr>
+        <tr>
+            <td width="40%">
+                <label>Nota máxima 2:</label>
+            </td>
+            <td width="60%">
+                <input style="width:40%" type="text" name="nota2" class="nota2">
+            </td>
+        </tr>
+        <tr>
+            <td width="40%">
+                <label>Ano:</label>
+            </td>
+            <td width="60%">
+                <input style="width:40%" type="text" name="ano" class="ano">
+                <input  type="hidden" name="id" class="id" value="">
+            </td>
+        </tr>
+        <tr>
+            <td width="40%">
+                <label>Periodo:</label>
+            </td>
+            <td width="60%">
+                <?php echo $periodo; ?>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="submit" value="Gravar" class="submit"/>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<?php
+                $html = ob_get_contents();
+                ob_end_clean();
+                $htmlJS = preg_replace('/\s/', ' ', $html);
+
+                $html = '<div class="crud-c">
+         <p style="text-align:right"><a href="#" class="crud-toggle-button">Novo Notas máximas por semestre - Doutorado</a></p>
+     ' . $html . '</div>';
+
+                $a0 = range(0, 1000, 1);
+                echo $this->partial('partials/fieldset.phtml', array(
+                    'height' => 400,
+                    'title' => 'Notas máximas por semestre - Doutorado',
+                    'content' => $this->partial('partials/flexigrid.phtml',
+                            array(
+                                'isCrud' => true,
+                                'doubleClick' => "carregaBox(this.className)",
+                                'table' => $this->data,
+                                'functionDelete' => 'deleteData',
+                                'exclude' => array('id_nota_maxima', 'deletado', 'id_periodo'),
+                                'headers' => array('nota1' => 'Nota 1', 'nota2' => 'Nota 2', 'ano' => 'Ano', 'periodo' => 'Período')
+                            )
+                    ) . $html
+                ));
+?>
+                <script type="text/javascript">
+
+                    function carregaBox(data)
+                    {
+                        var re = new RegExp('\{[^}]*\}', "g");
+                        var m0 = re.exec(data);
+                        var pResult = m0[0].substring(1, m0[0].length - 1);
+                        var arrResult = new Array();
+                        arrResult = pResult.split(',');
+                        params    = new Array();
+                        for(i = 0; i < arrResult.length; i++)
+                        {                
+                            var tmp = arrResult[i].split(":");
+                            params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+                        }
+                        //alert(data);
+                        jQuery.facebox('<div id="faceboxForm">');
+                        var tabela='<?php echo $htmlJS; ?>';
+                        $('#faceboxForm').append(tabela+'</div>');
+
+                        $('.nota1').val(params['nota1']);
+                        $('.nota2').val(params['nota2']);
+                        $('.ano').val(params['ano']);
+                        $('.periodos').val(params['id_periodo']);
+                        $('.id').val(params['id_nota_maxima']);
+
+
+
+                    }
+                    function deleteData(data)
+                    {
+                        p = getParams(data);
+                        location.href='<?php echo $this->url(array('module' => 'gerenciar', 'controller' => 'notas-maximas-doutorado', 'action' => 'delete')); ?>/id/' + p['id_nota_maxima'];
+        //alert('Excluindo dado ' + );
+    }
+</script>

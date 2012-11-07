@@ -1,0 +1,95 @@
+<?php 
+
+
+$ar = array(
+'dado 1',
+'dado 2',
+'dado 3',
+'dado 4',
+'dado 5',
+'dado 6',
+'dado 7',
+'dado 8',
+'dado 9',
+'dado 10',
+'dado 11',
+'dado 12',
+'dado 13',
+'dado 14',
+'dado 15',
+'dado 16',
+'dado 17',
+'dado 18',
+'dado 19',
+'dado 20',
+'dado 21',
+'dado 22',
+'dado 23',
+'dado 24',
+'dado 25',
+'dado 26',
+'dado 27',
+'dado 28',
+'dado 29',
+'dado 30',
+'dado 31',
+'dado 32',
+'dado 33',
+'dado 34',
+'dado 35',
+'dado 36',
+'dado 37',
+'dado 38',
+'dado 39',
+'dado 40');
+
+$a0 = $ar;
+$a1 = $ar;
+$a2 = $ar;
+
+shuffle($a0);
+shuffle($a1);
+shuffle($a2);
+
+
+?>
+
+<table width="100%">
+	<tr>
+		<td>
+<?php 
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Alunos em curso',
+	'width' => '100%',
+	'content' => 'Alunos que estão fazendo mestrado ou doutorado'.$this->flex1
+));
+
+?>
+		</td>
+	</tr>
+	<tr>
+		<td>
+<?php 
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Relatorios pendentes',
+	'width' => '100%',
+	'content' => 'Pós-graduandos que ainda não entregaram relatórios'.$this->flex2
+));
+
+?>
+	
+		</td>
+	</tr>
+	<tr>
+		<td>
+<?php 
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Alunos com conclusão próxima',
+	'width' => '100%',
+	'content' => 'Alunos que estão fazendo mestrado ou doutorado e que tem a data de egresso em 6 meses ou menos'.$this->flex3
+));
+
+?>
+		</td>
+	</tr>
+</table>

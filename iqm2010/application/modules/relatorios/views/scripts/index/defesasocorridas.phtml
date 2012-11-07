@@ -1,0 +1,78 @@
+<?php
+echo $this->mascara;
+$ordenar=$this->ordenar;
+if($this->tipo=='5')
+	$check5='checked="checked"';
+else
+	$check3='checked="checked"';
+if($ordenar=='data_defesa') {
+	
+	$checkdata='checked';
+	
+} elseif($ordenar=='RA') {
+	
+	$checkra='checked';
+	
+} else {
+	
+	$checknome='checked';
+}
+$professores = $this->partial('partials/combobox.phtml', array(
+	'name'=>'professores',
+ 	'data'=>$this->prof,
+	'id'=>'professores',
+	'selected'=>$this->profSelect
+));
+$subfiltros='';
+if($this->subfiltro){
+	$subfiltros.='<tr><td><b>Orientadores</b></td><td>'.$professores.'</td></tr>';
+	$subfiltros.='<tr><td><b>Ordernar por </b></td><td><input type="radio" name="ordernar" '.$checknome.' value="nome_aluno">Nome';
+	$subfiltros.='<input type="radio" name="ordernar" '.$checkra.' value="RA">RA';
+	$subfiltros.='<input type="radio" name="ordernar" '.$checkdata.' value="data_defesa">Data defesa</td></tr>';
+}
+$html = '
+<br/>
+<form action="" method="get">
+<p>
+<label for="tipo"> <b>Tipo: </b> </label>
+<input type="radio" name="tipo" '.$check3.' value="3"> 
+Mestrado
+<input type="radio" name="tipo" '.$check5.' value="5">
+Doutorado
+</p>
+<table border="0">
+<tr>
+<td>
+<b>Período</b>
+</td>
+<td>
+<label> de  </label>
+<input type="text" name="datainicio" value="'.$this->datainicio.'" class="data"> 
+<td>
+<label> a </label>
+<input type="text" name="datafim" value="'.$this->datafim.'" class="data"> 
+</td>
+</tr>
+'.$subfiltros.'
+<tr>
+<td>
+<input type="submit" value="Listar">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+</table>
+<br/>
+</form>';
+$html .= $this->flex;
+
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Relatório de defesas ocorridas',
+	'height' => 500,
+	'content' => $html
+));
+?>

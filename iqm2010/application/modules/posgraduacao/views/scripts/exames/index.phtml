@@ -1,0 +1,220 @@
+<form class="zend_form" method="post" action="<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'exames', 'action' => 'post')) . '/controller/action' ?>">
+    <?php
+    echo $this->partial('partials/pessoaheader.phtml', array('nome' => $this->nomePessoa));
+    echo $this->partial('partials/posgraduacaoheader.phtml', array('tipo' => $this->tipoPosGraduacao));
+    ?>
+    <script type="text/javascript">
+        var i=0;
+        var numAux=1;
+        var outros=false;
+        $(document).ready(function(){
+            $('#pessoa-<?php echo $this->tipocurso; ?>').addClass('selecionado');
+            $('#<?php echo $this->tipocurso; ?>-exames').addClass('selecionado');
+            $("#divPeriodo0").html($("#periodoInv").html());
+            $("#divCidade0").html($("#divCidadeInv").html());
+
+            $('input').attr('onBlur', 'mudancaDeValor()');
+
+<?php if ($this->tipocurso == 'mestrado') { ?>
+            if(!outros){
+                $('.<?php echo $this->tipocurso; ?>-outros').css('color', '#CCC').css('cursor', 'default').click(function(e){return false;});
+            }
+<?php } ?>	
+      });
+    function mudancaDeValor()
+    {
+        window.onbeforeunload = function(){ return 'Você perderá todas as alterações';}
+
+        //alert('Modificado');
+        //$('body').attr('onUnload', 'if !window.confirm("Dados podem ter sido alterados. Deseja sair sem gravar?")){return false}');
+    }
+    function ConfirmExit()
+    {
+        //alert('')
+        //Pode se utilizar um window.confirm aqui também...
+        return window.confirm('');
+    }
+
+
+    function insereNotas(num){
+        var valor, vhtml, ahtml, xtr, valor1, nInputs, iExame, crudFlag;
+        valor = $("#nota"+num).val();
+        nInputs = 0;
+        xtr = 0;
+        vhtml = "<table>";
+        for(x=1;x<=valor;x++)
+        {
+            if(xtr==3){xtr=0;}
+            if(xtr==0){vhtml=vhtml + "<tr>";}
+            vhtml = vhtml + '<td><label style="font-size: 12px;">Nota Questão '+x+'</label></td><td><input style="width:50px;" type="text" id="i_nota'+numAux+'" name="nota[]"></td>';
+            if(xtr==2){vhtml=vhtml + "</tr>";}
+            xtr++;
+            numAux++;
+            nInputs++;
+        }
+        valor1 = numAux - 1;
+        iExame = num;
+        crudFlag = 1;
+        vhtml = vhtml + "<tr><td colspan='2'><input onclick='calcularmedia("+valor1+","+nInputs+","+iExame+","+crudFlag+");' class='botao-calcular-media' type='button' value='Calcular Média' /></td></tr>";
+        vhtml = vhtml + "</table>";
+        $("#notas"+num).html(vhtml);
+    }
+
+
+
+    function calculo2(nota2, aux)
+    {
+        var max1= $('#nota_1_max_'+aux).val();
+        var max2= $('#nota_2_max_'+aux).val();    
+        var nota1 = $('#nota1_'+aux).val();
+
+        var p1Nor =  (nota1/max1)*50;
+        var p2Nor =  (nota2/max2)*50;
+        
+        if(max1.replace(" ","")!="" &&  max2.replace(" ","")!="")
+            return p1Nor+p2Nor;
+        else
+            alert("Nota máxima não definida para este ano. \nConfigure-a no gerenciar.");
+        
+        return " ";
+    }
+
+
+    function enableOutros(){
+        if(!outros){outros=true;}
+    }
+
+    function calcularmedia(firstInput,nInputs,iExame,crudFlag){
+        var n = 0;
+        var b;
+        var v_id;
+        var aux = iExame;
+        var notaMaxima = 0;
+        if(crudFlag==1)v_id="#i_nota"; <?php // Insercao  ?>
+        if(crudFlag==2)v_id="#u_nota"; <?php // Update    ?>
+        for(x=((firstInput-nInputs)+1);x<=firstInput;x++){
+            if($(v_id+x).val()){
+                b = parseFloat( $(v_id+x).val() );
+            }else{
+                b = 0;
+            }
+            if(b>notaMaxima) notaMaxima = b;
+            n = n + b;
+        }
+        valorFinal = n / (nInputs/2);
+
+<?php if ($this->tipocurso == 'doutorado') { ?>
+        valorFinal = n;
+        valorFinal = calculo2(valorFinal, aux);
+<?php } ?>
+        $("#mediaaluno"+iExame).val(valorFinal.toFixed(1));
+    }
+    </script>
+    <?php
+    $nota1 = "";
+    $textReferente2 = "";
+    $numAux = 0;
+    $numNotaAux = array();
+    $numNotaAux2 = array();
+    
+    
+    foreach ($this->exame as $item) {
+        //var_dump($item);
+        if ($item['fez_prova'] == 1)
+            $fez_prova = 'checked="checked"';
+        else
+            $fez_prova='';
+
+        if ($item['aprovado'] == 1)
+            $aprovado = 'checked="checked"';
+        else
+            $aprovado='';
+
+        if ($item['matriculado'] == 1)
+            $matriculado = 'checked="checked"';
+        else
+            $matriculado='';
+
+        $notacurriculo1 = $item['nota_curriculo_1'];
+
+        $xtr = 0;
+        $numNota = 0;
+        $numCont = 0;
+        $html = '<table border="0"><tr><td></td></tr>';
+        foreach ($this->notas as $notas) {
+            $nq = 1;
+            $nqAux = 0;
+            foreach ($notas as $nota) {
+                if ($nota['id_exame'] == $item['id_exame']) {
+                    if ($xtr == 3)
+                        $xtr = 0;
+                    if ($xtr == 0)
+                        $html.="<tr>";
+                    $numNota2 = $numNota + 1;
+                    $html.='<td><label style="font-size: 12px;">Nota Questão ' . $nq . '</label></td><td><input style="width:50px;" type="text" id="u_nota' . $numNota2 . '" value="' . $nota['nota'] . '" name="nota[]"></td>';
+                    if ($xtr == 2)
+                        $html .= "</tr>";
+                    $xtr++;
+                }
+                $nq++;
+                $nqAux++;
+                $numNota++;
+            }
+            if ($numNotaAux[$numCont] == '') {
+                $numNotaAux2[$numCont] = $nqAux;
+                $numNotaAux[$numCont] = $numNota;
+            }
+            $numCont++;
+        }
+        $html.='<tr><td colspan="2"><input onclick="calcularmedia(' . $numNotaAux[$numAux] . ',' . $numNotaAux2[$numAux] . ',' . $numAux . ',' . (2) . ');" class="botao-calcular-media" type="button" value="Calcular Média" /></td></tr>';
+        $html.='</table>';
+        if ($this->tipocurso == 'doutorado') {
+
+            $nota1 = '<tr><td><label>Nota do currículo do aluno: <sub>(Referente a nota máxima 1)</sub></label></td><td colspan="4"><input type="text" id="nota1_' . $numAux . '" name="nota1[]" value="' . $notacurriculo1 . '" /></td></tr>';
+            $textReferente2 = "<sub>(Referente a nota máxima 2)</sub>";
+        }
+        echo $this->partial('partials/fieldset.phtml', array('title' => 'Exames <span class="fakeText"><input style="width: 400px;" type="text" readonly="readonly" value="Referente a Inscrição n° ' . $item['id_inscricao'] . '"></span>'
+            , 'height' => '400', 'content' =>
+            '<div class="crud-c">
+    <table width="100%">
+      <colgroup><col width="210" /><col></colgroup>
+      <tr><td><label>Data do exame:</label></td><td colspan="4"><input value="' . $this->partial('partials/data.phtml', array('tipo' => 'out', 'data' => $item['data_exame'])) . '" type="text" id="data" name="data[]" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10" /></td></tr>
+      <tr>
+        <td><label>Cidade realizada a prova:</label>
+        </td><td colspan="4">
+          ' . $this->partial('partials/combobox.phtml', array('name' => 'cidade[]', 'data' => $this->cidadesProva, 'selected' => $item['id_cidade_prova'])) . '
+        </td>
+      </tr>
+      <tr><td><label>Aluno não fez a prova:</label></td><td colspan="4"><input ' . $fez_prova . ' type="checkbox" id="prova" name="prova' . $numAux . '" value="1" /></td></tr>
+      ' . $nota1 . '
+                        <tr><td><label>Número de questões: ' . $textReferente2 . '</label></td><td colspan="4"><input value="' . $item['numero_questoes'] . '" type="text" id="nota' . $numAux . '" name="numero_questoes[]" /></label>&nbsp;<input class="botao-ok" type="button" value="OK" onclick="insereNotas(' . $numAux . ');" /></td></tr>
+      <tr>	
+        <td></td>
+        <td id="notas' . $numAux . '">' . $html . '</td>
+      </tr>
+      <tr><td><label>Média aluno: </label></td><td colspan="4"><input value="' . $item['media'] . '" type="text" id="mediaaluno' . $numAux . '" name="mediaaluno[]" /></td></tr>
+      <tr><td><label>Média Turma:</label></td><td colspan="4"><input value="' . $item['media_turma'] . '" type="text" id="mediaturma" name="mediaturma[]" /></td></tr>
+      <tr><td><label>Nota de corte:</label></td><td colspan="4"><input value="' . $item['nota_corte'] . '" type="text" id="notacorte" name="notacorte[]" /></td></tr>
+      <tr><td><label>Classificação:</label></td><td><input value="' . $item['classificacao'] . '" type="text" id="classificacao" name="classificacao[]" /> <b>de</b> <input value="' . $item['classificacao_quantidade'] . '" type="text" name="classificacao_quantidade[]"></td></tr>
+      <tr><td><label>Aprovado?</label></td><td colspan="4"><input ' . $aprovado . ' type="checkbox" id="aprovado" name="aprovado' . $numAux . '" value="1" /></label></td></tr>
+      <tr><td><label>Matriculado?</label></td><td colspan="4"><input ' . $matriculado . ' type="checkbox" id="matriculado' . $numAux . '" name="matriculado' . $numAux . '" value="1" /></td></tr>
+    </table>
+  </div>
+  <input type="hidden" name="id_exame[]" value="' . $item['id_exame'] . '"/>
+
+         <input type="hidden" id="nota_1_max_' . $numAux . '" value="' . $item['nota1'] . '"/>
+         <input type="hidden" id="nota_2_max_' . $numAux . '" value="' . $item['nota2'] . '"/>
+             
+  <input type="hidden" name="id_pos_graduacao" value="' . $item['id_pos_graduacao'] . '"/>
+  <input type="hidden" id="id_pessoa" name="id_pessoa" value="' . $item['id_pessoa'] . '"/>
+  <input type="hidden" name="id_inscricao[]" value="' . $item['id_inscricao'] . '"/>'
+        ));
+        $script.='if($("#matriculado' . $numAux . '").is(":checked"))enableOutros();';
+        $numAux++;
+    }
+
+    echo '<script>' . $script . '</script>';
+    ?>
+    <p id="pnovo"></p>
+    <div><input class="botao" type="submit" value="Gravar" onClick="window.onbeforeunload=null" /></div>
+</form>

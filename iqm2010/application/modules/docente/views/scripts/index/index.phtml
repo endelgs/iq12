@@ -1,0 +1,178 @@
+<style type="text/css">
+.detalhesAposentadoria
+{
+	display:none;
+}
+</style>
+
+<script type="text/javascript">
+$(document).ready(function()
+        {
+            $('#pessoa-docente').addClass('selecionado');
+            $('#docente-dados').addClass('selecionado');
+            $('input').attr('onBlur', 'mudancaDeValor()');
+        });
+
+function habilitaDetalhes(ready)
+{
+	if($('#ehDocente').is(':checked'))
+		$('#formDetalhes').show();
+	else
+	{
+		$('#formDetalhes').hide();
+
+		if(ready)
+			$('.docente-outros').css('color', '#CCC').css('cursor', 'default').click(function(e){return false;});
+	}
+}
+
+function habilitaDetalhesAposendadoria()
+{
+//	alert($('#aposentado').is(':checked'));
+	if($('#aposentado').is(':checked'))
+		$('.detalhesAposentadoria').show();
+	else
+	{
+		$('.detalhesAposentadoria').hide();
+	}
+	
+}
+
+$(document).ready(function(){
+
+	habilitaDetalhes(true);
+	habilitaDetalhesAposendadoria();
+	
+	$('#ehDocente').click(function(){
+		habilitaDetalhes(false);
+	});
+
+	$('.aposentado').click(function(){
+		habilitaDetalhesAposendadoria();
+	});
+});
+</script>
+<?php
+echo $this->partial('partials/pessoaheader.phtml', array('nome' => $this->nomePessoa));
+echo $this->partial('partials/posgraduacaoheader.phtml', array('tipo' => '6'));
+
+$instituicoes = $this->partial('partials/combobox.phtml', array(
+    'name'=>'instituicao',
+    'data'=>$this->instituicoes,
+    'selected'=>$this->dados['id_instituicao']
+));
+
+$departamentos = $this->partial('partials/combobox.phtml', array(
+    'name'=>'departamento',
+    'data'=>$this->departamentos,
+    'selected'=>$this->dados['id_departamento']
+));
+
+$tiposdocente = $this->partial('partials/combobox.phtml', array(
+    'name'=>'tipodocente',
+    'data'=>$this->tiposDocente,
+    'selected'=>$this->dados['id_tipodocente']
+));
+
+$tipoaposendadorias = $this->partial('partials/combobox.phtml', array(
+    'name'=>'tipoaposentadoria',
+    'data'=>$this->tiposAposendadorias,
+    'selected'=>$this->dados['id_aposentadoria']
+));
+
+if((int)$this->dados['aposentado']==1)
+	$checkAposentadoSim='CHECKED';
+else
+	$checkAposentadoNao='CHECKED';
+	
+if((int)$this->dados['status']==1)
+	$checkStatusSim='CHECKED';
+else
+	$checkStatusNao='CHECKED"';
+	
+	
+if($this->idPessoa != 0)
+{
+	
+	$check=$this->check ? 'checked="checked"' : '';
+	echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Dados do docente',
+	'height' => 200,
+	'content' =>'
+<form action="" method="post" class="zend_form">
+    <input type="checkbox" id="ehDocente" name="ehDocente" value="1" '.$check.' /> Esta pessoa é um docente ?
+	
+	<table id="formDetalhes" style="display:none;" class="fieldset">
+		<colgroup>
+			<col width="180" />
+			<col>
+		</colgroup>
+		<tr>
+			<td><br/></td>
+		</tr>
+		<tr>
+			<td><label>Universidade:</label></td>
+			<td>'.$instituicoes.'</td>
+		</tr>
+		<tr>
+			<td><label>Unidade:</label></td>
+			<td><input value="'.$this->dados['unidade'].'" type="text" name="unidade" id="unidade" size="100%"/></td>
+		</tr>
+		<tr>
+			<td><label>Departamento:</label></td>
+			<td>'.$departamentos.'</td>
+		</tr>
+		<tr>
+			<td><label>Tipo de docente:</label></td>
+			<td>'.$tiposdocente.'</td>
+		</tr>
+		<tr>
+			<td><label>Titulação:</label></td>
+			<td><input value="'.$this->dados['titulacao'].'" type="text" name="titulacao" id="titulacao" size="100%"/></td>
+		</tr>
+		<tr>
+			<td><label>Título:</label></td>
+			<td><input value="'.$this->dados['titulo'].'" type="text" name="titulo" id="titulo" size="100%"/></td>
+		</tr>
+		<tr>
+			<td><label>Data de titulação:</label></td>
+			<td><input value="'.$this->dados['data'].'" type="text" name="data" id="data" size="100%" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"/></td>
+		</tr>
+		<tr>
+			<td><label>Observações:</label></td>
+			<td><textarea name="observacoes" id="observacoes" style="width:100%;">'.$this->dados['observacoes'].'</textarea></td>
+		</tr>
+		<tr>
+			<td><label>Aposentado?</label></td>
+			<td>
+				<input  name="aposentado" '.$checkAposentadoNao.' type="radio"  class="aposentado" value="0" /> Não
+				<input  name="aposentado" '.$checkAposentadoSim.' id="aposentado" class="aposentado" type="radio" value="1" /> Sim
+			</td>
+		</tr>
+		<tr class="detalhesAposentadoria">
+			<td><label>Data de aposentadoria:</label></td>
+			<td>
+				<input  name="dataaposentadoria" type="text" value="'.$this->dados['dataaposentadoria'].'" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10" />
+			</td>
+		</tr>
+		<tr class="detalhesAposentadoria">
+			<td><label>Tipo de aposentadoria:</label></td>
+			<td>
+				'.$tipoaposendadorias.'
+			</td>
+		</tr>
+		<tr>
+			<td><label>Ativo?</label></td>
+			<td>
+				<input  '.$checkStatusNao.' name="ativo" type="radio" value="0" /> Não
+				<input  '.$checkStatusSim.' name="ativo" type="radio" value="1" /> Sim
+			</td>
+		</tr>
+	
+	</table>
+
+' )); 
+}
+?>
+<input type="submit" class="botao" value="Gravar">
+</form>

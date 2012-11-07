@@ -1,0 +1,29 @@
+<?php 
+$cbOrientadores = $this->partial('partials/combobox.phtml', array(
+	'name'=>'data',
+ 	'data'=>$this->orientadores,
+	'selected'=>$this->data
+));
+
+
+$html='<form action="" method="get">
+<br/><br/><table width="650px"><tr><td>';
+
+$html.='Orientador: '.$cbOrientadores;
+	
+$html.='</td></tr></table>
+<br/><br/>
+<input type="submit" value="Listar">
+<br/><br/>
+</form>';
+
+$html .= $this->flex;
+
+
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Relatório de alunos ativos em curso ',
+	'height' => 500,
+	'content' => $html
+	));
+	
+?>

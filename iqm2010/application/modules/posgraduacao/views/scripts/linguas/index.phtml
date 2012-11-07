@@ -1,0 +1,224 @@
+<?php
+echo $this->partial('partials/pessoaheader.phtml', array('nome' => $this->nomePessoa));
+echo $this->partial('partials/posgraduacaoheader.phtml', array('tipo' => $this->tipoPosGraduacao));
+$lingua = $this->partial('partials/combobox.phtml', array(
+            'name' => 'lingua',
+            'data' => $this->linguas,
+            'id' => 'lingua',
+        ));
+$veApro[0] = "Sim";
+$veApro[1] = "Não";
+//$veApro[2] = "Convalidado";
+$aprovado = $this->partial('partials/combobox.phtml', array(
+            'name' => 'aprovado',
+            'data' => $veApro,
+            'id' => 'aprovado',
+        ));
+
+
+$instituicoes = $this->partial('partials/combobox.phtml', array(
+            'name' => 'instituicoes',
+            'data' => $this->instituicoes,
+            'id' => 'instituicoes',
+        ));
+?>
+
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        $('#pessoa-<?php echo $this->tipocurso; ?>').addClass('selecionado');
+        $('#<?php echo $this->tipocurso; ?>-linguas').addClass('selecionado');
+        //$('input').attr('onBlur', 'mudancaDeValor()');
+
+
+        function mudancaDeValor()
+        {
+            window.onbeforeunload = function(){ return 'Você perderá todas as alterações';}
+
+            //alert('Modificado');
+            //$('body').attr('onUnload', 'if !window.confirm("Dados podem ter sido alterados. Deseja sair sem gravar?")){return false}');
+        }
+        function ConfirmExit()
+        {
+            //alert('')
+            //Pode se utilizar um window.confirm aqui também...
+            return window.confirm('');
+        }
+</script>
+
+<div style="height: 0; visibility: hidden; display: none;">
+    <div id="divLinguaInv"><?php echo $lingua; ?></div>
+    <div id="divAprovadoInv"><?php echo $aprovado; ?></div>
+    <div id="divInstituicoesInicio" ><?php echo $instituicoes; ?></div>
+</div>
+<?php
+echo $this->partial('partials/fieldset.phtml', array(
+    'height' => 400,
+    'title' => 'Linguas',
+    'content' => $this->partial('partials/flexigrid.phtml', array(
+        'isCrud' => true,
+        'doubleClick' => "carregaBox(this.className)",
+        'table' => $this->grid,
+        'functionDelete' => 'deleteData',
+        'exclude' => array('id_pos_graduacao', 'id_proficiencia_lingua', 'id_lingua', 'aprovado', 'convalidado', 'id_instituicao'),
+        'headers' => array('lingua' => 'Língua', 'aprovado_msg' => 'Aprovado', 'data' => 'Data de Proeciência', 'convalidado_msg'=>'Convalidado')
+            )
+    ) . '
+<div class="crud-c">
+<p style="text-align:right"><a href="#" class="crud-toggle-button">Nova proficiência de lingua</a></p>
+<form class="zend_form crud-toggle" method="post">
+	<table width="100%">
+	<tr><td width="20%"><label>Lingua:</td><td width="80%" colspan="2">' . $lingua . '</label></td></tr>
+		<tr><td width="20%"><label>Aprovado:</label></td>
+			<td width="80%" colspan="2">
+			<select name="aprovado" id="aprovado">
+					<option selected value="0">Sim</option>
+					<option value="1">Não</option>
+			</select>			
+		</td></tr>
+
+        <tr>
+        <td width="20%">
+        <label for="checkCon">Convalidado</label>
+        </td>
+        <td  width="80%">
+        <input type="checkbox" id="checkCon"  name="convalidado" class="checkC">
+        </td>
+        </tr>
+        <tr class="instituicaoList1" style="display:none;">
+        <td width="20%">
+        <label >Instituição</label>
+        </td>
+        <td  width="80%">
+        ' . $instituicoes . '
+        <br> <br>
+        
+           </td>
+        </tr>
+         <tr class="instituicaoList1" style="display:none;">
+        <td width="20%">
+        <label>Data de convalidação:</label>
+        </td>
+        <td  width="80%">
+       <input type="text" id="dataconv" name="dataconv" value="" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10">
+        
+        <br> <br>
+        
+           </td>
+        </tr>
+        
+             
+     <tr>
+     	<td><label>Data de proficiência:</label></td>
+     	<td><input type="text" id="data" name="data" value="" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td>
+     </tr>
+	<tr><td></td><td><input type="submit" class="submit"  value="Gravar" onClick="window.onbeforeunload=null" /></td></tr>
+	</table>
+</form>
+</div>	'
+));
+?>
+<script type="text/javascript">
+        function carregaBox(data)
+        {
+
+            var re = new RegExp('\{[^}]*\}', "g");
+            var m0 = re.exec(data);
+            var pResult = m0[0].substring(1, m0[0].length - 1);
+            var arrResult = new Array();
+            arrResult = pResult.split(',');
+            params    = new Array();
+
+            for(i = 0; i < arrResult.length; i++)
+            {
+                var tmp = arrResult[i].split(":");
+                params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+            }
+
+            jQuery.facebox('<div id="faceboxForm">');
+
+            $('#faceboxForm').append('\
+                        <form action="" class="zend_form" method="post" id="formCreate"> \
+                <input type="hidden" name="id_proficiencia" id="id_proficiencia" value="' + params['id_proficiencia_lingua'] + '"> \
+                <table> \
+                <tr><td><label><label>Lingua:</label></label></td><td><div id="divLingua" name="divLingua" ></div></td></tr>\
+                <tr><td>Data de proficiência:</td><td><input type="text" id="datapro" name="datapro" value="' + params['data'] + '" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr> \
+                        <tr><td width="20%"><label>Aprovado:</label></td><td><div id="divAprovado" name="divAprovado"></div></td></tr>\
+        <tr>\
+        <td width="20%">\
+                    <label for="checkCon2">Convalidado</label>\
+                    </td>\
+        <td  width="80%">\
+        <input type="checkbox" id="checkCon2" onclick="check()" class="checkC" name="convalidado">\
+                    </td>\
+                    </tr>\
+        <tr class="instituicaoList2" style="display:none;">\
+        <td width="20%">\
+                    <label> Instituição</label>\
+                    </td>\
+        <td  width="80%">\
+        <div id="divInstituicoesJS"></div>\
+                    </td>\
+                    </tr>\
+                    <tr class="instituicaoList2" style="display:none;">\
+                    <td width="20%">\
+                    <label> Data de convalidação</label>\
+                    </td>\
+                    <td  width="80%">\
+                    <input type="text" id="dataconv" name="dataconv" value="' + params['dataconv'] + '" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10">\
+                                </td>\
+                                </tr>\
+                <tr><td></td><td><input type="submit" class="submit"  value="Ok" onClick="window.onbeforeunload=null"></td></tr> \
+                                </table> \
+                                </form>');
+                                
+                            //  alert(params['convalidado']);
+                          
+                            $('#lingua').clone().attr('id', 'linguaU').attr('name', 'linguaU').appendTo('#divLingua');
+                            $('#aprovado').clone().attr('id', 'aprovadoU').attr('name', 'aprovadoU').appendTo('#divAprovado');
+                            $('#linguaU').val(params['id_lingua']);
+                            $('#aprovadoU').val(params['aprovado']);
+                            $('#instituicoes').clone().attr('id','instituicoesU').attr('name','instituicoesU').appendTo('#divInstituicoesJS');
+                            $('#instituicoesU').val(params['id_instituicao']);
+
+
+                            if(params['convalidado']=='1')
+                            {
+                               $('.instituicaoList2').show();
+                                $('#checkCon2').attr('checked','checked');
+                            }
+
+                        }
+                        function deleteData(data)
+                        {
+                            p = getParams(data);
+            
+                            location.href='<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'linguas', 'action' => 'delete')); ?>/id/' + p['id_proficiencia_lingua'];
+                        }
+
+
+                        function check()
+                        {
+                           $('.instituicaoList2').toggle();
+                        }
+
+                        
+                        $(document).ready(function(){
+
+                            $('#checkCon').click(function(){
+								//alert("TESTE");
+                                // checado=$(this).is(':checked');
+                                $('.instituicaoList1').toggle();
+
+                            });
+
+                            //                            $('#checkCon2').click(function(){
+                            //
+                            //                                alert('Oiii');
+                            //                                // checado=$(this).is(':checked');
+                            //                                // $('#').toggle();
+                            //
+                            //                            });
+                        });
+</script>
+

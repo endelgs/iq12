@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<response>
+	<!-- Metadados dos resultados -->
+	<metadata>
+		<relatorio name="Nome do Relatório">
+			<desc>
+				<![CDATA[ Descrição do relatório. Aqui pode ter acentos e tudo mais. ]]>
+			</desc>
+		</relatorio>
+		<affectedRows>2</affectedRows>
+	</metadata>
+	<!-- Metadados dos campos -->
+	<fMeta>
+		<field name="qtd" displayName="Quantidade" />
+		<field name="ano" displayName="Ano" />
+	</fMeta>
+	<data>
+		<row ano="2008" qtd="12"/>
+		<row ano="2009" qtd="10"/>
+		<row ano="2010" qtd="3"/>
+	</data>
+</response>

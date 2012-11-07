@@ -1,0 +1,304 @@
+<form class="zend_form" method="post" action="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'qualificacoes','action'=>'post', 'qualificacao'=> $this->tipoQualificacao)) ?>">
+<?php 
+$professor = $this->partial('partials/combobox.phtml', array(
+	'name'=>'i_professor',
+ 	'data'=>$this->professores,
+	'id' => 'i_professor',
+));
+$atribuicao = $this->partial('partials/combobox.phtml', array(
+    'name'=>'u_atribuicao',
+    'data'=>$this->atribuicoes,
+	'id' => 'i_atribuicao',
+));
+?>
+<script type="text/javascript">
+var nd = 1;
+function novosDados()
+{
+	var opt_professor  = $('#i_professor').html();
+	var opt_atribuicao = $('#i_atribuicao').html();
+	tabela = '<table class="fieldset" cellpadding="0" cellspacing="0" style="width: 100%;" id="iqualificacao-' + nd +'">\
+	<tr class="fieldset-top"><td class="fieldset-top-l"></td><td class="fieldset-top-c"></td><td class="fieldset-top-r"></td></tr>\
+	<tr> \
+	        <td class="fieldset-center-l"></td> \
+	        <td class="fieldset-center-c" valign="top"> \
+	            <h1 class="fieldset-title">Dados de Qualificação</h1><div class="crud-c"> \
+	        <table width="100%"> \
+	        <colgroup> \
+	         <col width="300" /> \
+	         <col> \
+	        </colgroup> \
+	        <tr><td><label>Título: </td><td><input value="" size="50" type="text" name="i_titulo'+nd+'" /></td></tr> \
+		    <tr><td><label>Data: </td><td><input type="text" value="" name="i_data'+nd+'" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr> \
+		    <tr><td><label>Sala: </td><td><input value="" type="text" name="i_sala'+nd+'" /></td></tr> \
+		    <tr><td><label>Horário: </td><td><input value="" type="text" onkeypress="formataCampo(this, \'00:00:00\', event);" maxlength="8" name="i_horario'+nd+'" /></td></tr> \
+		    <tr> \
+		    	<td><label>Aprovado: </td> \
+		    	<td> \
+		    		<table> \
+		    			<tr><td><input  checked="checked" name="i_aprovado'+nd+'" onclick="condicional('+nd+',1,0);" type="radio" value="0" /></td><td>sim</td></tr> \
+		    			<tr><td><input  name="i_aprovado'+nd+'" onclick="condicional('+nd+',1,1);"type="radio" value="1" /></td><td>não</td></tr> \
+		    			<tr><td><input name="i_aprovado'+nd+'" type="radio" value="2" onclick="condicional('+nd+',1,2);"/></td><td>condicional</td></tr> \
+		    		</table> \
+		    	</td> \
+		    </tr> \
+		    <tr id="i_ob'+nd+'" style="display:none;"><td><label>Observações: </td><td><textarea  name="i_observacoes'+nd+'" ></textarea></td></tr> \
+		    <tr> \
+	    	<td><label>O exame é convalidado?</td> \
+	    	<td> \
+	    		<table> \
+	    			<tr><td><input  checked="checked" name="i_conv'+nd+'" onclick="condicional2('+nd+',1,0);" type="radio" value="0" /></td><td>não</td></tr> \
+	    			<tr><td><input  name="i_conv'+nd+'" onclick="condicional2('+nd+',1,1);"type="radio" value="1" /></td><td>sim</td></tr> \
+	    		</table> \
+	    	</td> \
+	    </tr> \
+	    <tr id="i_data_con_div'+nd+'" style="display:none;"><td><label>Data de convalidação: </td><td><input type="text" value="" name="i_data_conv'+nd+'" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr> \
+			<tr><td><label>Bancas: </td><td> \
+		    <table><tr><td><label>Professor:</label></td> \
+			<td><select id="i_professores'+nd+'" name="i_professores'+nd+'"> \
+			'+opt_professor+' \
+			</select></td> \
+			<td><label>Atribuição:</label></td> \
+			<td><select id="i_atribuicoes'+nd+'" name="i_atribuicoes'+nd+'"> \
+			'+opt_atribuicao+' \
+			</select></td>\
+			<td>\
+			<input class="botao-calcular-media" type="submit" value="Gravar" onClick="window.onbeforeunload=null"/>\
+			</td></tr></table></td> \
+		    </tr> \
+		    <tr><td></td><td align="right"><a href="#" onClick="if(window.confirm(\'Deseja realmente excluir esta inscrição e o exame a esta relacionado?\\n\')){$(\'#iqualificacao-' + nd + '\').remove()}" class="linkRemove"><img src="<?php echo $this->baseUrl(); ?>/assets/img/cross.png" alt="[x]" align="absmiddle" />Remover</a></td></tr> \
+		    <input type="hidden" name="count_i[]" value="0" /> \
+	        </table> \
+	    </div>      </td> \
+	        <td class="fieldset-center-r"></td> \
+	</tr><tr class="fieldset-bottom"><td class="fieldset-bottom-l"></td><td class="fieldset-bottom-c"></td><td class="fieldset-bottom-r"></td></tr></table>';
+	$('#pnovo').append(tabela);
+	nd = nd + 1;
+
+        tabela=null;
+}
+</script>
+<?php 
+echo $this->partial('partials/pessoaheader.phtml', array('nome' => $this->nomePessoa));
+echo $this->partial('partials/posgraduacaoheader.phtml', array('tipo' => $this->tipoPosGraduacao));
+	$rows = $this->pg_qualificacoes;
+	$u = 1;
+	foreach($rows as $row)
+	{
+		$bancas = array();
+		$y = 0;
+		foreach($this->pg_bancas as $banca)
+		{
+			if($banca['id_qualificacao']==$row['id_qualificacoes'])
+			{
+				$bancas[$y] = array(
+					'id_qualificacao' 	=> $banca['id_qualificacao'],
+					'id_banca' 			=> $banca['id'],
+					'id_professor'		=> $banca['nome'],
+					'id_atribuicao'		=> $banca['atribuicao'],
+				);
+				$y++;	
+			}
+		}
+	$style="display:none;";
+	
+	
+	if($row['aprovado']==0)$aprovado[0]="checked='checked'";
+	else $aprovado[0]="";
+	if($row['aprovado']==1)$aprovado[1]="checked='checked'";
+	else $aprovado[1]="";
+	if($row['aprovado']==2)
+	{
+		$style="";
+		$aprovado[2]="checked='checked'";
+	}
+	else $aprovado[2]="";	
+	
+	$style2="display:none;";
+	if($row['conv']==0)
+	$conv[0]="checked='checked'";
+	else $conv[0]="";
+	if($row['conv']==1)
+	{
+		$style2="";
+		$conv[1]="checked='checked'";
+	}
+	else $conv[1]="";
+	
+
+	
+	$a = $this->partial('partials/fieldset.phtml', array(
+		'title' => 'Dados de Qualificação',
+		'aditional' => 'id="qualificacao-' . $u . '"',
+		'content' =>'
+		<div class="crud-c">
+		<table width="100%">
+			<colgroup>
+		    	<col width="250" />
+		    	<col>
+		    </colgroup>
+		    <tr><td><label>Título: </td><td><input value="'.$row['titulo'].'" size="50" type="text" name="u_titulo'.$u.'" /></td></tr>
+		    <tr><td><label>Data: </td><td><input type="text" id="u_data" value="'.$this->partial('partials/data.phtml', array('tipo'=>'out', 'data'=>$row['data'])).'" name="u_data'.$u.'" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr>
+		    <tr><td><label>Sala: </td><td><input value="'.$row['sala'].'" type="text" name="u_sala'.$u.'" /></td></tr>
+		    <tr><td><label>Horário: </td><td><input value="'.$row['horario'].'" type="text" onkeypress="formataCampo(this, \'00:00:00\', event);" maxlength="8" name="u_horario'.$u.'" /></td></tr>
+		    <tr>
+		    	<td><label>Aprovado: </td>
+		    	<td>
+		    		<table>
+		    			<tr><td><input '.$aprovado[0].' name="u_aprovado'.$u.'" type="radio" value="0" onclick="condicional('.$u.',2,0);"/></td><td>sim</td></tr>
+		    			<tr><td><input '.$aprovado[1].' name="u_aprovado'.$u.'" type="radio" value="1" onclick="condicional('.$u.',2,1);"/></td><td>não</td></tr>
+		    			<tr><td><input '.$aprovado[2].' name="u_aprovado'.$u.'" type="radio" value="2" onclick="condicional('.$u.',2,2);"/></td><td>condicional</td></tr>
+		    		</table>	
+		    	</td>
+		    </tr>
+		     <tr style="'.$style.'" id="u_ob'.$u.'"><td><label>Observações: </td><td><textarea  name="u_observacoes'.$u.'">'.$row['observacoes'].'</textarea></td></tr>
+		     
+		     <tr>
+		    	<td><label>O exame é convalidado? </td>
+		    	<td>
+		    		<table>
+		    			<tr><td><input '.$conv[0].' name="u_conv'.$u.'" type="radio" value="0" onclick="condicional2('.$u.',2,0);"/></td><td>não</td></tr>
+		    			<tr><td><input '.$conv[1].' name="u_conv'.$u.'" type="radio" value="1" onclick="condicional2('.$u.',2,1);"/></td><td>sim</td></tr>  
+		    		</table>	
+		    	</td>
+		    </tr>
+		     <tr style="'.$style2.'" id="u_data_con_div'.$u.'"><td><label>Data convalidacao: </td><td><input type="text" id="u_dataconv" value="'.$this->partial('partials/data.phtml', array('tipo'=>'out', 'data'=>$row['dataconv'])).'" name="u_dataconv'.$u.'" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr>
+		     
+		     <tr>
+		    	<td><label>Bancas: </td>
+		    	<td>
+		    		<table>
+		    			<tr>
+		    				<td colspan="4">
+		    				'.
+							$this->partial('partials/flexigrid.phtml', 
+					        array(
+					        	'isCrud' => true,
+					            'table' =>$bancas,
+					        	'functionDelete' => 'deleteBancaQualificacao',
+					            'exclude' => array('id_banca','id_qualificacao'),
+					            'headers' => array('id_professor' => 'Professor', 'id_atribuicao'=>'Atribuição'),
+					            'ifNull' => array('id_professor', 'id_atribuicao'),
+                                                    'height'=>'120'
+					        	))
+							.'
+		    				</td>
+		    			</tr>
+		    			<tr>
+		    				<td><label>Professor:</label></td>
+		    				<td>
+		    				'.$this->partial('partials/combobox.phtml', array(
+						    	'name'=>'u_professores'.$u,
+						    	'data'=>$this->professores,
+						    	)).'
+		    				</td>
+		    				<td><label>Atribuição:</label></td>
+		    				<td>'.$this->partial('partials/combobox.phtml', array(
+						    	'name'=>'u_atribuicoes'.$u,
+						    	'data'=>$this->atribuicoes,
+						    	)).'
+							</td>
+							<td>
+								<input class="botao-calcular-media" type="submit" value="Gravar" onClick="window.onbeforeunload=null"/>
+							</td>
+		    			</tr>
+		    		</table>
+		    	</td>
+		    </tr>
+		    <tr><td></td><td align="right"><a href="#" onClick="if(window.confirm(\'Deseja realmente excluir esta inscrição e o exame a esta relacionado?\\n\')){$(\'#qualificacao-' . $u . '\').toggle(\'slow\');$(\'#deletado_u' . $u . '\').val(\'1\');}" class="linkRemove"><img src="' . $this->baseUrl(). '/assets/img/cross.png" alt="[x]" align="absmiddle" />Remover</a></td></tr>
+		    <input type="hidden" name="id_pg_qualificacao'.$u.'" value="'.$row['id_qualificacoes'].'" />
+		    <input type="hidden" id="deletado_u'.$u.'" name="deletado_u'.$u.'" value="0" />
+		    <input type="hidden" name="count_u[]" value="0" />
+		</table>
+		</div>' 
+		));
+		$u++;
+		echo $a;
+	}
+	if($u==1)
+	{
+		echo '<script type="text/javascript">$(document).ready(function(){novosDados()})</script>';
+	}	
+?>
+<p id="pnovo"></p>
+<div>
+	<input type="hidden" name="id_pos_graduacao" value="<?php echo $this->id_pos_graduacao?>" />
+	<input class="botao" type="button" value="Nova Qualificação" name="novo" id="novoBotao" onclick="novosDados();" />
+	<input class="botao" type="submit" id="gravar" value="Gravar" onClick="window.onbeforeunload=null" />
+	<input type="hidden" id="mudaValor" value="0" />
+</div>
+<div style="visibility: hidden;">
+<?php  
+print_r($professor); 
+print_r($atribuicao);
+?>
+</div>
+</form>
+<script type="text/javascript">
+$(document).ready(function()
+{
+    $('#pessoa-<?php echo $this->tipocurso;?>').addClass('selecionado');
+	$('#<?php echo $this->tipocurso;?>-qualificacoes<?php echo $this->tipoQualificacao;?>').addClass('selecionado');
+	$('input').attr('onBlur', 'mudaValor()');
+	$('#gravar').click(function(){
+		window.onbeforeunload=null;
+		$("#mudaValor").val('1');	
+	});
+
+});
+
+function condicional2(posicao,tipo, escolha)
+{  //tipo=2 u tipo=1 i
+  //escolha =2 aparece
+	//alert(posicao);
+	if(tipo=="1")
+		var pre="i";
+	else
+		var pre="u";
+	
+	var id='#'+pre+'_data_con_div'+posicao;
+
+	//alert(id);
+	if (escolha==1)
+		$(id).show();
+	else
+		$(id).hide();
+		
+	//alert(posicao);
+	//alert(tipo);  //u_ob'.$u.'
+
+	//class limpar i  limpar2 u
+}
+
+function condicional(posicao,tipo, escolha)
+{  //tipo=2 u tipo=1 i
+  //escolha =2 aparece
+	//alert(posicao);
+	if(tipo=="1")
+		var pre="i";
+	else
+		var pre="u";
+	
+	var id='#'+pre+'_ob'+posicao;
+
+	//alert(id);
+	if (escolha==2)
+		$(id).show();
+	else
+		$(id).hide();
+		
+	//alert(posicao);
+	//alert(tipo);  //u_ob'.$u.'
+
+	//class limpar i  limpar2 u
+}
+function mudaValor()
+{
+	if($("#mudaValor").val()=='0')window.onbeforeunload = function(){ return 'Você perderá todas as alterações';}
+}
+function deleteBancaQualificacao(data)
+{
+	p = getParams(data);
+	location.href='<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'qualificacoes', 'action' => 'delete')); ?>/id/' + p['id_banca'];
+} 
+</script>

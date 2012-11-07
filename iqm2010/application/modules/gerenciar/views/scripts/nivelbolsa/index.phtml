@@ -1,0 +1,61 @@
+<?php 
+$a0 = range(0, 1000, 1);
+echo $this->partial('partials/fieldset.phtml', array(
+	'height' => 400,
+'title' => 'Nível de bolsa produtividade',
+	'content' => $this->partial('partials/flexigrid.phtml', 
+		array(
+			'isCrud'      => true,
+			'doubleClick' => "carregaBox(this.className)",
+            'table'       => $this->data,
+		    'functionDelete' => 'deleteData',
+		    'exclude'     => array('id_nivelbolsa', 'deletado'),
+		    'headers'     => array('nivelbolsa' => 'Nivel de bolsa produtividade')
+
+		)
+	) . '
+<div class="crud-c">
+<p style="text-align:right"><a href="#" class="crud-toggle-button">Novo Nível de bolsa produtividade</a></p>
+<form class="zend_form crud-toggle" method="post">
+	<table width="100%">
+	<tr><td width="20%"><label>Nível de bolsa produtividade:</td><td width="80%"><input style="width:100%" type="text" name="data" id="data"></label></td></tr>
+	<tr><td></td><td><input type="submit" class="submit"  value="Gravar" /></td></tr>
+	</table>
+</form>
+</div>	'
+));
+?>
+<script type="text/javascript">
+function carregaBox(data)
+{
+	var re = new RegExp('\{[^}]*\}', "g");
+    var m0 = re.exec(data);
+    var pResult = m0[0].substring(1, m0[0].length - 1);
+    var arrResult = new Array();
+    arrResult = pResult.split(',');
+    params    = new Array();
+    for(i = 0; i < arrResult.length; i++)
+    {
+        var tmp = arrResult[i].split(":");
+        params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+    }   
+    //alert(data);
+	jQuery.facebox('<div id="faceboxForm">');
+
+        var tabela='\
+			<form action="" class="zend_form" method="post" id="formCreate"> \
+	        <input type="hidden" name="id" id="id" value="' + params['id_nivelbolsa'] + '"> \
+	        <table style="width:100%"> \
+	        <tr><td>Nível de bolsa produtividade:</td><td><input type="text" style="width:200px;" id="dado" name="dado" value="' + params['nivelbolsa'] + '"></td></tr> \
+	        <tr><td></td><td><input type="submit" value="Ok"></td></tr> \
+	        </table> \
+	    </form>';
+	$('#faceboxForm').append(tabela);
+}
+function deleteData(data)
+{
+    p = getParams(data);
+    location.href='<?php echo $this->url(array('module'=> 'gerenciar', 'controller'=> 'nivelbolsa', 'action' => 'delete')); ?>/id/' + p['id_nivelbolsa']; 
+	//alert('Excluindo dado ' + );
+}
+</script>

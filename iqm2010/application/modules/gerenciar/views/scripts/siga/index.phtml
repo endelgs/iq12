@@ -1,0 +1,23 @@
+<form method="post" action="<?php echo $this->url(array('action'=>'post'));?>" id="" enctype="multipart/form-data">
+
+<?php 
+$html='
+<p>
+Escolha um arquivo do tipo CSV da SIGA para importar dados.
+</p>
+<br>
+<p>
+ '.$this->upload.'
+</p>
+<input  type="submit"  class="submit"" value="Importar" /> 
+';
+
+echo $this->partial('partials/fieldset.phtml', array(
+	'height' => 400,
+	'width'=>850,
+	'title' => 'Importar CSV SIGA',
+	'content' =>$html
+));
+
+?>
+</form>

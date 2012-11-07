@@ -1,0 +1,19 @@
+<?php
+// usar method get para manter parametros fixos
+$html = '
+<br/>
+<form action="" method="get">
+<p>
+<label for="nome"> Aluno: </label>
+<input type="text" name="nome" value="'. $this->nome .'"> 
+<input type="submit" value="Filtrar">
+</p>
+</form><br/>';
+$html .= $this->flex;
+
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Comprovante de matrícula',
+	'height' => 500,
+	'content' => $html
+	));
+?>	

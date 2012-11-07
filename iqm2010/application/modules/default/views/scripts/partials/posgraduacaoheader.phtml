@@ -1,0 +1,53 @@
+<?php 
+
+$idTipoCurso=$this->tipo;
+
+if($idTipoCurso==3){
+?>
+<div class="divPessoasMenuMestrado">
+	<a id="mestrado-inscricoes" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'inscricoes' , 'tipo'=>'3'),null,false) ?>" class="mestrado-inscricoes">Inscrições</a> |
+<!--	<a id="mestrado-exames" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'exames', 'tipo'=>'3'),null,false) ?>" class="mestrado-exame">Exames</a> |		-->
+	<a id="mestrado-exames" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'exames', 'tipo'=>'3')) ?>" class="mestrado-exame">Exames</a> |	
+	<a id="mestrado-ingresso" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'ingressos' , 'tipo'=>'3')) ?>" class="mestrado-outros">Ingressos</a> |
+	<a id="mestrado-atividades" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'atividades' , 'tipo'=>'3')) ?>" class="mestrado-outros">Atividades</a> |
+	<a id="mestrado-bolsas" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'bolsas', 'tipo'=>'3' )) ?>" class="mestrado-outros">Bolsas</a> |
+	<a id="mestrado-qualificacoes0" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'qualificacoes' , 'tipo'=>'3', 'qualificacao'=>'0')) ?>" class="mestrado-outros">Dados de Qualificação</a> |
+	<a id="mestrado-defesas" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'defesas', 'tipo'=>'3'  )) ?>" class="mestrado-outros">Dados de Defesa</a> |
+	<a id="mestrado-disciplinas" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'disciplinas', 'tipo'=>'3' )) ?>" class="mestrado-outros">Disciplina</a> |
+	<a id="mestrado-linguas" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'linguas', 'tipo'=>'3' )) ?>" class="mestrado-outros">Línguas</a> |
+	<a id="mestrado-publicacoes" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'publicacoes', 'tipo'=>'3' )) ?>" class="mestrado-outros">Publicações</a>	 |
+	<a id="mestrado-premios" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'premios', 'tipo'=>'3' )) ?>" class="mestrado-outros">Prêmios</a>	 |
+	<a id="mestrado-frequencia" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'frequencia', 'tipo'=>'3' )) ?>" class="mestrado-outros">Frequência</a>
+</div>
+<br />
+<?php 
+}elseif($idTipoCurso==5){
+?>
+<div class="divPessoasMenuMestrado">
+	<a id="doutorado-inscricoes" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'inscricoes' , 'tipo'=>'5'),null,false) ?>" class="mestrado-inscricoes">Inscrições</a> |
+	<a id="doutorado-exames" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'exames', 'tipo'=>'5'),null,false) ?>" class="doutorado-exame">Exames</a> |		
+	<a id="doutorado-ingresso" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'ingressos' , 'tipo'=>'5')) ?>" class="doutorado-outros">Ingressos</a> |
+	<a id="doutorado-atividades" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'atividades' , 'tipo'=>'5')) ?>" class="doutorado-outros">Atividades</a> |
+	<a id="doutorado-bolsas" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'bolsas' )) ?>" class="doutorado-outros">Bolsas</a> |
+	<a id="doutorado-qualificacoes1" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'qualificacoes' , 'tipo'=>'5', 'qualificacao'=>'1')) ?>" class="doutorado-outros">Dados de Qualificação por área</a> |
+	<a id="doutorado-qualificacoes2" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'qualificacoes' , 'tipo'=>'5', 'qualificacao'=>'2')) ?>" class="doutorado-outros">Dados de Qualificação Geral</a> |
+	<a id="doutorado-defesas" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'defesas' )) ?>" class="doutorado-outros">Dados de Defesa</a> |
+	<a id="doutorado-disciplinas" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'disciplinas', 'tipo'=>'5' )) ?>" class="doutorado-outros">Disciplina</a> |
+	<a id="doutorado-linguas" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'linguas', 'tipo'=>'5' )) ?>" class="doutorado-outros">Línguas</a> |
+	<a id="doutorado-publicacoes" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'publicacoes', 'tipo'=>'5' )) ?>" class="doutorado-outros">Publicações</a>	 |
+	<a id="doutorado-premios" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'premios', 'tipo'=>'5' )) ?>" class="doutorado-outros">Prêmios</a>	 |
+	<a id="doutorado-frequencia" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'frequencia', 'tipo'=>'5' )) ?>" class="doutorado-outros">Frequência</a>
+</div>
+<br />
+<?php 
+}elseif($idTipoCurso==6){
+?>
+<div class="divPessoasMenuMestrado">
+	<a id="docente-dados" href="<?php echo $this->url(array('module'=> 'docente', 'controller'=> 'index', 'tipo'=>'6' )) ?>">Dados do docente</a>	 |
+	<a id="docente-publicacoes" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'publicacoes', 'tipo'=>'6' )) ?>" class="docente-outros">Publicações</a>	 |
+	<a id="docente-premios" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'premios', 'tipo'=>'6' )) ?>" class="docente-outros">Prêmios</a>	 |
+	<a id="docente-bolsa" href="<?php echo $this->url(array('module'=> 'docente', 'controller'=> 'bolsa' )) ?>" class="docente-outros">Bolsa Produtividade</a>|
+        <a id="docente-projetos" href="<?php echo $this->url(array('module'=> 'docente', 'controller'=> 'projetos' )) ?>" class="docente-outros">Projetos</a>
+</div>
+<br />
+<?php }?>

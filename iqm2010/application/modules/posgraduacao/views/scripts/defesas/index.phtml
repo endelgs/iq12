@@ -1,0 +1,391 @@
+<script type="text/javascript">
+   
+
+
+    $(document).ready(function()
+    {
+        $('#pessoa-<?php echo $this->tipocurso; ?>').addClass('selecionado');
+        $('#<?php echo $this->tipocurso; ?>-defesas').addClass('selecionado');
+
+    });  
+</script>
+
+<form class="zend_form" method="post" action="<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'defesas', 'action' => 'post')) ?>">
+    <?php
+    $professor = $this->partial('partials/combobox.phtml', array(
+                'name' => 'i_professor',
+                'data' => $this->professores,
+                'id' => 'i_professor',
+            ));
+
+    $atribuicao = $this->partial('partials/combobox.phtml', array(
+                'name' => 'u_atribuicao',
+                'data' => $this->atribuicoes,
+                'id' => 'i_atribuicao',
+            ));
+
+    $tipoproj = $this->partial('partials/combobox.phtml', array(
+                'name' => 'u_tipoproj',
+                'data' => $this->tipoProj,
+                'id' => 'i_tipoproj'
+            ));
+//var_dump($this->atribuicoes);
+//echo'<br>';
+//var_dump($this->tipoProj);
+
+
+    $titulo = "Título";
+    if ($this->tipocurso == 'mestrado')
+        $titulo = "Título da Dissertação";
+    else if ($this->tipocurso == 'doutorado')
+        $titulo = "Título da Tese";
+
+
+    //print_r($this->professores);
+    ?>
+    <script type="text/javascript">
+        var nd = 1;
+        function novosDados()
+        {
+            var opt_professor  = $('#i_professor').html();
+            var opt_atribuicao = $('#i_atribuicao').html();
+            var opt_tipoproj = $('#i_tipoproj').html();
+            var titulo='<?php echo $titulo; ?>';
+        
+            tabela = '<table class="fieldset" cellpadding="0" cellspacing="0" style="width: 100%;" id="idefesa-' + nd +'">\
+            <tr class="fieldset-top"><td class="fieldset-top-l"></td><td class="fieldset-top-c"></td><td class="fieldset-top-r"></td></tr>\
+            <tr> \
+                    <td class="fieldset-center-l"></td> \
+                    <td class="fieldset-center-c" valign="top"> \
+                        <h1 class="fieldset-title">Dados de Defesa</h1><div class="crud-c"> \
+                    <table width="100%"> \
+                    <colgroup> \
+                     <col width="300" /> \
+                     <col> \
+                    </colgroup> \
+                    <tr><td><label>Título de projeto:</label></td> \
+                            <td><select id="i_tipoproj'+nd+'" name="i_tipoproj'+nd+'"> \
+                            '+opt_tipoproj+' \
+                            </select></td></tr> \
+                    <tr><td><label>'+ titulo +':</td><td><input value="" size="50" type="text" name="i_titulo'+nd+'" /></td></tr> \
+                        <tr><td><label>Data: </td><td><input type="text" value="" name="i_data'+nd+'" id="i_data'+nd+'" onkeyup="dataEntrega(this)" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr> \
+                        <tr><td><label>Sala: </td><td><input value="" type="text" name="i_sala'+nd+'" /></td></tr> \
+                        <tr><td><label>Horário: </td><td><input value="" type="text" onkeypress="formataCampo(this, \'00:00:00\', event);" maxlength="8" name="i_horario'+nd+'" /></td></tr> \
+                        <tr> \
+                            <td><label>Aprovado: </td> \
+                            <td> \
+                                    <table> \
+                                            <tr><td><input  checked="checked" name="i_aprovado'+nd+'" onclick="condicional('+nd+',1,0);" type="radio" value="0" /></td><td>sim</td></tr> \
+                                            <tr><td><input  name="i_aprovado'+nd+'" onclick="condicional('+nd+',1,1);"type="radio" value="1" /></td><td>não</td></tr> \
+                                            <tr><td><input name="i_aprovado'+nd+'" type="radio" value="2" onclick="condicional('+nd+',1,2);"/></td><td>condicional</td></tr> \
+                                    </table> \
+                            </td> \
+                        </tr> \
+                        <tr class="i_ob'+nd+'" class="i_ob'+nd+'" style="display:none;"> \
+                    <td><label>Aprovado condicional: </td> \
+                    <td> \
+                            <table> \
+                                    <tr><td><input  checked="checked" name="i_con_aprovado'+nd+'" type="radio" value="0" /></td><td>sim</td></tr> \
+                                    <tr><td><input  name="i_con_aprovado'+nd+'" type="radio" value="1" /></td><td>não</td></tr> \
+                            </table> \
+                    </td> \
+                    </tr> \
+                        <tr id="i_dataOb'+nd+'" ><td><label>Data de entrega: </td><td><input type="text" value="" class="dataentrega" name="i_con_data'+nd+'" id="i_con_data'+nd+'" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr> \
+                        <tr class="i_ob'+nd+'" style="display:none;"><td><label>Observações: </td><td><textarea  name="i_observacoes'+nd+'"  COLS="60" ROWS="5"></textarea></td></tr> \
+                        <tr><td><label>Resumo da dissertação: </td><td><textarea  name="i_resumo'+nd+'"  COLS="60" ROWS="5"></textarea></td></tr> \
+                        <tr><td><label>Palavras chaves: </td><td><input value="" type="text" name="i_palavras'+nd+'" /></td></tr> \
+                        <tr><td><label>Bancas: </td><td> \
+                        <table><tr><td><label>Professor:</label></td> \
+                            <td><select id="i_professores'+nd+'" name="i_professores'+nd+'"> \
+                            '+opt_professor+' \
+                            </select></td> \
+                            <td><label>Atribuição:</label></td> \
+                            <td><select id="i_atribuicoes'+nd+'" name="i_atribuicoes'+nd+'"> \
+                            '+opt_atribuicao+' \
+                            </select></td>\
+                            <td>\
+                            <input class="botao-calcular-media" type="submit" value="Gravar" onClick="window.onbeforeunload=null"/>\
+                            </td>\
+                            </tr></table></td> \
+                        </tr> \
+                        <tr><td></td><td align="right"><a href="#" onClick="if(window.confirm(\'Deseja realmente excluir esta inscrição e o exame a esta relacionado?\\n\')){$(\'#idefesa-' + nd + '\').remove()}" class="linkRemove"><img src="<?php echo $this->baseUrl(); ?>/assets/img/cross.png" alt="[x]" align="absmiddle" />Remover</a></td></tr> \
+                        <input type="hidden" name="count_i['+nd+']" value="'+nd+'" /> \
+                    </table> \
+                </div>      </td> \
+                    <td class="fieldset-center-r"></td> \
+            </tr><tr class="fieldset-bottom"><td class="fieldset-bottom-l"></td><td class="fieldset-bottom-c"></td><td class="fieldset-bottom-r"></td></tr></table>';
+                            $('#pnovo').append(tabela);
+                            nd = nd + 1;
+
+                            tabela=null;
+                        }
+    </script>
+    <?php
+    echo $this->partial('partials/pessoaheader.phtml', array('nome' => $this->nomePessoa));
+    echo $this->partial('partials/posgraduacaoheader.phtml', array('tipo' => $this->tipoPosGraduacao));
+    $rows = $this->pg_defesa;
+    $u = 1;
+
+    foreach ($rows as $row) {
+        $bancas = array();
+        $y = 0;
+        foreach ($this->pg_bancas as $banca) {
+//			print_r($row);
+//			echo '<br><br><br>';
+            if ($banca['id_defesa'] == $row['id_defesa']) {
+
+                //print_r($banca);
+
+                $bancas[$y] = array(
+                    'id_defesa' => $banca['id_defesa'],
+                    'id_defesa_banca' => $banca['id_defesa_banca'],
+                    'id_professor' => $banca['nome'],
+                    'id_atribuicao' => $banca['atribuicao'],
+                );
+                $y++;
+            }
+        }
+
+        $style = "display:none;";
+        $style2 = "display:none;";
+
+        if ($row['con_aprovado'] == 0)
+            $aprovado_con[0] = "checked='checked'";
+        else
+            $aprovado_con[1] = "checked='checked'";
+
+        if ($row['aprovado'] == 0) {
+            $aprovado[0] = "checked='checked'";
+            $style2 = "";
+        }
+        else
+            $aprovado[0] = "";
+
+        if ($row['aprovado'] == 1) {
+            $aprovado[1] = "checked='checked'";
+        }
+        else
+            $aprovado[1] = "";
+
+        if ($row['aprovado'] == 2) {
+            $style = "";
+            $aprovado[2] = "checked='checked'";
+            $style2 = "";
+        }
+        else
+            $aprovado[2] = "";
+
+        $tipoprojEdicao = $this->partial('partials/combobox.phtml', array(
+                    'name' => 'u_tipoproj' . $u,
+                    'data' => $this->tipoProjEdicao[$u - 1],
+                    'selected' => $row['id_tipo_projeto'],
+                    'id' => 'u_tipoproj' . $u
+                ));
+
+
+
+
+
+        $a = $this->partial('partials/fieldset.phtml', array(
+                    'title' => 'Dados de defesa',
+                    'aditional' => 'id="defesa-' . $u . '"',
+                    'content' => '
+		<div class="crud-c">
+		<table width="100%">
+			<colgroup>
+		    	<col width="250" />
+		    	<col>
+		    </colgroup>
+		     <tr><td><label>Título de Projeto: </td><td>' . $tipoprojEdicao . '<label style="font-size: 10px; width:400px;">Caso esteja vazio, adicionar o projeto no docente orientador do aluno.</label></td></tr>
+		    <tr><td><label>' . $titulo . ': </td><td><input value="' . $row['titulo'] . '" size="50" type="text" name="u_titulo' . $u . '" /></td></tr>
+		    <tr><td><label>Data: </td><td><input onkeyup="dataEntrega(this)"type="text"  value="' . $row['data_defesa'] . '" name="u_data' . $u . '" id="u_data' . $u . '" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr>
+		    <tr><td><label>Sala: </td><td><input value="' . $row['sala'] . '" type="text" name="u_sala' . $u . '" name="u_sala' . $u . '" /></td></tr>
+		    <tr><td><label>Horário: </td><td><input value="' . $row['horario'] . '" type="text" onkeypress="formataCampo(this, \'00:00:00\', event);" maxlength="8" name="u_horario' . $u . '" /></td></tr>
+		    <tr>
+		    	<td><label>Aprovado: </td>
+		    	<td>
+		    		<table>
+		    			<tr><td><input ' . $aprovado[0] . ' name="u_aprovado' . $u . '" type="radio" value="0" onclick="condicional(' . $u . ',2,0);"/></td><td>sim</td></tr>
+		    			<tr><td><input ' . $aprovado[1] . ' name="u_aprovado' . $u . '" type="radio" value="1" onclick="condicional(' . $u . ',2,1);"/></td><td>não</td></tr>
+		    			<tr><td><input ' . $aprovado[2] . ' name="u_aprovado' . $u . '" type="radio" value="2" onclick="condicional(' . $u . ',2,2);"/></td><td>condicional</td></tr>
+		    		</table>	
+		    	</td>
+		    </tr>
+		     <tr style="' . $style2 . '" id="u_dataOb' . $u . '"><td><label>Data de entrega: </td><td><input type="text" class="dataentrega" value="' . $row['con_data_entrega'] . '" name="u_con_data' . $u . '" name="u_con_data' . $u . '" id="u_con_data' . $u . '" onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td></tr>
+		     <tr style="' . $style . '" class="u_ob' . $u . '">
+		     		<td><label>Aprovado condicional: </td>
+		     		<td>
+		     			<table>
+		    				<tr><td><input ' . $aprovado_con[0] . ' name="u_con_aprovado' . $u . '" type="radio" value="0"/></td><td>Sim</td></tr>
+		    				<tr><td><input ' . $aprovado_con[1] . ' name="u_con_aprovado' . $u . '" type="radio" value="1"/></td><td>Não</td></tr>
+		    			</table>	
+		     		</td>
+		    </tr>
+		     <tr style="' . $style . '" class="u_ob' . $u . '"><td><label>Observações: </td><td><textarea  name="u_observacoes' . $u . '"  COLS="60" ROWS="5">' . $row['observacoes'] . '</textarea></td></tr>
+		    <tr>
+		    <td><label>Resumo da dissertação</label></td>
+		    <td>
+		    	<textarea name="u_resumo' . $u . '" COLS="60" ROWS="5">' . $row['resumo_dissertacao'] . '</textarea>
+		    </td>
+		    </tr>
+		    <tr>
+		    	<td><label>Palavras chaves:</label></td>
+		    	<td>
+		    		<input value="' . $row['palavras_chaves'] . '" type="text" name="u_palavras' . $u . '" />
+		    	</td>
+		    </tr>
+		     
+		    <tr>
+		    	<td><label>Bancas: </td>
+		    	<td>
+		    		<table>
+		    			<tr>
+		    				<td colspan="4">
+		    				' .
+                    $this->partial('partials/flexigrid.phtml',
+                            array(
+                                'isCrud' => true,
+                                'table' => $bancas,
+                                'functionDelete' => 'deleteBanca',
+                                'exclude' => array('id_defesa_banca', 'id_defesa'),
+                                'headers' => array('id_professor' => 'Professor', 'id_atribuicao' => 'Atribuição'),
+                                'ifNull' => array('id_professor', 'id_atribuicao')
+                    ))
+                    . '
+		    				</td>
+		    			</tr>
+		    			<tr>
+		    				<td><label>Professor:</label></td>
+		    				<td>
+		    				' . $this->partial('partials/combobox.phtml', array(
+                        'name' => 'u_professores' . $u,
+                        'data' => $this->professores,
+                    )) . '
+		    				</td>
+		    				<td><label>Atribuição:</label></td>
+		    				<td>' . $this->partial('partials/combobox.phtml', array(
+                        'name' => 'u_atribuicoes' . $u,
+                        'data' => $this->atribuicoes,
+                    )) . '
+							</td>
+							<td>
+								<input class="botao-calcular-media" type="submit" value="Gravar" onClick="window.onbeforeunload=null"/>
+							</td>
+		    			</tr>
+		    		</table>
+		    	</td>
+		    </tr>
+		    <tr><td></td><td align="right"><a href="#" onClick="if(window.confirm(\'Deseja realmente excluir esta inscrição e o exame a esta relacionado?\\n\')){$(\'#defesa-' . $u . '\').toggle(\'slow\');$(\'#deletado_u' . $u . '\').val(\'1\');}" class="linkRemove"><img src="' . $this->baseUrl() . '/assets/img/cross.png" alt="[x]" align="absmiddle" />Remover</a></td></tr>
+		    <input type="hidden" name="u_id_defesa' . $u . '" value="' . $row['id_defesa'] . '" />
+		    <input type="hidden" id="deletado_u' . $u . '" name="deletado_u' . $u . '" value="0" />
+		    <input type="hidden" name="count_u[' . $u . ']" value="' . $u . '" />
+		</table>
+		</div>'
+                ));
+        $u++;
+        echo $a;
+    }
+    if ($u == 1) {
+        echo '<script type="text/javascript">$(document).ready(function(){novosDados()})</script>';
+    }
+    ?>
+    <p id="pnovo"></p>
+    <div>
+        <input type="hidden" name="id_pos_graduacao" value="<?php echo $this->id_pos_graduacao ?>" />
+        <input class="botao" type="button" value="Nova Defesa" name="novo" id="novoBotao" onclick="novosDados();" />
+        <input class="botao" type="submit" id="gravar" value="Gravar" onClick="window.onbeforeunload=null" />
+        <input type="hidden" id="mudaValor" value="0" />
+    </div>
+    <div style="visibility: hidden;">
+        <?php
+        print_r($professor);
+        print_r($atribuicao);
+        print_r($tipoproj);
+        ?>
+    </div>
+</form>
+<script type="text/javascript">
+    function condicional(posicao,tipo, escolha)
+    {
+        if(tipo=="1")
+            var pre="i";
+        else
+            var pre="u";
+	
+        var id='.'+pre+'_ob'+posicao;
+        var id2='#'+pre+'_dataOb'+posicao;
+
+        //alert(id);
+	
+        if (escolha==2)
+            $(id).show();
+        else
+            $(id).hide();
+
+        if(escolha==1)
+            $(id2).hide();
+        else
+            $(id2).show();
+
+    }
+    function mudaValor()
+    {
+        if($("#mudaValor").val()=='0')window.onbeforeunload = function(){ return 'Você perderá todas as alterações';}
+    }
+    function deleteBanca(data)
+    {
+        p = getParams(data);
+        
+        url='<?php echo $this->url(array('module' => 'posgraduacao', 'controller' => 'defesas', 'action' => 'delete')); ?>/id/' + p['id_defesa_banca'];
+        window.location=url;
+     
+    }
+    function somadias(data, dias) {
+        data=data.split('/');
+        diafuturo=parseInt(data[0])+dias;
+        mes=parseInt(data[1]);
+        ano=parseInt(data[2]);
+        while(diafuturo>daysInMonth(mes,ano)) {
+            diafuturo-=daysInMonth(mes,ano);
+            mes++;
+            if(mes>12) {
+                mes=1;
+                ano++;
+            }
+        }
+
+        return diafuturo+"/"+mes+"/"+ano;
+    }
+
+    function daysInMonth(month,year) {
+        var dd = new Date(year, month, 0);
+        return dd.getDate();
+    }
+    function dataEntrega(este)
+    {
+        data=este.value;
+        if(data.length>=10)
+        {
+            dados = este.id.split('_data');
+        
+            numero=dados[1];
+            indetificador=dados[0];
+            
+            dataFinal=somadias(data, 60);
+            dataFinal=dataFinal.split('/');
+
+            if(dataFinal[0]*1<10)
+            {
+                dataFinal[0]='0'+dataFinal[0];
+            }
+
+            if(dataFinal[1]*1<10)
+            {
+                dataFinal[1]='0'+dataFinal[1];
+            }
+            //alert(dataFinal);
+            idFinal='#'+indetificador+'_con_data'+numero;
+            $(idFinal).val(dataFinal[0]+'/'+dataFinal[1]+'/'+dataFinal[2]);
+        }
+    }
+</script>

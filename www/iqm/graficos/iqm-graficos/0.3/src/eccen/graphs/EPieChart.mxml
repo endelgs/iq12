@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:PieChart xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+
+			[Bindable] public var quantityField:String = '';
+			[Bindable] public var labelField:String = '';
+			[Bindable] public var displayName:String = '';
+
+		]]>
+	</mx:Script>
+
+	<mx:SeriesInterpolate id="fxInterpolate" duration="500" />
+	<mx:series>
+		 <mx:PieSeries 
+		 		id="serie"
+		 		displayName="{displayName}"
+                field="{quantityField}"
+                nameField="{labelField}" 
+                showDataEffect="fxInterpolate"
+           />
+	</mx:series>
+</mx:PieChart>

@@ -1,0 +1,231 @@
+<script type="text/javascript">
+$(document).ready(function()
+		{
+			$('#pessoa-mestrado').addClass('selecionado');
+			$('#mestrado-ingresso').addClass('selecionado');
+		})
+</script>
+<form method="post" class="zend_form" action="<?php echo $this->url(array('module'=> 'mestrado', 'controller'=> 'ingressos','action'=>'post' )) ?>">
+<input type="text" name="idPosGraduacao" value="<?php echo $this->idPosGraduacao; ?>"> 
+<?php 
+echo $this->partial('partials/pessoaheader.phtml', array('nome' => $this->nomePessoa));
+echo $this->partial('partials/mestradoheader.phtml'); ?> 
+<?php 
+
+$ingressoGeral =' 
+    <table width="100%">
+        <tr>
+            <td><label>Data de ingresso:</label></td><td><input type="text" name="data" onkeypress="formataCampo(this, \'00/0000\', event);"></td>
+        </tr>
+        <tr>
+            <td><label>Período de ingresso:</label></td><td>' . $this->partial('partials/combobox.phtml', array('name'=>'id_periodo','data'=>$this->periodos,'selected'=>$item['id_periodo'])) . '</td>
+        </tr>
+        <tr>
+            <td><label>Data de integralização:</label></td><td><input type="text" name="integralizacao" onkeypress="formataCampo(this, \'00/0000\', event);"></td>
+        </tr>
+        <tr>
+            <td><label>Linha de pesquisa:</label></td><td>' . $this->partial('partials/combobox.phtml', array('name'=>'id_linha_de_pesquisa','data'=>$this->linhasDePesquisa,'selected'=>$item['id_linha_de_pesquisa'])) . '</td>
+        </tr>
+        <tr>
+            <td><label>RA:</label></td><td><input type="text" name="ra"></td>
+        </tr>
+        <tr>
+            <td></td><td><label style="text-align:left"><input type="checkbox" name="passagem"  value="1" onChange="(this.checked ? $(\'#divPassagemDireta\').show() : $(\'#divPassagemDireta\').hide())">Pasagem direta para o doutorado</label></td>
+        </tr>
+        <tr>
+            <td id="divPassagemDireta" colspan="2" style="display:none">
+            <label style="float: left;">Data: <input type="text" name="dataPassagemDireta" onkeypress="formataCampo(this, \'00/0000\', event);"></label>
+            ' . $this->partial('partials/fieldset.phtml', array(
+    'title' => 'Passagem direta para doutorado',
+    'height'=> '400',
+    'content' => ''
+)) . '
+            </td>
+        </tr>
+        <tr>
+            <td></td><td><label style="text-align:left"><input type="checkbox" name="ingresso"  value="1" onChange="(this.checked ? $(\'#divIngressoDireto\').show() : $(\'#divIngressoDireto\').hide())">Ingresso direto para o doutorado</label></td>
+        </tr>
+        <tr>
+            <td id="divIngressoDireto" colspan="2" style="display: none;">
+            <label style="float: left;">Data: <input type="text" name="dataIngressoDireto" onkeypress="formataCampo(this, \'00/0000\', event);"></label>
+            ' . $this->partial('partials/fieldset.phtml', array(
+    'title' => 'Passagem direta para doutorado',
+    'height'=> '400',
+    'width' => '100%',
+    'content' => ''
+)) . '
+            </td>
+        </tr>
+        <tr>
+            <td></td><td><label style="text-align: left;"><input type="checkbox" name="desligado" value="1">Aluno desligado</label></td>
+        </tr>
+        <tr>
+            <td><label>Motivo do desligamento:</label></td><td>' . $this->partial('partials/combobox.phtml', array('name'=>'idDesligadoDetalhe','data'=>$this->desligado,'selected'=>$item['id_desligado_detalhe'])) . '</td>
+        </tr>
+        <tr>
+            <td><label>Data de desligamento:</label></td><td><label style="text-align: left;"><input type="text" name="desligadoData" onkeypress="formataCampo(this, \'00/0000\', event);"></label></td>
+        </tr>
+        
+        </table>
+';
+
+$orientadores = '
+    <table>
+    <colgroup><col width="300" /><col></colgroup>
+        <tr>
+            <td><label>Nome do orientador:</label></td><td></td>
+        </tr>
+        <tr>
+            <td><label>Área de concentração:</label></td><td></td>
+        </tr>
+        <tr>
+            <td><label>Data:</label></td><td></td>
+        </tr>
+        <tr>
+            <td><label>Justificativa:</label></td><td></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+            '.$this->partial('partials/flexigrid.phtml', 
+        array(
+            'table' =>array(array('K' => '1')))).'
+            </td>
+        </tr>
+        <tr>
+            <td></td><td align="right"><a href="javascript:;" onClick="$(\'#novoOrientador\').toggle(\'fast\');">Adicionar novo</a></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+        <table width="100%" id="novoOrientador" style="display: none;"><tr>
+            <td><label>Nome do orientador:</label></td><td>' . $this->partial('partials/combobox.phtml', array('name'=>'id_professor','data'=>$this->professores,'selected'=>$item['id_orientador'])) . '</td>
+        </tr>
+        <tr>
+            <td><label>Área de concentração:</label></td><td>' . $this->partial('partials/combobox.phtml', array('name'=>'id_area_de_concentracao','data'=>$this->areasDeConcentracao,'selected'=>$item['id_area_de_concentracao'])) . '</td>
+        </tr>
+        <tr>
+            <td><label>Data:</label></td><td><input type="text" name="orientadorData" onkeypress="formataCampo(this, \'00/0000\', event);"></td>
+        </tr>
+        <tr>
+            <td><label>Justificativa:</label></td><td><textarea name="justificativa"></textarea></td>
+        </tr>
+        <tr>
+            <td></td><td><label style="text-align: left;"><input type="checkbox" name="atual" value="1">Orientador atual?</label></td>
+        </tr>
+        </table>
+            </td>
+        <tr>
+    </table>
+';
+
+$relatorios = '
+    <table>
+    <tr>
+        <td>'.$this->partial('partials/flexigrid.phtml', 
+        array(
+            'table' =>array(array('K' => '1')))).'</td>
+    </tr>
+    <tr><td align="right"><a href="javascript:;" onClick="$(\'#novoRelatorio\').toggle(\'fast\');">Adicionar novo</a></td></tr>
+    <tr><td>
+        <table id="novoRelatorio" style="display: none;">
+        <tr><td colspan="2"><h4>Aluno</h4><td></tr>
+        <tr>
+            <td><label>Data de início:</label></td>
+            <td><input type="text" name="dataAlunoInicio" onkeypress="formataCampo(this, \'00/00/0000\', event);"></td>
+        </tr>
+        <tr>
+            <td><label>Data de término prevista:</label></td>
+            <td><input type="text" name="dataAlunoTermino" onkeypress="formataCampo(this, \'00/00/0000\', event);"></td>
+        </tr>
+        <tr>
+            <td><label>Data de entrega:</label></td>
+            <td><input type="text" name="dataAlunoEntrega" onkeypress="formataCampo(this, \'00/00/0000\', event);"></td>
+        </tr>
+        <tr><td colspan="2"><h4>Parecerista</h4><td></tr>
+        <tr>
+            <td><label>Data de início:</label></td>
+            <td><input type="text" name="dataPareceristaInicio" onkeypress="formataCampo(this, \'00/00/0000\', event);"></td>
+        </tr>
+        <tr>
+            <td><label>Data de término prevista:</label></td>
+            <td><input type="text" name="dataPareceristaTermino" onkeypress="formataCampo(this, \'00/00/0000\', event);"></td>
+        </tr>
+        <tr>
+            <td><label>Data de início:</label></td>
+            <td><input type="text" name="dataAlunoInicio" onkeypress="formataCampo(this, \'00/00/0000\', event);"></td>
+        </tr>
+        <tr>
+            <td><label>Data de entrega:</label></td>
+            <td><input type="text" name="dataPareceristaTermino" onkeypress="formataCampo(this, \'00/00/0000\', event);"></td>
+        </tr>
+        <tr>
+            <td><label>Parecerista:</label></td>
+            <td>' . $this->partial('partials/combobox.phtml', array('name'=>'id_parecerista','data'=>$this->professores,'selected'=>$item['id_parecerista'])) . '</td>
+        </tr>
+        <tr>
+            <td><label>Aprovado?</label></td>
+            <td><label style="text-align:left;"> <input type="radio" name="parecerAprovado" value="1"> Sim </label> <label style="float:left;"> <input type="radio" name="parecerAprovado" value="0"> Não</label></td>
+        </tr>
+        <tr>
+            <td><label>Parecer:</label></td>
+            <td><textarea name="parecer"></textarea></td>
+        </tr>
+        </table>
+        </td>
+        </tr>
+        </table>
+';
+
+$trancamentos = '
+    <table>
+    <tr>
+        <td><label>Tipo:</label></td>
+        <td>' . $this->partial('partials/combobox.phtml', array('name'=>'id_tipo_de_trancamento','data'=>$this->tiposDeTrancamento,'selected'=>$item['id_tipo_de_trancamento'])) . '</td>
+    </tr>
+    <tr>
+        <td><label>Duração (em meses):</label></td>
+        <td><input type="text" name="trancamentoDuracao"></td>
+    </tr>
+    <tr>
+        <td><label>Observações:</label></td>
+        <td><textarea name="trancamentoObservacoes"></textarea></td>
+    </tr>
+    </table>
+    ';
+        
+echo $this->partial('partials/fieldset.phtml', array(
+    'title' => 'Ingresso',
+    'height'=> '360',
+    'content' => $ingressoGeral
+));
+?><input type="submit" class="botao" value="Gravar" />
+<?php 
+echo $this->partial('partials/fieldset.phtml', array(
+    'title' => 'Orientadores',
+    'height'=> '400',
+    'content' => $orientadores
+));
+?><input type="submit" class="botao" value="Gravar" />
+<?php 
+echo $this->partial('partials/fieldset.phtml', array(
+    'title' => 'Entrega de relatórios',
+    'height'=> '400',
+    'content' => $relatorios
+));
+?><input type="submit" class="botao" value="Gravar" />
+<?php 
+echo $this->partial('partials/fieldset.phtml', array(
+    'title' => 'Situação do aluno',
+    'height'=> '400',
+    'content' => ''
+));
+?><input type="submit" class="botao" value="Gravar" />
+<?php 
+echo $this->partial('partials/fieldset.phtml', array(
+    'title' => 'Trancamento',
+    'height'=> '400',
+    'content' => $trancamentos 
+));
+?>
+<input type="submit" class="botao" value="Gravar" />
+</form>
+<?php 

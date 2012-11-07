@@ -1,0 +1,36 @@
+<div class="divPessoasMenuAll">
+	<h1><img alt="" src="<?php echo $this->baseUrl().'/assets/img/pessoas.png'?>">
+	
+	
+	<?php
+        
+       
+	if((isset($this->nome) && $this->nome != '')) 
+	{
+		echo 'Perfil de ' . $this->nome;
+                $_SESSION['nome']=$this->nome;
+	}elseif($_SESSION['nome']!=""){
+            
+            echo 'Perfil de ' . $_SESSION['nome'];
+        }
+	else
+	{
+		  echo 'Pessoa';
+	}
+	?></h1>
+	
+		<p class="advice">
+		Aqui, temos concentrados todos os dados de uma pessoa durante toda a sua vida acadêmica na CPG. Seja ela um professor, mestrando, doutorando e até mesmo um egresso.
+		<br/>Todos os dados dela estarão concentrados nesse perfil .
+		</p>
+		
+	<div>
+		<br/>
+		<a id="pessoa-aviso" class="mainMenuBorder" href=""><span class="borders"><span class="bordersInner">Avisos</span></span></a> 
+		<a id="pessoa-geral" class="mainMenuBorder" href="<?php echo $this->url(array('module'=> 'pessoas', 'controller'=> 'geral' )) ?>"><span class="borders"><span class="bordersInner">Dados Pessoais</span></span></a>  
+		<a id="pessoa-mestrado" class="mainMenuBorder" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'inscricoes', 'tipo'=>'3' )) ?>"><span class="borders"><span class="bordersInner">Dados de Mestrado</span></span></a>  
+		<a id="pessoa-doutorado" class="mainMenuBorder" href="<?php echo $this->url(array('module'=> 'posgraduacao', 'controller'=> 'inscricoes', 'tipo'=>'5' )) ?>"><span class="borders"><span class="bordersInner">Dados de Doutorado</span></span></a> 
+		<a id="pessoa-docente" class="mainMenuBorder" href="<?php echo $this->url(array('module'=> 'docente', 'controller'=> 'index', 'tipo' => '6' )) ?>"><span class="borders"><span class="bordersInner">Dados do Docente</span></span></a> 
+	</div>
+</div>
+<div style="clear: both; padding-bottom: 10px;"></div>

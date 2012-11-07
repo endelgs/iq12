@@ -1,0 +1,36 @@
+<?php
+if($this->full != 'no')
+{
+	if($this->tipo=='in')
+	{
+		$aux = explode("/",$this->data); 
+		$nData = ($aux[2]."-".$aux[1]."-".$aux[0]);
+		   echo $nData;
+	}
+	if($this->tipo=='out')
+	{
+		$aux = substr($this->data,0,10);
+		$aux = explode("-",$aux); 
+		$nData = $aux[2]."/".$aux[1]."/".$aux[0];
+	    if($nData != '//' && $nData != '00/00/0000')
+		   echo $nData;
+	}
+}
+else
+{
+    if($this->tipo=='in')
+    {
+        $aux = explode("/",$this->data); 
+        $nData = ($aux[1]."-".$aux[0]."-01");
+           echo $nData;
+    }
+    if($this->tipo=='out')
+    {
+        $aux = substr($this->data,0,10);
+        $aux = explode("-",$aux); 
+        $nData = $aux[1]."/".$aux[0];
+        if($nData != '/' && $nData != '00/0000')
+           echo $nData;
+    }
+}	
+?>

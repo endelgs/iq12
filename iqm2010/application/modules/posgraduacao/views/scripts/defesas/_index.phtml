@@ -1,0 +1,345 @@
+<?php
+$professores = $this->partial('partials/combobox.phtml', array(
+	'name'=>'professores[]',
+ 	'data'=>$this->professores,
+	'id'=>'professores[]'
+));
+
+$atribuicoes = $this->partial('partials/combobox.phtml', array(
+	'name'=>'atribuicoes[]',
+ 	'data'=>$this->atribuicoes,
+	'id'=>'atribuicoes[]'
+));
+
+
+$tipoproj = $this->partial('partials/combobox.phtml', array(
+	'name'=>'tipoproj',
+ 	'data'=>$this->tipoProj,
+	'id'=>'tipoproj'
+));
+$listaHidden1= $this->partial('partials/listahidden.phtml', array(
+	'name'=>'profInv',
+	'data'=>$this->defesaProf
+));
+$listaHidden2= $this->partial('partials/listahidden.phtml', array(
+	'name'=>'ativInv',
+	'data'=>$this->defesaAtiv
+));
+
+$professores = $this->partial('partials/combobox.phtml', array(
+	'name'=>'professor[]',
+ 	'data'=>$this->professores
+));
+
+?>
+
+
+
+
+<?php
+echo $this->partial('partials/pessoaheader.phtml', array('nome' => $this->nomePessoa));
+echo $this->partial('partials/mestradoheader.phtml');
+echo $this->partial('partials/fieldset.phtml', array(
+	'title' => 'Defesa',
+	'height' => 400,
+	'content' => $this->partial('partials/flexigrid.phtml', array(
+			'isCrud'      => true,
+			'doubleClick' => "carregaBox(this.className)",
+            'table'       => $this->grid,
+		    'functionDelete' => 'deleteData',
+		    'exclude'     => array('id_pos_graduacao','id_tipo_projeto', 'resumo_dissertacao', 'con_aprovado', 'con_data_entrega','aprovado', 'con_aprovado', 'id_defesa'),
+		    'headers'     => array('msgAprovado' => 'Aprovado?','titulo' => 'Título', 'tipo_projeto' => 'Tipo de projeto?', 'sala' => 'Sala', 'horario'=>'Horário' ,'data_defesa'=>'Data da defesa', 'palavras_chaves'=>'Palavras chaves' ),
+
+)
+) . '
+<div class="crud-c" >
+<p style="text-align:right"><a href="#" class="crud-toggle-button">Adicionar defesa</a></p>
+<form class="zend_form crud-toggle" method="post" action="" >
+	<table width="100%" id="form_add">
+			<tr>
+				<td width="20%"><label>Título da dissertação: </td>
+				<td width="80%"><input type="text" id="titulo" value="" name="titulo" size="100"></label></td>
+			</tr>
+			<tr>
+				<td width="20%"><label>Tipo de projeto: </label></td>
+				<td width="80%">'.$tipoproj.'</td>
+			</tr>
+			<tr>
+				<td width="20%"><label>Data da defesa: </td>
+				<td width="80%"><input type="text" id="data_defesa" value="" name="data_defesa"
+					onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10" ></label></td>
+			</tr>
+			<tr>
+				<td width="20%"><label>Sala: </td>
+				<td width="80%"><input type="text" id="sala" value="" name="sala"
+					></label></td>
+			</tr>
+			
+			<tr>
+				<td width="20%"><label>Horários: </td>
+				<td width="80%"><input type="text" id="horario" value="" name="horario"
+					></label></td>
+			</tr>
+
+
+			<tr>
+				<td width="20%"><label>Aprovado?</td>
+				<td width="80%"><select name="aprovado" id="aprovado">
+					<option selected value="0">Sim</option>
+					<option value="1">Não</option>
+					<option value="3">Condicional</option>
+				</select></td>
+			</tr>
+			<tr class="condicionalnormal" style="display:none;">
+				<td width="20%"><label>Data de entrega:</label></td>
+				<td width="80%"><input type="text" id="dataentrega" value="" 
+					name="dataentrega"
+					onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></td>
+			</tr>
+			<tr class="condicional" style="display:none;">
+				<td width="20%"><label>Aprovado</label></td>
+				<td width="80%"><select name="aprovadoCondicional" id="aprovadoCondicional">
+					<option selected value="0">Sim</option>
+					<option value="1">Não</option>
+				</select></td>
+			</tr>
+			<tr class="condicional" style="display:none;">
+				<td width="20%"><label>Observação</label></td>
+				<td width="80%"><TEXTAREA COLS=40 ROWS=5 NAME="obsevacao"></TEXTAREA></td>
+			</tr>
+			<tr>
+				<td width="20%"><label>Composição da banca:</label>
+				</td>
+				<td width="80%">
+					<a href="#" onclick="novoDocente()">Adicionar novo docente</a>
+				</td>
+			</tr>
+			<tr>
+				<td  width="20%">
+				</td>
+				<td  width="80%">
+					<p id="pnovo">
+				</td>
+			</tr>
+			<tr>
+				<td>
+				<br>
+				</td>
+			</tr>
+			<tr>
+				<td width="20%"><br><label>Resumo da dissertação: </td>
+				<td width="80%"><textarea id="resumo" name="resumo" COLS="75" ROWS="5"></textarea></label></td>
+			</tr>
+			<tr>
+				<td width="20%">
+					<label>Palavras chaves: 
+				</td> 
+				<td width="80%">
+					<input type="text" id="palavras" value="" name="palavras"  size="100"></label>
+				</td>
+			</tr>
+		<tr><td></td><td><input type="submit" value="Gravar" 
+
+onClick="window.onbeforeunload=null" /></td></tr>
+	</table>
+</form>
+</div>	
+'
+));
+
+?>
+<input type="hidden" value="<?php echo $this->totalProfAtiv; ?>" id="totalProfAtiv" name="totalProfAtiv"/>
+<?php echo $listaHidden1;?>
+<?php echo $listaHidden2;?>
+<div style="visibility: hidden; display: none;">
+<div id="divProfessorInv"><font size="3"> Professor: </font><?php echo $professores; ?></div>
+<div id="divAtribuicoesInv"><font size="3">Atribuição: </font><?php echo $atribuicoes; ?></div>
+<div id="divProfessorInvED"><font size="2"> Professor: </font><?php echo $professores; ?></div>
+<div id="divAtribuicoesInvED"><font size="2">Atribuição: </font><?php echo $atribuicoes; ?></div>
+<div id="divProjetoInv">Atribuição: <?php echo $tipoproj; ?></div>
+</div>
+<style type="text/css">
+#formCreate label
+{
+font-size: 10px;
+padding-right: 5px;
+}
+
+</style>
+<script type="text/javascript">
+function carregaBox(data)
+{
+	var re = new RegExp('\{[^}]*\}', "g");
+    var m0 = re.exec(data);
+    var pResult = m0[0].substring(1, m0[0].length - 1);
+    var arrResult = new Array();
+    arrResult = pResult.split(',');
+    params    = new Array();
+    for(i = 0; i < arrResult.length; i++)
+    {
+        var tmp = arrResult[i].split(":");
+        params[trim(tmp[0].replace(':', ''))] = unescape(trim(tmp[1].replace("'", "").replace("'", "")));
+    }   
+    
+//	alert(data);
+
+	jQuery.facebox('<div id="faceboxForm">');
+	$('#faceboxForm').append('\
+			<form action="" class="zend_form" method="post" id="formCreate">\
+	        <input type="hidden" name="id" id="id" value="' + params['id_defesa'] + '"> \
+	        <table width="400px"> \
+	        <tr><td width="20%"><label> Título da dissertação: </td><td width="80%"><input style="width:100%" type="text" name="titulo" id="titulo" value="' + params['titulo'] + '"></label></td></tr>\
+	        <tr><td width="20%"><label> Tipo de projeto: </td><td width="80%"><div id="divProjeto"></div></label></td></tr>\
+	        <tr><td width="20%"><label> Data de defesa: </td><td width="80%"><input style="width:100%" type="text" name="datadefesa" id="datadefesa" value="' + params['data_defesa'] + '"  onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></label></td></tr>\
+	        <tr><td width="20%"><label> Sala: </td><td width="80%"><input style="width:100%" type="text" name="sala" id="sala" value="' + params['sala'] + '"></label></td></tr>\
+	        <tr><td width="20%"><label> Horários: </td><td width="80%"><input style="width:100%" type="text" name="horario" id="horario" value="' + params['horario'] + '"></label></td></tr>\
+	        <tr><td width="20%"><label> Aprovado? </td><td width="80%"><div id="divAprovado"></div></label></td></tr>\
+	    	<tr class="condicional" style="display:none;"><td width="20%" ><label> Data de entrega: </td><td width="80%"><input style="width:100%" type="text" name="dataentrega" id="dataentrega" value="' + params['con_data_entrega'] + '"  onkeypress="formataCampo(this, \'00/00/0000\', event);" maxlength="10"></label></td></tr>\
+	    	<tr class="condicional" style="display:none;"><td width="20%" ><label> Aprovado? </td><td width="80%"><div id="divCond"></div></label></td></tr>\
+	    	<tr><td width="20%"><label> Composição da banca: </td><td width="80%"><a href="#" onclick="novoDocenteJ()" style="font-size: 12px;">Adicionar novo docente</a></tr></tr>\
+	    	<tr><td width="20%"></td><td width="80%"><p id="pnovoJ"></td></tr>\
+	    	<tr><td></td><td colspan="3"> <div id="divBanca"></div><input type="hidden" id="docenteExcluir" name="docenteExcluir"> </td></tr> \
+	    	<tr><td width="20%"><label> Resumo da dissertação: </td><td width="80%"><textarea id="resumo" name="resumo" COLS="30" ROWS="5">' + params['resumo_dissertacao'] + '</textarea></label></td></tr>\
+	    	<tr><td width="20%"><label> Palavras chaves: </td><td width="80%"><input style="width:100%" type="text" name="palavras" id="palavras" value="' + params['palavras_chaves'] + '"></label></td></tr>\
+	    	<tr><td></td><td><input type="submit" value="Ok"></td></tr> \
+		    </table>\
+		    </form>\
+			');
+    geraCombobox(params['id_defesa']);
+	 $('#tipoproj').clone().attr('id', 'projetoU').attr('name', 'projetoU').appendTo('#divProjeto');
+	 $('#projetoU').val(params['id_tipo_projeto']);	 
+
+	 $('#aprovado').clone().attr('id', 'aprovadoU').attr('name', 'aprovadoU').appendTo('#divAprovado');
+	 $('#aprovadoU').val(params['aprovado']);	 
+
+	 $('#aprovadoCondicional').clone().attr('id', 'aprovadoConU').attr('name', 'aprovadoConU').appendTo('#divCond');
+	 $('#aprovadoConU').val(params['con_aprovado']);	
+
+
+	if($('#aprovadoU').val()==3)
+		$('.condicional').show();
+
+			
+	$('#aprovadoU').change(function(){
+		if($('#aprovadoU').val()==3)
+		{	
+			$('.condicional').show();
+		}else
+		{
+			$('.condicional').hide();
+		}
+	});
+		
+	
+}
+
+function geraCombobox(id_defesa)
+{
+
+	var i=0;
+//	var div = document.getElementById('divlistahidden');
+	var html='';
+	
+	
+	while(i< $('#totalProfAtiv').val())
+	{
+		i++;
+		var nome="profInv";
+		var nomevariavel='#'+nome+i;
+		var variavel= $(nomevariavel).val();
+		var nome="ativInv";
+		var nomevariavel='#'+nome+i;
+		var variavel2= $(nomevariavel).val();
+		
+		if( variavel!=undefined) 
+		{ 
+			var quebra=variavel.split("#");
+			var quebra2=variavel2.split("#");
+
+			if(quebra[1]==id_defesa)
+			{
+				html=html+'<div style="font-size:12px;" id="divB'+i+'">Professor: '+quebra[3];
+				html=html+'<br>Atribuição: '+quebra2[3];
+				html=html+'<input id="hddprof'+i+'" name="hddprof[]" type="hidden" value="'+quebra[2]+'">';
+				html=html+'<input id="hddativ'+i+'" name="hddativ[]" type="hidden" value="'+quebra2[2]+'">';
+				html=html+' <a href="#" id="btnprofessor" onclick="deleteprofessor('+i+')">Excluir</a></div><br>';
+			} 
+		}
+	}
+	 $('#divBanca').html(html);
+}
+
+function novoDocente()
+{
+
+	idNovaTabela = Math.ceil(Math.random()*10000);
+	componente='<p><div id="divProfessor' + idNovaTabela + '"></div>\
+				<div id="divAtribuicoes' + idNovaTabela + '"></div></p>';
+    $('#pnovo').append(componente);
+    $('#divProfessor'+ idNovaTabela).html($('#divProfessorInv').html());
+    $('#divAtribuicoes'+ idNovaTabela).html($('#divAtribuicoesInv').html());
+}
+$('.condicional').hide();
+
+function deleteData(data)
+{
+    p = getParams(data);
+    location.href='<?php echo $this->url(array('module'=> 'mestrado', 'controller'=> 'defesas', 'action' => 'delete')); ?>/id/' + p['id_defesa']; 
+	//alert('Excluindo dado ' + );
+}
+
+function novoDocenteJ()
+{
+
+	idNovaTabela = Math.ceil(Math.random()*10000);
+	componente='<p><div id="divProfessor' + idNovaTabela + '"></div>\
+				<div id="divAtribuicoes' + idNovaTabela + '"></div></p>';
+    $('#pnovoJ').append(componente);
+    $('#divProfessor'+ idNovaTabela).html($('#divProfessorInvED').html());
+    $('#divAtribuicoes'+ idNovaTabela).html($('#divAtribuicoesInvED').html());
+}
+
+function deleteprofessor(i)
+{
+	var profe= $('#hddprof'+i).val();
+	var varDelete= 	$('#docenteExcluir').val();
+	varDelete=varDelete+'#'+profe;
+	$('#docenteExcluir').val(varDelete);
+	$('#divB'+i).hide();
+}
+
+$(document).ready(function(){
+	
+	$('#aprovado').change(function(){
+		if($('#aprovado').val()==3)
+		{
+			$('.condicionalnormal').show();	
+			$('.condicional').show();
+		}
+		else if ($('#aprovado').val()==0)
+		{
+			$('.condicionalnormal').show();
+		}
+		else	
+		{
+			$('.condicionalnormal').hide();
+			$('.condicional').hide();
+		}
+	});
+});
+
+$(document).ready(function()
+        {
+            $('#pessoa-mestrado').addClass('selecionado');
+            $('#mestrado-defesas').addClass('selecionado');
+            $('input').attr('onBlur', 'mudancaDeValor()');
+});
+
+function mudancaDeValor()
+{
+    window.onbeforeunload = function(){ return 'Você perderá todas as alterações';}
+
+    //alert('Modificado');
+    //$('body').attr('onUnload', 'if !window.confirm("Dados podem ter sido alterados. Deseja sair sem gravar?")){return false}');
+}
+</script>
